@@ -20,6 +20,7 @@ const pagedTheme=()=>PAGED.has(document.documentElement.dataset.ttkTheme);
 
 // ── Paper: "now reading" block beside the cover + a bookshelf strip (profile pictures, or swipes as spines) ──
 const SHELF_KEY='darak-shelf';
+const SHELF_THEMES=new Set(['paper','nocturne','porcelain']); // 서재(책장)가 있는 테마 — Studio 제외
 function shelfOff(){try{return localStorage.getItem(SHELF_KEY)==='off';}catch{return false;}}
 function applyShelfPref(){document.documentElement.dataset.ttkShelf=shelfOff()?'off':'on';}
 function shelfItems(mes){
@@ -61,7 +62,7 @@ function shelfBlock(mes){
   row.append(b);
  });
  for(let i=items.length;i<Math.min(items.length+3,6);i++){const e=document.createElement('span');e.className='ttk-spine empty';e.style.setProperty('--h',`${50+((i*7+3)%5)*4}px`);row.append(e);} // empty slots: room for more profile pictures
- const deco=document.createElement('span');deco.className='ttk-shelf-deco';row.append(deco);
+ const deco=document.createElement('span');deco.className='ttk-shelf-deco';for(let i=0;i<3;i++)deco.append(document.createElement('i'));row.append(deco);
  shelf.append(row);
 }
 function caption(mes){
@@ -91,7 +92,7 @@ function caption(mes){
  if(poster){
   set(poster.children[0],'');set(poster.children[1],no===''?'':`S#${no}`);set(poster.children[2],'');
  }
- if(document.documentElement.dataset.ttkTheme==='paper'){
+ if(SHELF_THEMES.has(document.documentElement.dataset.ttkTheme)){
   const c=window.SillyTavern?.getContext?.();
   const isUser=mes.getAttribute('is_user')==='true';
   const when=m?`${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')} ${m[4]}`:time;
