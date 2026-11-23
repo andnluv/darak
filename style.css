@@ -1688,3 +1688,6 @@ html[data-ttk-theme] body #chat#chat .mes_reasoning_details{margin:0 0 .6em}
 html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary){padding-left:0!important;padding-right:0!important;color:var(--ttk-muted)!important}
 html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary) :is(h4,span,.mes_reasoning_header_title,.mes_reasoning_arrow,svg,i,.fa-solid,.fa-regular){color:var(--ttk-muted)!important}
 html[data-ttk-theme] body #chat#chat .mes_reasoning{padding-left:0!important;padding-right:0!important}
+
+/* v0.20.2 Studio: 본문 안 블록형 위젯(상태창 등)이 자체 폭 제한 때문에 카드보다 좁아 오른쪽이 비는 문제 — 카드 폭에 맞춰 채운다 */
+html[data-ttk-theme=studio] body #chat#chat .mes .mes_text > :is(div,section,table,details,figure){width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box!important}
