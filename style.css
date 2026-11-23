@@ -1674,3 +1674,17 @@ html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper .avatar{gr
 html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub{grid-row:4}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{grid-row:3/5}
 html[data-ttk-theme=nocturne] .ttk-shelf-deco{padding-right:46px}
+
+/* v0.20.1 서재 버튼: 글자 대신 도형(◆ 펼침 / ◇ 접힘) */
+html[data-ttk-theme] body #chat#chat .mes .ttk-shelf-toggle{border:0!important;background:none!important;padding:4px 7px!important;min-width:0;font-size:14px;line-height:1;color:var(--ttk-accent)!important;opacity:1}
+html[data-ttk-theme] body #chat#chat .mes .ttk-shelf-toggle::before{content:'\25C6'}
+html[data-ttk-shelf=off] body #chat#chat .mes .ttk-shelf-toggle::before{content:'\25C7'}
+html[data-ttk-theme] body #chat#chat .mes .ttk-shelf-toggle:hover{filter:brightness(1.15)}
+
+/* v0.20.1 추론(사유) 블록: 색 면·테두리로 구분하지 않는다 — 모든 테마 공통, 본문과 같은 바탕에 글자만 */
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_details,.mes_reasoning_header,.mes_reasoning_header_block,.mes_reasoning_summary,summary.mes_reasoning_summary,.mes_reasoning),
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary):is(:hover,:focus-visible,:active){background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+html[data-ttk-theme] body #chat#chat .mes_reasoning_details{margin:0 0 .6em}
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary){padding-left:0!important;padding-right:0!important;color:var(--ttk-muted)!important}
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary) :is(h4,span,.mes_reasoning_header_title,.mes_reasoning_arrow,svg,i,.fa-solid,.fa-regular){color:var(--ttk-muted)!important}
+html[data-ttk-theme] body #chat#chat .mes_reasoning{padding-left:0!important;padding-right:0!important}

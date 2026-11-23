@@ -38,10 +38,11 @@ function nowBlock(mes,vals){
  if(!now){
   now=document.createElement('div');now.className='ttk-now';
   for(const [tag,cls] of [['span','ttk-now-eyebrow'],['b','ttk-now-name'],['span','ttk-now-by'],['span','ttk-now-meta']]){const e=document.createElement(tag);e.className=cls;now.append(e);}
-  const t=document.createElement('button');t.type='button';t.className='ttk-shelf-toggle';t.setAttribute('aria-label','서재 접기/펼치기');t.textContent='서재';
+  const t=document.createElement('button');t.type='button';t.className='ttk-shelf-toggle';t.setAttribute('aria-label','서재 접기/펼치기');t.title='서재 접기/펼치기';
   t.addEventListener('click',e=>{e.stopPropagation();try{localStorage.setItem(SHELF_KEY,shelfOff()?'on':'off');}catch{}applyShelfPref();});
   now.append(t);mes.append(now);
  }
+ const tg=now.querySelector('.ttk-shelf-toggle');if(tg&&tg.textContent)tg.textContent=''; // 도형은 CSS(◆/◇)로 표시
  const set=(e,v)=>{if(e&&e.textContent!==v)e.textContent=v;};
  set(now.children[0],vals.eyebrow);set(now.children[1],vals.name);set(now.children[2],vals.by);set(now.children[3],vals.meta);
 }
