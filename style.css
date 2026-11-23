@@ -1502,3 +1502,9 @@ html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{overflow:visi
 #ttk-panel input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:var(--ttk-accent,#4f6f8f);border:2px solid var(--ttk-surface,#fff);box-shadow:0 1px 4px rgba(0,0,0,.25)}
 #ttk-panel input[type=range]::-moz-range-track{height:4px;border-radius:99px;background:var(--ttk-border,#ccc)}
 #ttk-panel input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ttk-accent,#4f6f8f);border:2px solid var(--ttk-surface,#fff)}
+
+/* v0.17.1 Studio: 긴 이름이 ‘…’로 잘리지 않게 (모바일은 글자를 조금 줄이고 필요하면 줄바꿈) */
+html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-name{overflow:visible!important;text-overflow:clip!important;white-space:normal!important;overflow-wrap:anywhere}
+@media (max-width:600px){
+ html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-name{font-size:clamp(14px,4.1vw,22px)!important;letter-spacing:0!important}
+}
