@@ -13,7 +13,7 @@ import {syncMessageFooters} from './message-footer.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,THEMES,FONTS,FONT_GROUPS} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.17.5';
+const VERSION = '0.18.0';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -24,7 +24,8 @@ function merge(raw){const modules={...DEFAULT_MODULES,...(raw?.modules||{})};con
 const failed=new Map();
 function guard(name,fn,cleanup){try{return fn();}catch(e){console.error(`[DARAK] ${name} 오류`,e);try{cleanup?.();}catch{}if(!failed.has(name)){failed.set(name,String(e?.message||e).slice(0,160));globalThis.toastr?.error?.(`${name}에서 오류가 나 이 모듈만 멈췄습니다. 다른 모듈은 계속 동작합니다. 자세한 내용은 다락방 설정 맨 위에 있습니다.`,'다락방',{timeOut:9000});}showFailures();}}
 function showFailures(){const box=document.getElementById('ttk-failures');if(!box)return;box.hidden=!failed.size;if(!failed.size)return;box.replaceChildren(el('strong','','멈춘 모듈이 있습니다'),...[...failed].map(([n,m])=>el('p','',`${n}: ${m}`)),el('p','','나머지 모듈은 그대로 동작합니다. 브라우저 콘솔(F12)의 [DARAK] 줄에 자세한 오류가 있습니다. 페이지를 새로고침하면 다시 시도합니다.'));}
-function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncMessageFooters(settings.modules.design);},()=>{teardownDesign();syncMessageFooters(false);});guard('한글화',syncLocalization);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);}
+const footerHooks={shelf:id=>(settings?.modules?.avatars&&avatars)?avatars.shelfFor(id):null};
+function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncMessageFooters(settings.modules.design,footerHooks);},()=>{teardownDesign();syncMessageFooters(false);});guard('한글화',syncLocalization);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);}
 function changed(){applyModules();save();}
 function syncAvatars(){if(!avatars)return;if(settings.modules.avatars)avatars.start();else avatars.stop();}
 function syncThemeImages(){if(!themeImages)return;if(settings.modules.themeImages)themeImages.start();else themeImages.stop();}

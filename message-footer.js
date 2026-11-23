@@ -9,13 +9,59 @@
  *     (textarea inside) always falls back to normal vertical layout. The chat's own vertical scroll is never hijacked. */
 const MOVES=[['nav','.swipe_left'],['nav','.swipeRightBlock'],['tok','.tokenCounterDisplay'],['btn','.mes_buttons']];
 const PAGED=new Set(['paper','nocturne']);
-const OWN='.ttk-pager,.ttk-cap,.ttk-stub,.ttk-poster';
+const OWN='.ttk-pager,.ttk-cap,.ttk-stub,.ttk-poster,.ttk-now,.ttk-shelf';
+let hooks={};
 let observer=null,timer=null,resizeTimer=null;
 const dirty=new Set();
 const pages=new WeakMap();
 const txt=node=>(node?.textContent||'').replace(/\s+/g,' ').trim();
 const pagedTheme=()=>PAGED.has(document.documentElement.dataset.ttkTheme);
 
+
+// ── Paper: "now reading" block beside the cover + a bookshelf strip (profile pictures, or swipes as spines) ──
+const SHELF_KEY='darak-shelf';
+function shelfOff(){try{return localStorage.getItem(SHELF_KEY)==='off';}catch{return false;}}
+function applyShelfPref(){document.documentElement.dataset.ttkShelf=shelfOff()?'off':'on';}
+function shelfItems(mes){
+ const id=Number(mes.getAttribute('mesid'));
+ let data=null;try{data=hooks.shelf?.(id)||null;}catch{data=null;}
+ if(data?.items?.length)return {items:data.items.map(i=>({url:i.url,label:i.name||'',active:!!i.active})),pick:data.pick};
+ const m=txt(mes.querySelector('.swipes-counter')).match(/(\d+)\s*\/\s*(\d+)/);
+ if(m&&Number(m[2])>1){const cur=Number(m[1]),n=Math.min(Number(m[2]),30);return {items:Array.from({length:n},(_,i)=>({url:'',label:String(i+1),active:i+1===cur})),pick:null};}
+ return {items:[],pick:null};
+}
+function nowBlock(mes,vals){
+ let now=mes.querySelector(':scope > .ttk-now');
+ if(!now){
+  now=document.createElement('div');now.className='ttk-now';
+  for(const [tag,cls] of [['span','ttk-now-eyebrow'],['b','ttk-now-name'],['span','ttk-now-by'],['span','ttk-now-meta']]){const e=document.createElement(tag);e.className=cls;now.append(e);}
+  const t=document.createElement('button');t.type='button';t.className='ttk-shelf-toggle';t.setAttribute('aria-label','서재 접기/펼치기');t.textContent='서재';
+  t.addEventListener('click',e=>{e.stopPropagation();try{localStorage.setItem(SHELF_KEY,shelfOff()?'on':'off');}catch{}applyShelfPref();});
+  now.append(t);mes.append(now);
+ }
+ const set=(e,v)=>{if(e&&e.textContent!==v)e.textContent=v;};
+ set(now.children[0],vals.eyebrow);set(now.children[1],vals.name);set(now.children[2],vals.by);set(now.children[3],vals.meta);
+}
+function shelfBlock(mes){
+ let shelf=mes.querySelector(':scope > .ttk-shelf');
+ const {items,pick}=shelfItems(mes);
+ if(!items.length){if(shelf)shelf.remove();return;}
+ const sig=items.map(i=>`${i.url}|${i.label}|${i.active?1:0}`).join(';');
+ if(shelf&&shelf.dataset.sig===sig)return;
+ if(!shelf){shelf=document.createElement('div');shelf.className='ttk-shelf';mes.append(shelf);}
+ shelf.dataset.sig=sig;shelf.replaceChildren();
+ const row=document.createElement('div');row.className='ttk-shelf-row';
+ items.forEach((it,i)=>{
+  const b=document.createElement(pick&&it.url?'button':'span');b.className='ttk-spine'+(it.active?' on':'');
+  b.style.setProperty('--h',`${54+((i*7+3)%5)*4}px`);b.dataset.c=String(i%5);
+  if(it.url){b.style.backgroundImage=`linear-gradient(rgba(24,16,8,.38),rgba(24,16,8,.62)),url("${it.url.replace(/["\\]/g,'\\$&')}")`;}
+  const l=document.createElement('i');l.textContent=it.label||String(i+1);b.append(l);
+  if(b.tagName==='BUTTON'){b.type='button';b.setAttribute('aria-label',`프로필 사진 ${it.label||i+1}`);b.addEventListener('click',e=>{e.stopPropagation();try{pick(it.url);}catch{}shelf.dataset.sig='';requestAnimationFrame(()=>shelfBlock(mes));});}
+  row.append(b);
+ });
+ const deco=document.createElement('span');deco.className='ttk-shelf-deco';row.append(deco);
+ shelf.append(row);
+}
 function caption(mes){
  const wrap=mes.querySelector(':scope > .mesAvatarWrapper');if(!wrap)return;
  let cap=wrap.querySelector(':scope > .ttk-cap');
@@ -43,6 +89,13 @@ function caption(mes){
  if(poster){
   set(poster.children[0],'');set(poster.children[1],no===''?'':`S#${no}`);set(poster.children[2],'');
  }
+ if(document.documentElement.dataset.ttkTheme==='paper'){
+  const c=window.SillyTavern?.getContext?.();
+  const isUser=mes.getAttribute('is_user')==='true';
+  const when=m?`${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')} ${m[4]}`:time;
+  nowBlock(mes,{eyebrow:isUser?'MY PAGE':'NOW READING',name,by:isUser?(c?.name2?`to ${c.name2}`:''):(c?.name1?`with ${c.name1}`:''),meta:[no===''?'':`#${no}`,when].filter(Boolean).join(' · ')});
+  shelfBlock(mes);
+ }else{mes.querySelectorAll(':scope > .ttk-now,:scope > .ttk-shelf').forEach(n=>n.remove());}
 }
 function footer(mes){
  if(mes.querySelector(':scope > .mes_block > .ttk-foot'))return;
@@ -154,12 +207,12 @@ function flush(){
  relayout(list);
 }
 function onResize(){clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>relayout(document.querySelectorAll('#chat .mes')),200);}
-export function syncMessageFooters(enabled){
+export function syncMessageFooters(enabled,h){hooks=h||hooks;applyShelfPref();
  if(!enabled){
   observer?.disconnect();observer=null;if(timer){clearTimeout(timer);timer=null;}dirty.clear();
   window.removeEventListener('resize',onResize);
   document.querySelectorAll('#chat .ttk-foot').forEach(restore);
-  document.querySelectorAll('#chat .ttk-cap,#chat .ttk-stub,#chat .ttk-pager,#chat .ttk-poster').forEach(n=>n.remove());
+  document.querySelectorAll('#chat .ttk-cap,#chat .ttk-stub,#chat .ttk-pager,#chat .ttk-poster,#chat .ttk-now,#chat .ttk-shelf').forEach(n=>n.remove());
   document.querySelectorAll('#chat .mesAvatarWrapper').forEach(w=>w.style.removeProperty('--ttk-av-url'));
   document.querySelectorAll('#chat .mes.ttk-paged,#chat .mes.ttk-spread,#chat .mes.ttk-2col,#chat .mes.ttk-rich').forEach(m=>{m.classList.remove('ttk-paged','ttk-spread','ttk-2col','ttk-rich');const t=m.querySelector('.mes_text');if(t){t.scrollLeft=0;t.style.removeProperty('height');t.style.removeProperty('flex');}});
   return;

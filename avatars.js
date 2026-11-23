@@ -75,6 +75,17 @@ export class Avatars {
     list(key) { return this.S().owners[key]?.images || []; }
     activeOf(key) { const o = this.S().owners[key]; return o?.images.find(i => i.id === o.active) || null; }
 
+    /** For the bookshelf strip (Paper): this message owner's pictures, the one in use marked, and a way to switch this message's picture. */
+    shelfFor(mesId) {
+        const msg = this.ctx()?.chat?.[mesId]; if (!msg || msg.is_system) return null;
+        const key = this.ownerOf(msg), list = key ? this.list(key) : []; if (!list.length) return null;
+        const cur = msg.extra?.ttk_avatar?.url, def = this.S().owners[key]?.active;
+        return {
+            items: list.map(p => ({ url: p.url, name: p.name, active: cur ? p.url === cur : p.id === def })),
+            pick: url => { msg.extra = { ...(msg.extra || {}), ttk_avatar: { key, url } }; this.paint(this.mesEl(mesId), msg); this.ctx().saveChat?.(); },
+        };
+    }
+
     // ---- chat display ----
     mesEl(id) { return document.querySelector(`#chat .mes[mesid="${id}"]`); }
     paint(el, msg) {
