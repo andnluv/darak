@@ -1521,20 +1521,6 @@ html[data-ttk-theme=nocturne] body #chat#chat .mes .ch_name .flex-container{flex
  html[data-ttk-theme=porcelain]{--pc-img:clamp(84px,27%,120px)}
  html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{margin-left:12px!important;padding-left:12px!important}
 }
-/* 전체 너비 모드 (.ttk-rich): 사진·번호는 위 한 줄, 본문은 아래 전체 너비 */
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto!important;height:auto!important;max-height:none!important;min-height:0}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .mesAvatarWrapper{grid-column:1;grid-row:1;flex-direction:row;align-items:center!important;gap:14px;padding:14px 14px 0!important;overflow:visible}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .mesAvatarWrapper .avatar{flex:0 0 auto;width:var(--rd-img)!important;max-width:110px;aspect-ratio:3/4}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .mesAvatarWrapper .ttk-cap{width:auto;justify-content:flex-start;padding:0}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .mes_block{grid-column:1;grid-row:2;padding:12px 16px 10px!important}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .mes_text{overflow:visible!important;column-count:auto;height:auto!important}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .ttk-pager{display:none!important}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .ch_name{padding:0 0 10px!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich{grid-template-columns:minmax(0,1fr)!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich .mesAvatarWrapper{grid-column:1;grid-row:2;display:grid!important;grid-template-columns:var(--pc-img) minmax(0,1fr);align-items:end;margin-bottom:16px!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich .avatar{grid-column:1}
-html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich .ttk-stub{grid-column:1;grid-row:3}
-html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich .mes_block{grid-column:1;grid-row:4;margin-left:0!important;padding-left:0!important;border-left:0;border-top:1px solid var(--ttk-border);padding-top:14px!important}
 @media(max-width:600px){
  html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ch_name{padding-bottom:58px!important}
  html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ttk-pager{top:68px}
@@ -1549,3 +1535,10 @@ html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich .mes_block{grid-col
  html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ttk-pager{top:56px}
  :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{padding-top:10px!important}
 }
+
+
+/* v0.17.5 상태창 같은 자체 레이아웃 메시지: 배치는 다른 메시지와 똑같이 두고, 쪽으로만 자르지 않고 끝까지 펼친다 */
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich{height:auto!important;max-height:none!important;grid-template-rows:auto!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .mes_text{overflow:visible!important;column-count:auto!important;height:auto!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .ttk-pager{display:none!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-rich .ch_name{padding-right:0!important;padding-bottom:0!important}

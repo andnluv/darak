@@ -125,12 +125,11 @@ function layout(mes){
  const natural=text.scrollHeight;
  // 2) the text box height a fixed page leaves for the text
  mes.classList.add('ttk-paged');
- let box=text.clientHeight;
+ const box=text.clientHeight;
  mes.style.removeProperty('content-visibility');
  const wide=mes.classList.contains('ttk-2col');
  const line=parseFloat(getComputedStyle(text).lineHeight)||28;
- // A page holds a whole number of lines, so the last line of a page is never sliced by the page edge.
- if(box>line*2){box=Math.floor(box/line)*line;text.style.height=`${box}px`;text.style.flex='0 0 auto';}
+
  if(natural<=box){
   mes.classList.remove('ttk-paged');text.style.removeProperty('height');text.style.removeProperty('flex');
   // PC: medium-length text is set in two balanced columns, like an open spread; short text stays one column.
