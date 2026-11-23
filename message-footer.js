@@ -41,8 +41,7 @@ function caption(mes){
  const m=time.match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})\D*?\s+(.+)$/);
  set(cap.children[0],no);set(cap.children[1],name);set(cap.children[2],time);set(cap.children[3],tokens);set(cap.children[4],m?m[4]:time);set(stub.children[0],no);set(stub.children[1],name);
  if(poster){
-  const date=m?`${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`:'';
-  set(poster.children[0],m?m[4]:time);set(poster.children[1],no===''?'':`S#${no}`);set(poster.children[2],[date,tokens].filter(Boolean).join(' · ').toUpperCase());
+  set(poster.children[0],'');set(poster.children[1],no===''?'':`S#${no}`);set(poster.children[2],'');
  }
 }
 function footer(mes){
@@ -105,10 +104,17 @@ function turn(mes,d){
  pages.set(mes,d===-Infinity?0:d===Infinity?n-1:Math.min(Math.max(cur+d,0),n-1));
  show(mes,true);
 }
+// Messages that carry a layout of their own (status panel, table, image, <details>) are never cut into pages and
+// get the full width instead of the narrow reading column, so nothing in them is clipped.
+const RICH='div,table,details,pre,img,iframe,section,figure,video';
+function rich(text){return !!text&&!!text.querySelector(RICH);}
 function layout(mes){
  const text=mes.querySelector(':scope > .mes_block > .mes_text');
- const clear=()=>{mes.classList.remove('ttk-paged','ttk-spread','ttk-2col');const p=mes.querySelector(':scope > .mes_block > .ttk-pager');if(p)p.hidden=true;if(text)text.scrollLeft=0;};
- if(!text||!pagedTheme()||text.querySelector('textarea,[contenteditable="true"]')){clear();return;}
+ const clear=()=>{mes.classList.remove('ttk-paged','ttk-spread','ttk-2col');const p=mes.querySelector(':scope > .mes_block > .ttk-pager');if(p)p.hidden=true;if(text){text.scrollLeft=0;text.style.removeProperty('height');text.style.removeProperty('flex');}};
+ const themed=!!document.documentElement.dataset.ttkTheme&&document.documentElement.dataset.ttkTheme!=='studio';
+ mes.classList.toggle('ttk-rich',themed&&rich(text));
+ if(!text||!pagedTheme()||mes.classList.contains('ttk-rich')||text.querySelector('textarea,[contenteditable="true"]')){clear();return;}
+ text.style.removeProperty('height');
  pager(mes);
  // Messages skipped by content-visibility (ours or another extension's) report 0 heights, so render them while measuring.
  mes.style.setProperty('content-visibility','visible','important');
@@ -119,12 +125,14 @@ function layout(mes){
  const natural=text.scrollHeight;
  // 2) the text box height a fixed page leaves for the text
  mes.classList.add('ttk-paged');
- const box=text.clientHeight;
+ let box=text.clientHeight;
  mes.style.removeProperty('content-visibility');
  const wide=mes.classList.contains('ttk-2col');
  const line=parseFloat(getComputedStyle(text).lineHeight)||28;
+ // A page holds a whole number of lines, so the last line of a page is never sliced by the page edge.
+ if(box>line*2){box=Math.floor(box/line)*line;text.style.height=`${box}px`;text.style.flex='0 0 auto';}
  if(natural<=box){
-  mes.classList.remove('ttk-paged');
+  mes.classList.remove('ttk-paged');text.style.removeProperty('height');text.style.removeProperty('flex');
   // PC: medium-length text is set in two balanced columns, like an open spread; short text stays one column.
   if(wide&&natural>line*8)mes.classList.add('ttk-spread');
   const p=mes.querySelector(':scope > .mes_block > .ttk-pager');if(p)p.hidden=true;text.scrollLeft=0;
@@ -137,7 +145,7 @@ function scan(){
  relayout(document.querySelectorAll('#chat .mes'));
 }
 function relayout(list){
- if(!pagedTheme()){for(const mes of list)if(mes.classList.contains('ttk-paged')||mes.classList.contains('ttk-spread'))layout(mes);return;}
+ if(!pagedTheme()){for(const mes of list)layout(mes);return;}
  for(const mes of list)layout(mes);
 }
 function flush(){
@@ -154,7 +162,7 @@ export function syncMessageFooters(enabled){
   document.querySelectorAll('#chat .ttk-foot').forEach(restore);
   document.querySelectorAll('#chat .ttk-cap,#chat .ttk-stub,#chat .ttk-pager,#chat .ttk-poster').forEach(n=>n.remove());
   document.querySelectorAll('#chat .mesAvatarWrapper').forEach(w=>w.style.removeProperty('--ttk-av-url'));
-  document.querySelectorAll('#chat .mes.ttk-paged,#chat .mes.ttk-spread,#chat .mes.ttk-2col').forEach(m=>{m.classList.remove('ttk-paged','ttk-spread','ttk-2col');const t=m.querySelector('.mes_text');if(t)t.scrollLeft=0;});
+  document.querySelectorAll('#chat .mes.ttk-paged,#chat .mes.ttk-spread,#chat .mes.ttk-2col,#chat .mes.ttk-rich').forEach(m=>{m.classList.remove('ttk-paged','ttk-spread','ttk-2col','ttk-rich');const t=m.querySelector('.mes_text');if(t){t.scrollLeft=0;t.style.removeProperty('height');t.style.removeProperty('flex');}});
   return;
  }
  const chat=document.querySelector('#chat');if(!chat)return;
