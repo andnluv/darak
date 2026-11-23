@@ -28,7 +28,9 @@ function shelfItems(mes){
  if(data?.items?.length)return {items:data.items.map(i=>({url:i.url,label:i.name||'',active:!!i.active})),pick:data.pick};
  const m=txt(mes.querySelector('.swipes-counter')).match(/(\d+)\s*\/\s*(\d+)/);
  if(m&&Number(m[2])>1){const cur=Number(m[1]),n=Math.min(Number(m[2]),30);return {items:Array.from({length:n},(_,i)=>({url:'',label:String(i+1),active:i+1===cur})),pick:null};}
- return {items:[],pick:null};
+ // no registered pictures or swipes: the current profile picture is the one book on the shelf
+ const img=mes.querySelector(':scope > .mesAvatarWrapper .avatar img')?.getAttribute('src')||'';
+ return {items:img?[{url:img,label:txt(mes.querySelector('.ch_name .name_text'))||'',active:true}]:[],pick:null};
 }
 function nowBlock(mes,vals){
  let now=mes.querySelector(':scope > .ttk-now');
@@ -45,7 +47,6 @@ function nowBlock(mes,vals){
 function shelfBlock(mes){
  let shelf=mes.querySelector(':scope > .ttk-shelf');
  const {items,pick}=shelfItems(mes);
- if(!items.length){if(shelf)shelf.remove();return;}
  const sig=items.map(i=>`${i.url}|${i.label}|${i.active?1:0}`).join(';');
  if(shelf&&shelf.dataset.sig===sig)return;
  if(!shelf){shelf=document.createElement('div');shelf.className='ttk-shelf';mes.append(shelf);}
@@ -59,6 +60,7 @@ function shelfBlock(mes){
   if(b.tagName==='BUTTON'){b.type='button';b.setAttribute('aria-label',`프로필 사진 ${it.label||i+1}`);b.addEventListener('click',e=>{e.stopPropagation();try{pick(it.url);}catch{}shelf.dataset.sig='';requestAnimationFrame(()=>shelfBlock(mes));});}
   row.append(b);
  });
+ for(let i=items.length;i<Math.min(items.length+3,6);i++){const e=document.createElement('span');e.className='ttk-spine empty';e.style.setProperty('--h',`${50+((i*7+3)%5)*4}px`);row.append(e);} // empty slots: room for more profile pictures
  const deco=document.createElement('span');deco.className='ttk-shelf-deco';row.append(deco);
  shelf.append(row);
 }

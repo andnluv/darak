@@ -1619,3 +1619,6 @@ html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(1){width:44px}ht
 /* v0.19.1 한글은 단어(띄어쓰기) 단위로 줄바꿈: 음절 중간에서 끊기지 않게. 한 단어가 한 줄보다 길 때만 예외로 끊는다 */
 html[data-ttk-theme] body #chat#chat .mes .mes_text,
 html[data-ttk-theme] body #chat#chat .mes .mes_text :is(p,li,blockquote,div,span,q,em,strong,td,th,summary){word-break:keep-all!important;overflow-wrap:break-word!important;line-break:strict}
+
+/* v0.19.2 서재: 책이 없어도 책장은 항상 보임 (빈 칸 = 점선 자리) */
+html[data-ttk-theme=paper] .ttk-spine.empty{background:none!important;box-shadow:none;border:1px dashed color-mix(in srgb,var(--ttk-muted) 55%,transparent);border-bottom:0;opacity:.7}
