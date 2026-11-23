@@ -1,0 +1,11 @@
+{
+  "display_name": "다락방 · DARAK",
+  "loading_order": 50,
+  "requires": [],
+  "optional": [],
+  "js": "index.js",
+  "css": "style.css",
+  "author": "DARAK independent project",
+  "version": "0.17.0",
+  "auto_update": false
+}
