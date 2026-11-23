@@ -1300,8 +1300,8 @@ html[data-ttk-theme] body #chat#chat .mes .ttk-foot-btn{flex:0 1 auto;margin-lef
 html[data-ttk-theme] body #chat#chat .mes .ttk-foot .mes_buttons{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:2px}
 
 /* ── Paper · Nocturne 공통: 이북 리더 골격 — 왼쪽 전체 사진 | 오른쪽 본문(PC 2단), 긴 글은 가로 페이지 넘김 ── */
-html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(150px,32%,320px);--rd-h:min(78vh,760px);--rd-gap:48px}
-@media(max-width:600px){html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(92px,32%,140px);--rd-h:min(74dvh,640px);--rd-gap:28px}}
+html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(150px,32%,320px);--rd-h:min(88vh,980px);--rd-gap:48px}
+@media(max-width:600px){html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(92px,32%,140px);--rd-h:min(90dvh,860px);--rd-gap:28px}}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes{grid-template-columns:var(--rd-img) minmax(0,1fr)!important;column-gap:0;padding:0!important;align-items:stretch;min-height:calc(var(--rd-img) * 1.3);border-radius:20px!important;overflow:hidden!important;background:var(--ttk-ai)!important;border:1px solid var(--ttk-border)!important;box-shadow:0 14px 34px var(--ttk-shadow)!important;margin:22px 0!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes[is_user=true]{background:var(--ttk-user)!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-paged{height:var(--rd-h);max-height:var(--rd-h);grid-template-rows:calc(var(--rd-h) - 2px)!important}
@@ -1539,4 +1539,13 @@ html[data-ttk-theme=porcelain] body #chat#chat .mes.ttk-rich .mes_block{grid-col
  html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ch_name{padding-bottom:58px!important}
  html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ttk-pager{top:68px}
  html[data-ttk-theme=nocturne] body #chat#chat .mes .ch_name .timestamp{font-size:10.5px}
+}
+
+/* v0.17.3 읽는 공간 확대: 쪽 높이 키움 + 모바일에서 쪽 넘김 줄이 차지하던 위쪽 여백 축소 */
+@media(max-width:600px){
+ :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-paged .ch_name{padding-bottom:26px!important;margin-bottom:6px!important}
+ :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes.ttk-paged .ttk-pager{top:auto;right:10px;top:34px}
+ html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ch_name{padding-bottom:44px!important}
+ html[data-ttk-theme=nocturne] body #chat#chat .mes.ttk-paged .ttk-pager{top:56px}
+ :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{padding-top:10px!important}
 }
