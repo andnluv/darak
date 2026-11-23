@@ -1579,3 +1579,39 @@ html[data-ttk-theme=paper] body #chat#chat .mes .mes_block > .ch_name{display:no
 html[data-ttk-theme=paper] body #chat#chat .mes:has(.mes_text textarea) .mes_block > .ch_name{display:flex!important}
 html[data-ttk-theme=paper] body #chat#chat .mes .ttk-pager{top:12px!important;right:14px!important}
 html[data-ttk-theme=paper] body #chat#chat .mes .mes_block{align-self:stretch;min-height:0}
+
+/* ── v0.19 입력 중 표시: 채팅 맨 아래 메시지 모양 카드 — 테마마다 다른 소재 ── */
+.ttk-typing{display:none}
+html[data-ttk-theme] #chat .ttk-typing{display:flex;align-items:center;gap:14px;box-sizing:border-box;width:100%;margin:22px 0;padding:14px 18px;border:1px solid var(--ttk-border);border-radius:16px;background:var(--ttk-ai);box-shadow:0 10px 26px var(--ttk-shadow);color:var(--ttk-text);font-family:var(--ttk-font);animation:ttk-typing-in .35s ease both}
+html[data-ttk-theme] #chat .ttk-typing-cover{flex:0 0 auto;width:48px;aspect-ratio:3/4;border-radius:4px;background:var(--ttk-raised) center/cover no-repeat;box-shadow:0 0 0 1px var(--ttk-border),0 4px 10px var(--ttk-shadow)}
+html[data-ttk-theme] #chat .ttk-typing-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+html[data-ttk-theme] #chat .ttk-typing-eyebrow{font-size:11px;line-height:1.3;letter-spacing:.22em;text-transform:uppercase;color:var(--ttk-accent)}
+html[data-ttk-theme] #chat .ttk-typing-name{font-size:16px;line-height:1.3;font-weight:700;color:var(--ttk-text);overflow-wrap:anywhere}
+html[data-ttk-theme] #chat .ttk-typing-name:empty{display:none}
+html[data-ttk-theme] #chat .ttk-typing-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html[data-ttk-theme] #chat .ttk-typing-motif{margin-top:8px;display:flex;gap:6px;align-items:center}
+html[data-ttk-theme] #chat .ttk-typing-motif i{display:block}
+/* Paper: 줄이 한 줄씩 채워지는 원고 */
+html[data-ttk-theme=paper] #chat .ttk-typing{border-radius:20px}
+html[data-ttk-theme=paper] #chat .ttk-typing-motif{flex-direction:column;align-items:stretch;gap:7px;max-width:260px}
+html[data-ttk-theme=paper] #chat .ttk-typing-motif i{height:2px;border-radius:2px;background:color-mix(in srgb,var(--ttk-text) 55%,transparent);transform-origin:left;animation:ttk-typing-line 3.6s ease-in-out infinite}
+html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(1){width:96%}html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(2){width:100%;animation-delay:.35s}html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(3){width:82%;animation-delay:.7s}html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(n+4){display:none}
+/* Nocturne: 필름 프레임이 차례로 켜지는 카운트다운 */
+html[data-ttk-theme=nocturne] #chat .ttk-typing{border-radius:20px;border-bottom:1px dashed var(--ttk-border)}
+html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i{width:22px;height:16px;border:1.5px solid var(--ttk-accent);border-radius:2px;opacity:.25;animation:ttk-typing-frame 1.8s steps(1,end) infinite}
+html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(2){animation-delay:.3s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(3){animation-delay:.6s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(4){animation-delay:.9s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(5){animation-delay:1.2s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(6){animation-delay:1.5s}
+/* Porcelain: 활자가 하나씩 찍히는 조판 */
+html[data-ttk-theme=porcelain] #chat .ttk-typing{border-radius:6px;box-shadow:inset 0 0 0 3px var(--ttk-ai),0 4px 18px var(--ttk-shadow);border-top:4px double var(--ttk-accent)}
+html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i{width:16px;height:16px;border:1.5px solid var(--ttk-accent);background:transparent;transform-origin:bottom;animation:ttk-typing-stamp 2.4s ease-in-out infinite}
+html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(2){animation-delay:.25s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(3){animation-delay:.5s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(4){animation-delay:.75s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(5){animation-delay:1s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(6){display:none}
+/* Studio: 지면 블록이 반짝이며 채워지는 화보 */
+html[data-ttk-theme=studio] #chat .ttk-typing{border-radius:4px;border-top:4px solid var(--ttk-text)}
+html[data-ttk-theme=studio] #chat .ttk-typing-motif{gap:8px}
+html[data-ttk-theme=studio] #chat .ttk-typing-motif i{height:10px;border-radius:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ttk-accent) 30%,transparent) 0,var(--ttk-accent) 50%,color-mix(in srgb,var(--ttk-accent) 30%,transparent) 100%) 0 0/200% 100%;animation:ttk-typing-shimmer 1.6s linear infinite}
+html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(1){width:44px}html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(2){width:26px;animation-delay:.2s}html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(3){width:60px;animation-delay:.4s}html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(n+4){display:none}
+@keyframes ttk-typing-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes ttk-typing-line{0%{transform:scaleX(0);opacity:.2}35%,80%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes ttk-typing-frame{0%{opacity:.9;background:color-mix(in srgb,var(--ttk-accent) 40%,transparent)}16.6%,100%{opacity:.25;background:transparent}}
+@keyframes ttk-typing-stamp{0%,100%{transform:scaleY(1);background:transparent}20%{transform:scaleY(.55);background:var(--ttk-accent)}40%{transform:scaleY(1);background:transparent}}
+@keyframes ttk-typing-shimmer{from{background-position:200% 0}to{background-position:0 0}}
+@media(prefers-reduced-motion:reduce){html[data-ttk-theme] #chat :is(.ttk-typing,.ttk-typing-motif i){animation:none!important}html[data-ttk-theme] #chat .ttk-typing-motif i{opacity:.7}}
