@@ -1652,3 +1652,58 @@ html[data-ttk-theme] .ttk-shelf .ttk-spine[data-c="2"]{background-color:var(--sf
 html[data-ttk-theme] .ttk-shelf .ttk-spine[data-c="3"]{background-color:var(--sf-c3)!important}
 html[data-ttk-theme] .ttk-shelf .ttk-spine[data-c="4"]{background-color:var(--sf-c4)!important}
 html:is([data-ttk-theme=nocturne],[data-ttk-theme=porcelain],[data-ttk-theme=studio]) body #chat#chat .mes.mes .mesAvatarWrapper{align-self:center!important}
+
+/* ===== v0.22 · 실기기 피드백 반영 ===== */
+/* 여백: 카드 안쪽·머리와 본문 사이를 넓힘 */
+html[data-ttk-theme]{--cp:30px}
+@media(max-width:600px){html[data-ttk-theme]{--cp:20px}}
+/* 본문 칸: 옛 테마의 카드·세로 괘선 흔적 제거 → 테마별 구분선 하나만 */
+html[data-ttk-theme] body #chat#chat .mes.mes .mes_block{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;padding-left:0!important;padding-right:0!important}
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .mes_block{margin-top:26px!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .mes_block{margin-top:22px!important;padding-top:22px!important;border-top:1px dashed color-mix(in srgb,var(--ttk-accent) 45%,transparent)!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes.mes .mes_block{margin-top:22px!important;padding-top:22px!important;border-top:3px double var(--ttk-accent)!important}
+html[data-ttk-theme=studio] body #chat#chat .mes.mes .mes_block{margin-top:24px!important;padding-top:22px!important;border-top:2px solid var(--ttk-text)!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-shelf + .mes_block{margin-top:8px!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-shelf{margin-top:22px!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot{margin-top:22px!important;padding-top:12px!important}
+
+/* Paper: 표지와 글자 사이 간격 */
+html[data-ttk-theme=paper] body #chat#chat .mes.mes{column-gap:30px!important}
+@media(max-width:600px){html[data-ttk-theme=paper] body #chat#chat .mes.mes{column-gap:20px!important}}
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now{gap:5px!important}
+/* Paper 마스킹 테이프: 줄무늬 없이 종이 질감만 */
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .mesAvatarWrapper .avatar::before,html[data-ttk-theme=paper] body #chat#chat .mes.mes .mesAvatarWrapper .avatar::after{background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4MCcgaGVpZ2h0PSc0MCc+PGZpbHRlciBpZD0nbic+PGZlVHVyYnVsZW5jZSB0eXBlPSdmcmFjdGFsTm9pc2UnIGJhc2VGcmVxdWVuY3k9Jy45IC4zNScgbnVtT2N0YXZlcz0nMycgc2VlZD0nNycvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0nMCAwIDAgMCAxICAwIDAgMCAwIDEgIDAgMCAwIDAgMSAgMCAwIDAgLjU1IC0uMTgnLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0nODAnIGhlaWdodD0nNDAnIGZpbHRlcj0ndXJsKCNuKScvPjwvc3ZnPg==')!important;background-size:80px 40px!important;background-color:color-mix(in srgb,var(--ttk-accent) 18%,#EDE3CB)!important;opacity:.88!important;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+
+/* Nocturne: 포스터 틀 — 검은 바탕 + 금색 이중 괘선, 아래 타이틀·빌링 블록까지 한 장의 포스터로 */
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .mesAvatarWrapper{padding:14px 14px 0!important;background:#0B0A08!important;border:1px solid color-mix(in srgb,var(--ttk-accent) 55%,transparent)!important;border-bottom:0!important;box-sizing:border-box}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .mesAvatarWrapper .avatar{box-shadow:0 0 0 1px color-mix(in srgb,var(--ttk-accent) 60%,transparent),0 0 0 5px #0B0A08,0 0 0 6px color-mix(in srgb,var(--ttk-accent) 30%,transparent)!important;border-radius:0!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-now{display:flex!important;order:2;flex-direction:column;align-items:center;width:var(--pw);max-width:100%;box-sizing:border-box;padding:16px 16px 14px;background:#0B0A08;border:1px solid color-mix(in srgb,var(--ttk-accent) 55%,transparent);border-top:0;box-shadow:0 18px 32px rgba(0,0,0,.5)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-now > .ttk-now-eyebrow{margin:0!important;font:500 11px/1 'Oswald',var(--ttk-font),sans-serif!important;letter-spacing:.42em;color:var(--ttk-muted)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-now > .ttk-now-name{margin-top:8px!important;font:700 clamp(22px,6.4vw,30px)/1.1 'Oswald',var(--ttk-font),sans-serif!important;letter-spacing:.06em;color:var(--ttk-accent)!important;word-break:keep-all}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-now > .ttk-now-meta{align-self:stretch;margin-top:10px!important;padding-top:7px;border-top:1px solid color-mix(in srgb,var(--ttk-accent) 40%,transparent);font:400 10px/1.3 'Oswald',var(--ttk-font),sans-serif!important;letter-spacing:.12em;color:var(--ttk-muted);transform:scaleY(1.15);transform-origin:top}
+
+/* 추론 펼치기: 화살표가 제목 글자 위에 겹치던 문제 — 화살표를 글자 뒤로 */
+html[data-ttk-theme] body #chat#chat .mes.mes :is(.mes_reasoning_header){padding-right:0!important;align-items:center!important;gap:.5em}
+html[data-ttk-theme] body #chat#chat .mes.mes .mes_reasoning_details .mes_reasoning_arrow{position:static!important;transform:none!important;flex:0 0 auto;margin-left:.4em}
+html[data-ttk-theme] body #chat#chat .mes.mes .mes_reasoning_details:not([open]) .mes_reasoning_arrow{transform:rotate(180deg)!important}
+
+/* 북마크 책등: 메시지 번호만, 세로로 세움 */
+html[data-ttk-theme] .ttk-shelf .ttk-spine i{text-orientation:upright;letter-spacing:0!important;font-style:normal!important;font-weight:700!important;font-size:10.5px!important;line-height:1.05!important}
+
+/* 하단 버튼 줄: 아이콘이 겹치지 않게 — 줄어들지 않고, 넘치면 다음 줄로. 모바일은 아이콘을 조금 작게 */
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot :is(.mes_buttons,.extraMesButtons){flex-wrap:wrap!important;overflow:visible!important;justify-content:flex-end;row-gap:4px;column-gap:2px}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot :is(.mes_button,.extraMesButtons > div,.ttk-bm){flex:0 0 auto!important;min-width:0}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn{flex:1 1 auto!important;flex-wrap:wrap;row-gap:4px}
+@media(max-width:600px){
+ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .mes_buttons{font-size:15px!important}
+ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot :is(.mes_button,.extraMesButtons > div){padding:5px!important}
+ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm{width:26px;height:26px}
+ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm::before{width:15px;height:15px}
+}
+/* Nocturne 티켓 스텁: 버튼이 많아도 넘치지 않게 일반 흐름으로 — 카드 폭 전체 띠 + 양 끝 반원 홈 */
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes{padding-bottom:0!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes::before,html[data-ttk-theme=nocturne] body #chat#chat .mes.mes::after{content:none!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-foot{position:relative!important;left:auto;right:auto;bottom:auto;height:auto!important;min-height:48px;margin:24px calc(var(--cp) * -1) 0!important;padding:10px var(--cp)!important;flex-wrap:wrap!important;border-top:2px dashed var(--ttk-border)!important;border-radius:0 0 19px 19px;background:radial-gradient(circle at 0 0,var(--ttk-bg) 12px,transparent 12.5px),radial-gradient(circle at 100% 0,var(--ttk-bg) 12px,transparent 12.5px),color-mix(in srgb,var(--ttk-bg) 55%,var(--ttk-ai))!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-foot-btn{overflow:visible!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-foot::after{order:9}
+@media(max-width:600px){html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-foot::after{display:none}}

@@ -8,8 +8,6 @@
  *     last message (SillyTavern marks it "last_mes"), scrolls sideways when full and disappears at zero books.
  *     Bookmarks are stored per chat in chat metadata (key darak_bookmarks), matched by the message's send date so
  *     deleting or inserting messages does not shift them. Messages always read top to bottom — no pages. */
-import {inputAsk} from './dialogs.js';
-
 const MOVES=[['nav','.swipe_left'],['nav','.swipeRightBlock'],['tok','.tokenCounterDisplay'],['btn','.mes_buttons']];
 const OWN='.ttk-cap,.ttk-stub,.ttk-poster,.ttk-now,.ttk-shelf,.ttk-bm';
 const BM_KEY='darak_bookmarks';
@@ -30,7 +28,7 @@ function books(){
  const chat=ctx()?.chat||[];const out=[];
  for(const b of bmList()){
   const i=chat.findIndex((m,idx)=>String(m.send_date||`#${idx}`)===b.d);
-  if(i>=0)out.push({i,note:b.n||'',text:firstWords(chat[i].mes)});
+  if(i>=0)out.push({i,text:firstWords(chat[i].mes)});
  }
  return out.sort((a,b)=>a.i-b.i);
 }
@@ -39,13 +37,6 @@ function toggleBm(i){
  const k=keyOf(i);if(!k)return;
  const l=bmList().slice();const j=l.findIndex(b=>b.d===k);
  if(j>=0)l.splice(j,1);else l.push({d:k});
- bmSave(l);refresh();
-}
-async function editNote(i){
- const k=keyOf(i);const l=bmList().slice();const b=l.find(x=>x.d===k);if(!b)return;
- const v=await inputAsk('책등에 쓸 짧은 메모(비우면 본문 첫 단어로 돌아갑니다)',b.n||'');
- if(v===null)return;
- const t=String(v).trim().slice(0,14);if(t)b.n=t;else delete b.n;
  bmSave(l);refresh();
 }
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -79,7 +70,7 @@ function shelfBlock(mes,list){
  let shelf=mes.querySelector(':scope > .ttk-shelf');
  if(!list.length){shelf?.remove();delete mes.dataset.ttkBooks;return;}
  mes.dataset.ttkBooks=String(list.length);
- const sig=list.map(b=>`${b.i}|${b.note}|${b.text}`).join(';');
+ const sig=list.map(b=>`${b.i}|${b.text}`).join(';');
  if(shelf&&shelf.dataset.sig===sig)return;
  if(!shelf){shelf=document.createElement('div');shelf.className='ttk-shelf';mes.append(shelf);}
  shelf.dataset.sig=sig;shelf.replaceChildren();
@@ -87,14 +78,9 @@ function shelfBlock(mes,list){
  list.forEach((b,n)=>{
   const s=document.createElement('button');s.type='button';s.className='ttk-spine';
   s.style.setProperty('--h',`${76+((n*7+3)%5)*5}px`);s.dataset.c=String(n%5);
-  const l=document.createElement('i');l.textContent=`${b.i} · ${b.note||b.text||'…'}`;s.append(l);
-  s.setAttribute('aria-label',`북마크 ${b.i}번 메시지로 이동`);
-  let pressTimer=null,long=false;
-  const clear=()=>{clearTimeout(pressTimer);pressTimer=null;};
-  s.addEventListener('pointerdown',()=>{long=false;clear();pressTimer=setTimeout(()=>{long=true;editNote(b.i);},650);});
-  for(const ev of ['pointerup','pointerleave','pointercancel'])s.addEventListener(ev,clear);
-  s.addEventListener('click',e=>{e.stopPropagation();if(long){long=false;return;}jump(b.i);});
-  s.addEventListener('contextmenu',e=>e.preventDefault());
+  const l=document.createElement('i');l.textContent=String(b.i);s.append(l);
+  s.setAttribute('aria-label',`북마크 ${b.i}번 메시지로 이동`);s.title=b.text?`#${b.i} ${b.text}`:`#${b.i}`;
+  s.addEventListener('click',e=>{e.stopPropagation();jump(b.i);});
   row.append(s);
  });
  const deco=document.createElement('span');deco.className='ttk-shelf-deco';for(let i=0;i<3;i++)deco.append(document.createElement('i'));row.append(deco);
