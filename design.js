@@ -32,6 +32,17 @@ export const FONTS = Object.freeze({
  hahmlet:{name:'함렡',category:'serif',source:'web',css:GF('Hahmlet:wght@400;500;600;700'),family:`"Hahmlet", ${SERIF}`},
  busandandi:{name:'부산단디명조',category:'serif',source:'web',face:[300,500,700].map((weight,i)=>({family:'BusanDandiMyeongjo',url:JSD+`Project-Noonnu/2610132210@l-2/l/부산단디명조${'LMB'[i]}.woff2`,format:'woff2',weight})),family:`"BusanDandiMyeongjo", ${SERIF}`},
  zenserif:{name:'Zen Old Mincho',category:'serif',source:'web',css:GF('Zen+Old+Mincho:wght@400;500;700'),family:`"Zen Old Mincho", ${SERIF}`},
+ paperlogy:{name:'페이퍼로지',category:'gothic',source:'web',face:[[400,'4Regular'],[700,'7Bold']].map(([weight,f])=>({family:'Paperozi',url:JSD+`projectnoonnu/2408-3@1.0/Paperlogy-${f}.woff2`,format:'woff2',weight})),family:`"Paperozi", ${GOTHIC}`},
+ suit:{name:'수트 (SUIT)',category:'gothic',source:'web',css:JSD+'sun-typeface/SUIT@2/fonts/static/woff2/SUIT.css',family:`"SUIT", ${GOTHIC}`},
+ freesentation:{name:'프리젠테이션',category:'gothic',source:'web',face:[[400,'4Regular'],[700,'7Bold']].map(([weight,f])=>({family:'Presentation',url:JSD+`projectnoonnu/2404@1.0/Freesentation-${f}.woff2`,format:'woff2',weight})),family:`"Presentation", ${GOTHIC}`},
+ maruburi:{name:'마루 부리',category:'serif',source:'web',face:[[400,'Regular'],[700,'Bold']].map(([weight,f])=>({family:'MaruBuri',url:`https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-${f}.woff2`,format:'woff2',weight})),family:`"MaruBuri", ${SERIF}`},
+ gowunbatang:{name:'고운바탕',category:'serif',source:'web',css:GF('Gowun+Batang:wght@400;700'),family:`"Gowun Batang", ${SERIF}`},
+ bookendbatang:{name:'북엔드 바탕',category:'serif',source:'web',face:[[400,'R'],[700,'SB']].map(([weight,f])=>({family:'BookendBatang',url:JSD+`projectnoonnu/2410-2@1.0/TTBookendBatang${f}.woff2`,format:'woff2',weight})),family:`"BookendBatang", ${SERIF}`},
+ hwalkong:{name:'HS활공명조',category:'serif',source:'web',face:{family:'HsGlidingSerif',url:JSD+'projectnoonnu/2604-1@1.0/HSHwalkongSerif-Regular.woff2',format:'woff2'},family:`"HsGlidingSerif", ${SERIF}`},
+ gmarket:{name:'G마켓 산스',category:'decor',source:'web',face:[[300,'Light'],[500,'Medium'],[700,'Bold']].map(([weight,f])=>({family:'GmarketSans',url:JSD+`projectnoonnu/noonfonts_2001@1.1/GmarketSans${f}.woff`,format:'woff',weight})),family:`"GmarketSans", ${GOTHIC}`},
+ surroundair:{name:'카페24 써라운드에어',category:'decor',source:'web',face:{family:'Cafe24SurroundAir',url:JSD+'projectnoonnu/noonfonts_2105_2@1.0/Cafe24SsurroundAir.woff',format:'woff'},family:`"Cafe24SurroundAir", ${GOTHIC}`},
+ levelup:{name:'레벨업',category:'decor',source:'web',face:[[400,'regular','Regular'],[700,'regular','Bold'],[400,'italic','Italic']].map(([weight,tag,f])=>({family:'LevelUp',url:JSD+`Project-Noonnu/2610132210@levelup-${tag}/levelup-${tag}/LevelUp-${f}.woff2`,format:'woff2',weight,style:tag==='italic'?'italic':'normal'})),family:`"LevelUp", ${GOTHIC}`},
+ badasseugi:{name:'학교안심 받아쓰기',category:'hand',source:'web',face:{family:'SchoolSafeDictation',url:JSD+'projectnoonnu/2408-5@1.0/HakgyoansimBadasseugiTTF-L.woff2',format:'woff2'},family:`"SchoolSafeDictation", ${GOTHIC}`},
  mona12:{name:'모나12',category:'decor',source:'web',css:JSD+'MonadABXY/mona-font@2026.10.09/web/mona.css',family:`"Mona12", ${GOTHIC}`},
  sanhayeop:{name:'산하엽',category:'decor',source:'web',face:{family:'Sanhayeop',url:JSD+'projectnoonnu/noonfonts_JAMO@1.0/Diphylleia-Regular.woff2',format:'woff2'},family:`"Sanhayeop", ${SERIF}`},
  gangwon:{name:'강원교육새음체',category:'decor',source:'web',face:{family:'GangwonEduSaeeum',url:JSD+'projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff',format:'woff'},family:`"GangwonEduSaeeum", ${GOTHIC}`},
@@ -40,7 +51,7 @@ export const FONTS = Object.freeze({
  playfair:{name:'Playfair Display (영문·숫자)',category:'decor',source:'web',css:GF('Playfair+Display:wght@700;900'),family:'"Playfair Display", Georgia, serif'},
  system:{name:'기본 시스템 글꼴',category:'gothic',source:'system',family:'system-ui, sans-serif'},
 });
-export const FONT_GROUPS = Object.freeze({gothic:'고딕',serif:'명조·바탕',decor:'꾸밈'});
+export const FONT_GROUPS = Object.freeze({gothic:'고딕',serif:'명조·바탕',decor:'꾸밈',hand:'손글씨'});
 
 const clamp = (v,min,max,fallback) => v!==undefined && v!==null && v!=='' && Number.isFinite(Number(v))? Math.min(max,Math.max(min,Number(v))): fallback;
 const safeHex=(v, fallback)=>typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v)?v:fallback;
@@ -49,7 +60,7 @@ const DEFAULT={theme:'paper',dialogueColors:{},font:'nanummyeongjo',dialogueFont
 function normalizePalette(raw,theme){const palette={};for(const key of PALETTE_KEYS)palette[key]=safeHex(raw?.[key],THEMES[theme][key]);return palette;}
 export function normalizeDesign(raw={}){
  const theme=Object.hasOwn(THEMES,raw.theme)?raw.theme:(raw.theme==='midnight'?'nocturne':raw.theme==='sage'?'studio':'paper');
- const legacyFont={noto:'nanumgothic',nanum:'nanummyeongjo',gowun:'nanummyeongjo',basicgothic:'nanumgothic',maruburi:'nanummyeongjo',seoulhangang:'nanummyeongjo',yeonseong:'nanumgothic'};
+ const legacyFont={noto:'nanumgothic',nanum:'nanummyeongjo',gowun:'gowunbatang',basicgothic:'nanumgothic',seoulhangang:'nanummyeongjo',yeonseong:'nanumgothic'};
  const candidate=legacyFont[raw.font]||raw.font;
  const font=Object.hasOwn(FONTS,candidate)?candidate:THEMES[theme].font;
  const dialogueCandidate=legacyFont[raw.dialogueFont]||raw.dialogueFont;
@@ -80,10 +91,22 @@ export function syncFontSources(ids=[]){
  for(const id of wanted){
   const f=FONTS[id];let node;
   if(f.css){node=document.createElement('link');node.rel='stylesheet';node.href=f.css;node.crossOrigin='anonymous';}
-  else{node=document.createElement('style');node.textContent=[].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-display:swap}`).join('\n');}
+  else{node=document.createElement('style');node.textContent=[].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
   node.setAttribute(FONT_ATTR,id);document.head.append(node);
  }
 }
+// v0.23: font picker previews. Separate attribute so syncFontSources never removes a preview the list still shows.
+const PREVIEW_ATTR='data-ttk-font-pv';
+export function fontPreviewNode(id){
+ const f=FONTS[id];if(!f||!(f.css||f.face))return;
+ if(document.head.querySelector(`[${PREVIEW_ATTR}="${id}"]`))return;
+ let node;
+ if(f.css){node=document.createElement('link');node.rel='stylesheet';node.href=f.css;node.crossOrigin='anonymous';}
+ else{node=document.createElement('style');node.textContent=fontFaceCss(f);}
+ node.setAttribute(PREVIEW_ATTR,id);document.head.append(node);
+}
+export function clearFontPreviews(){document.head.querySelectorAll(`[${PREVIEW_ATTR}]`).forEach(n=>n.remove());}
+function fontFaceCss(f){return [].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
 function luminance(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.03928?c/12.92:((c+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2];}
 export function schemeOf(palette){return luminance(palette.bg)<.3?'dark':'light';}
 const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap'];
@@ -103,7 +126,7 @@ export function setOriginalThemeCss(muted){
   if(node?.hasAttribute(MUTE_ATTR)){const prev=node.getAttribute(MUTE_ATTR);if(prev)node.setAttribute('media',prev);else node.removeAttribute('media');node.removeAttribute(MUTE_ATTR);}
  }
 }
-export function teardownDesign(){setOriginalThemeCss(false);document.getElementById(STYLE_ID)?.remove();syncFontSources([]);for(const a of ROOT_ATTRS)document.documentElement.removeAttribute(a);}
+export function teardownDesign(){setOriginalThemeCss(false);clearFontPreviews();document.getElementById(STYLE_ID)?.remove();syncFontSources([]);for(const a of ROOT_ATTRS)document.documentElement.removeAttribute(a);}
 export function applyDesign(enabled,raw){
  if(!enabled){teardownDesign();return;}
  const d=normalizeDesign(raw),p=d.custom;

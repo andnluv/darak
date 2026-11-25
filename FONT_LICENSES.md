@@ -19,8 +19,19 @@ v0.3.14부터 이 확장은 **폰트 파일을 하나도 포함하지 않습니�
 | 부산단디명조 (L·M·B) | jsDelivr · `Project-Noonnu/2610132210` | 태그 `l-2` |
 | 산하엽 (Diphylleia) | jsDelivr · `projectnoonnu/noonfonts_JAMO` | `1.0` |
 | 그리운X국한박 글방구리체 | jsDelivr · `Project-Noonnu/2607161334` | 태그 `x-4` |
+| 페이퍼로지 (400·700) | jsDelivr · `projectnoonnu/2408-3` | `1.0` |
+| 수트 SUIT | jsDelivr · `sun-typeface/SUIT` (제작자 공식 저장소) | 메이저 `@2` |
+| 프리젠테이션 (400·700) | jsDelivr · `projectnoonnu/2404` | `1.0` |
+| 마루 부리 (400·700) | 네이버 한글 CDN (`hangeul.pstatic.net`, 공식 배포처) | 고정 경로 |
+| 고운바탕 | Google Fonts | Google Fonts 최신 |
+| 북엔드 바탕 (R·SB) | jsDelivr · `projectnoonnu/2410-2` | `1.0` |
+| HS활공명조 | jsDelivr · `projectnoonnu/2604-1` | `1.0` |
+| G마켓 산스 (L·M·B) | jsDelivr · `projectnoonnu/noonfonts_2001` | `1.1` |
+| 카페24 써라운드에어 | jsDelivr · `projectnoonnu/noonfonts_2105_2` | `1.0` |
+| 레벨업 (400·700·이탤릭 400) | jsDelivr · `Project-Noonnu/2610132210` | 태그 `levelup-regular`·`levelup-italic` |
+| 학교안심 받아쓰기 | jsDelivr · `projectnoonnu/2408-5` | `1.0` |
 
-- 주소는 2026-11-10에 각 저장소의 파일 목록으로 존재를 확인했습니다. 실제 브라우저 로딩은 사용자 환경에서 확인이 필요합니다.
+- 주소는 2026-11-10에 각 저장소의 파일 목록으로 존재를 확인했습니다. v0.23.0에 추가한 11종은 2026-11-25에 jsDelivr 파일 목록(마루 부리는 네이버 CSS)으로 확인했습니다. 11종 모두 OFL이며 웹 사용·임베딩이 허용됩니다. 실제 브라우저 로딩은 사용자 환경에서 확인이 필요합니다.
 - 나눔바른고딕 서브셋은 2,350자 밖의 드문 한글(예: 뷁, 똠)을 기기 기본 글꼴로 표시합니다.
 - 제3자가 운영하는 저장소(`moonspam`, `adrinerDP`, `innks`, `projectnoonnu`)는 저작권자의 공식 배포처가 아닙니다. 해당 저장소가 내려가면 그 글꼴은 기기 기본 글꼴로 대체됩니다.
 - 인터넷에 연결되지 않은 환경에서는 모든 웹폰트가 기기 기본 글꼴로 대체됩니다.

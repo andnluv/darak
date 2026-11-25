@@ -18,8 +18,10 @@ export const INPUT_LANGUAGES = Object.freeze({
     zh: { label: '中文', prompt: 'Chinese (Simplified, 简体中文)' },
 });
 export const DEFAULT_TRANSLATION = Object.freeze({
-    profileId: '', display: 'replace', autoOutput: true, inputMode: 'auto', inputLang: 'en', minTokens: 0,
+    profileId: '', display: 'replace', autoOutput: true, inputMode: 'auto', inputLang: 'en', minTokens: 0, promptMode: 'default', customPrompt: '',
 });
+/** v0.23: 번역 지시문 한 칸(응답·입력 공통). 'default' = 내장 지침, 'custom' = 직접 입력한 지시문. */
+export const CUSTOM_PROMPT_MAX = 4000;
 export function normalizeTranslation(raw = {}) {
     const r = raw && typeof raw === 'object' ? raw : {};
     const minTokens = Number(r.minTokens);
@@ -31,6 +33,8 @@ export function normalizeTranslation(raw = {}) {
         // 'zhs'/'zht' were one choice too many: models read either script, so a single Chinese option remains.
         inputLang: ['zhs', 'zht'].includes(r.inputLang) ? 'zh' : Object.hasOwn(INPUT_LANGUAGES, r.inputLang) ? r.inputLang : DEFAULT_TRANSLATION.inputLang,
         minTokens: Number.isFinite(minTokens) ? Math.min(16000, Math.max(0, Math.round(minTokens))) : 0,
+        promptMode: r.promptMode === 'custom' ? 'custom' : 'default',
+        customPrompt: typeof r.customPrompt === 'string' ? r.customPrompt.replace(/\r\n?/g, '\n').slice(0, CUSTOM_PROMPT_MAX) : '',
     };
 }
 
@@ -84,8 +88,23 @@ export const KOREAN_STYLE = `한국어 문체 지침 — 한국 작가가 처음
 6. 인명·지명은 통용되는 한글 표기로 옮기고 같은 글 안에서 표기를 통일한다. 원문이 일부러 외국어로 남긴 말은 그대로 둔다.
 7. 문장부호는 한국어 관습을 따른다. 쉼표를 원문만큼 찍지 말고 꼭 필요한 곳에만 쓴다.
 8. 인물의 감정 세기와 말의 온도를 바꾸지 않는다. 거친 말은 거칠게, 담담한 말은 담담하게 옮긴다.`;
-const OUTPUT_PROMPT = `You are a professional literary translator working on a role-play chat. Translate the text supplied by the user into Korean (한국어). Keep the meaning, tone and each character's voice.\n\n${KOREAN_STYLE}\n\n${RULES}`;
-const inputPrompt = lang => `You are a professional literary translator working on a role-play chat. The user wrote their role-play message in Korean. Translate it into ${lang}, in fluent, idiomatic prose that reads as if originally written in that language: natural word order and idioms of the target language, no word-for-word rendering of Korean sentence structure, honorifics and speech levels conveyed through tone and word choice. Keep the meaning, tone, narrative person and tense. Do not continue the story or reply to it. ${RULES}`;
+const OUTPUT_HEAD = `You are a professional literary translator working on a role-play chat. Translate the text supplied by the user into Korean (한국어). Keep the meaning, tone and each character's voice.`;
+/** 사용자가 직접 입력한 지시문(직접 입력 모드에서만, 비어 있으면 없음). */
+export function customInstruction(settings) {
+    const t = settings?.promptMode === 'custom' ? String(settings.customPrompt || '').trim() : '';
+    return t;
+}
+/** 응답 번역 지시문: 직접 입력 모드면 내장 문체 지침 자리에 사용자 지시문을 넣는다(비우면 내장 지침). 형식 보존 규칙은 항상 유지. */
+export function outputPrompt(settings) {
+    const style = customInstruction(settings) || KOREAN_STYLE;
+    return `${OUTPUT_HEAD}\n\n${style}\n\n${RULES}`;
+}
+const inputPromptBase = lang => `You are a professional literary translator working on a role-play chat. The user wrote their role-play message in Korean. Translate it into ${lang}, in fluent, idiomatic prose that reads as if originally written in that language: natural word order and idioms of the target language, no word-for-word rendering of Korean sentence structure, honorifics and speech levels conveyed through tone and word choice. Keep the meaning, tone, narrative person and tense. Do not continue the story or reply to it. ${RULES}`;
+/** 입력 번역 지시문: 직접 입력 모드면 사용자 지시문을 덧붙인다. */
+const inputPrompt = (lang, settings) => {
+    const extra = customInstruction(settings);
+    return inputPromptBase(lang) + (extra ? `\n\nAdditional instructions from the user (follow them unless they conflict with the preservation rules above):\n${extra}` : '');
+};
 
 /** 번역·대필이 함께 쓰는 용어집(이름·고유명사). 줄마다 "원어 = 한국어" 형태를 권장하지만 자유 메모도 허용. */
 export const GLOSSARY_MAX = 3000;
@@ -390,7 +409,7 @@ export class MessageTranslator {
     }
     /** 입력 번역의 시스템 프롬프트: 지침 + 맥락 + 용어집. `beforeIndex` 앞의 채팅을 맥락으로 쓴다. */
     inputSystem(lang, beforeIndex) {
-        return inputPrompt(INPUT_LANGUAGES[lang].prompt) + inputContext(this.ctx(), beforeIndex) + glossaryBlock(this.getGlossary(), false);
+        return inputPrompt(INPUT_LANGUAGES[lang].prompt, this.getSettings()) + inputContext(this.ctx(), beforeIndex) + glossaryBlock(this.getGlossary(), false);
     }
     async translateMessage({ id, manual, redo }) {
         const ctx = this.ctx(), message = ctx?.chat?.[id], chatId = ctx?.getCurrentChatId?.();
@@ -401,7 +420,7 @@ export class MessageTranslator {
         if (!manual && hangulRatio(source) > 0.5) return;
         this.onStatus(`#${id} 번역 중…`);
         const controller = new AbortController(); this.controller = controller;
-        const korean = await this.request(OUTPUT_PROMPT + speakers(ctx, message) + glossaryBlock(this.getGlossary(), true) + pairsBlock(previousPairs(ctx, id)), source, controller.signal);
+        const korean = await this.request(outputPrompt(this.getSettings()) + speakers(ctx, message) + glossaryBlock(this.getGlossary(), true) + pairsBlock(previousPairs(ctx, id)), source, controller.signal);
         const now = this.ctx();
         // The chat may have changed, or the message may have been edited or swiped while waiting.
         if (!this.enabled || now?.getCurrentChatId?.() !== chatId || now.chat[id] !== message || message.mes !== source) return;

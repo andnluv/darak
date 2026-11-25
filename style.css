@@ -1762,3 +1762,54 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn:not(.ttk-open) :is(.
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more{all:unset;box-sizing:border-box;flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;color:var(--ttk-muted)}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more::before{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:var(--ttk-ic-dots) center/contain no-repeat;mask:var(--ttk-ic-dots) center/contain no-repeat}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more:hover,html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn.ttk-open .ttk-more{background:var(--ttk-raised);color:var(--ttk-text)}
+/* ===== v0.23: 설정 패널 — 확장 목록 제목, 미리보기 고정, 테마 칩 한 줄, 글꼴 미리보기 목록, 번역 지시문 ===== */
+#ttk-panel > .inline-drawer-header .ttk-panel-title{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;min-width:0}
+#ttk-panel .ttk-panel-mark{display:inline-flex;flex:0 0 auto;color:var(--ttk-accent,currentColor)}
+#ttk-panel .ttk-panel-mark svg{display:block}
+#ttk-panel .ttk-panel-name{font-size:15px;font-weight:700;letter-spacing:.02em;color:var(--ttk-accent,currentColor)}
+#ttk-panel .ttk-panel-version{font-size:10px;font-weight:600;line-height:1;padding:3px 7px;border:1px solid currentColor;border-radius:99px;opacity:.72;font-variant-numeric:tabular-nums;white-space:nowrap}
+html[data-ttk-theme] #ttk-panel > .inline-drawer-header :is(.ttk-panel-mark,.ttk-panel-name){color:var(--ttk-accent)}
+html[data-ttk-theme] #ttk-panel > .inline-drawer-header .ttk-panel-version{color:var(--ttk-muted);border-color:var(--ttk-border)}
+
+/* 미리보기: '완성형 테마' 칸 맨 위에 붙어 스크롤해도 따라옵니다(sticky). 칸의 overflow 를 풀어야 동작합니다. */
+#ttk-panel #ttk-theme-section{overflow:visible}
+#ttk-panel #ttk-theme-section > .ttk-section-summary{border-radius:8px 8px 0 0}
+#ttk-panel #ttk-theme-section:not([open]) > .ttk-section-summary{border-radius:8px}
+#ttk-panel #ttk-theme-section .ttk-mini-preview{position:sticky;top:0;z-index:3;max-height:42vh;overflow:hidden;gap:6px;padding:10px;box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
+#ttk-panel #ttk-theme-section .ttk-preview-message{padding:10px 12px}
+
+/* 테마 칩: 한 줄 4칸, 색 견본 + 이름만 */
+#ttk-panel .ttk-theme-chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+#ttk-panel .ttk-theme-chip{display:flex;flex-direction:column;align-items:stretch;gap:5px;min-width:0;padding:5px!important;text-align:center}
+#ttk-panel .ttk-theme-chip .ttk-theme-swatch{height:30px;padding:7px 8px;gap:4px;justify-content:center}
+#ttk-panel .ttk-theme-chip .ttk-theme-swatch-line{width:80%;height:4px}
+#ttk-panel .ttk-theme-chip .ttk-theme-swatch-chip{width:40%;height:4px}
+#ttk-panel .ttk-theme-chip strong{font-size:11px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#ttk-panel .ttk-theme-chip[aria-pressed=true]{outline:2px solid var(--ttk-accent,currentColor);outline-offset:1px}
+#ttk-panel .ttk-theme-chip[aria-pressed=true] .ttk-theme-swatch{border-color:var(--ttk-sample-accent)}
+#ttk-panel .ttk-theme-desc{margin:-4px 0 0;font-size:11px;line-height:1.55;color:var(--ttk-muted,inherit)}
+
+/* 글꼴 목록: 이름을 그 글꼴로 표시 */
+#ttk-panel .ttk-font-picker{position:relative}
+#ttk-panel .ttk-font-trigger{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:36px;padding:7px 10px;border-radius:6px;border:1px solid rgba(128,128,128,.35);background:transparent;color:inherit;font-size:15px;text-align:left;cursor:pointer}
+#ttk-panel .ttk-font-trigger::after{content:'▾';font-family:system-ui,sans-serif;font-size:11px;opacity:.6}
+#ttk-panel .ttk-font-trigger[aria-expanded=true]::after{content:'▴'}
+#ttk-panel .ttk-font-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:6;max-height:300px;overflow-y:auto;overscroll-behavior:contain;padding:0 0 4px;border-radius:6px;border:1px solid rgba(128,128,128,.35);background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);box-shadow:0 10px 24px -12px rgba(0,0,0,.4)}
+#ttk-panel .ttk-font-list[hidden]{display:none}
+#ttk-panel .ttk-font-group{position:sticky;top:0;z-index:1;padding:8px 12px 5px;font-size:10px;font-weight:650;letter-spacing:.06em;color:var(--ttk-muted,#777);background:var(--ttk-surface,#fff);border-bottom:1px solid var(--ttk-border,rgba(128,128,128,.25));font-family:system-ui,sans-serif}
+#ttk-panel .ttk-font-option{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;font-size:16px;line-height:1.3;cursor:pointer;border-bottom:1px solid var(--ttk-border,rgba(128,128,128,.18));outline:0}
+#ttk-panel .ttk-font-option:last-child{border-bottom:0}
+#ttk-panel .ttk-font-option:is(:hover,:focus-visible){background:color-mix(in srgb,var(--ttk-accent,#888) 8%,transparent)}
+#ttk-panel .ttk-font-option[aria-selected=true]{color:var(--ttk-accent,inherit);font-weight:600}
+#ttk-panel .ttk-font-option[aria-selected=true]::after{content:'✓';font-family:system-ui,sans-serif;font-size:13px}
+html[data-ttk-theme] #ttk-panel .ttk-font-trigger{background:var(--ttk-raised)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
+html[data-ttk-theme] #ttk-panel .ttk-font-list{background:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
+
+/* 번역 지시문 */
+#ttk-panel .ttk-tr-instruction[hidden]{display:none}
+#ttk-panel .ttk-tr-instruction textarea{min-height:150px;line-height:1.55;font-size:12px}
+@media (max-width:1000px),(pointer:coarse){
+ #ttk-panel .ttk-font-trigger{min-height:42px;font-size:16px}
+ #ttk-panel .ttk-font-option{padding:10px 12px;font-size:17px}
+ #ttk-panel #ttk-theme-section .ttk-mini-preview{max-height:34vh}
+}
