@@ -1418,8 +1418,8 @@ html[data-ttk-theme=nocturne] body #chat#chat .mes::after{right:-12px}
 /* iOS Safari가 좁은 칸의 글자를 임의로 키우는 현상(text autosizing) 차단 — 캡션·본문 크기가 들쭉날쭉하던 원인 */
 html[data-ttk-theme],html[data-ttk-theme] body{-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
 /* 드롭캡 설정: 체크박스와 글자를 한 줄로 */
-#ttk-panel .ttk-dropcap-row{display:flex!important;flex-direction:row!important;align-items:center;gap:10px}
-#ttk-panel .ttk-dropcap-row input{flex:0 0 auto;margin:0}
+#ttk-panel :is(.ttk-dropcap-row,.ttk-typing-row){display:flex!important;flex-direction:row!important;align-items:center;gap:10px}
+#ttk-panel :is(.ttk-dropcap-row,.ttk-typing-row) input{flex:0 0 auto;margin:0}
 /* Porcelain: 캡션 띠에는 이름 대신 번호(이름은 제호에만) */
 /* Studio: 큰 번호가 위에서 잘리지 않게 */
 html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{overflow:visible!important}

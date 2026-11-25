@@ -14,7 +14,7 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.23.0';
+const VERSION = '0.23.1';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -315,7 +315,7 @@ function build(){
  const iconStyleRow=el('label','ttk-field');iconStyleRow.append(el('strong','','아이콘 스타일'));const iconStyle=el('select');for(const [value,label] of [['outline','윤곽형'],['soft','부드러운 버튼형'],['minimal','미니멀형']]){const o=el('option','',label);o.value=value;iconStyle.append(o)}iconStyle.addEventListener('change',()=>{settings.design.iconStyle=iconStyle.value;changed()});iconStyleRow.append(iconStyle);iconSection.append(iconStyleRow);
  const iconToneRow=el('label','ttk-field');iconToneRow.append(el('strong','','아이콘 색상'));const iconTone=el('select');for(const [value,label] of [['neutral','중립색 (기본)'],['accent','테마 강조색']]){const o=el('option','',label);o.value=value;iconTone.append(o)}iconTone.addEventListener('change',()=>{settings.design.iconTone=iconTone.value;changed()});iconToneRow.append(iconTone);iconSection.append(iconToneRow);controls.append(iconSection);
  const dropRow=el('label','ttk-field ttk-dropcap-row');const dropCap=el('input');dropCap.type='checkbox';dropCap.addEventListener('change',()=>{settings.design.dropCap=dropCap.checked;changed()});dropRow.append(dropCap,el('span','','Studio 첫 글자 장식(드롭캡)'));controls.append(dropRow);
- const typeRow=el('label','ttk-field ttk-typing-row');const typeBox=el('input');typeBox.type='checkbox';typeBox.addEventListener('change',()=>{settings.design.typing=typeBox.checked;changed()});typeRow.append(typeBox,el('span','','입력 중 표시(AI가 응답을 쓰는 동안 채팅 맨 아래에 표시)'));controls.append(typeRow);
+ const typeRow=el('label','ttk-field ttk-typing-row');const typeBox=el('input');typeBox.type='checkbox';typeBox.addEventListener('change',()=>{settings.design.typing=typeBox.checked;changed()});typeRow.append(typeBox,el('span','','입력 중 표시(AI가 응답을 쓰는 동안 표시)'));controls.append(typeRow);
  function syncPreview(){const d=settings.design,c=d.custom;preview.dataset.theme=d.theme;preview.dataset.porcelainVariant=d.theme==='porcelain'?(c.border.toLowerCase()==='#c5b18a'?'trim':c.accent.toLowerCase()==='#153e82'?'royal':'classic'):'';for(const [key,value] of Object.entries(c))preview.style.setProperty(`--pv-${key}`,value);preview.style.setProperty('--pv-font',FONTS[d.font].family);preview.style.setProperty('--pv-dialogue-font',FONTS[d.dialogueFont].family);preview.style.setProperty('--pv-dialogue-color',d.dialogueColors[d.theme]);preview.style.setProperty('--pv-size',`${d.size}px`);preview.style.setProperty('--pv-line',d.lineHeight);preview.style.setProperty('--pv-tracking',`${d.letterSpacing}px`);preview.style.setProperty('--pv-para',`${d.paragraphSpacing}px`);}
  
  const actions=el('div','ttk-actions');actions.append(btn('현재 테마 초기화',()=>{settings.design=resetPalette(settings.design,settings.design.theme);syncControls();changed();}));
