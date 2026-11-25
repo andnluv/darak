@@ -165,8 +165,9 @@ function flush(){
  for(const mes of list){footer(mes);head(mes);}
  refresh();
 }
-export function syncMessageFooters(enabled,h){hooks=h||hooks;applyShelfPref();
+export function syncMessageFooters(enabled,h){hooks=h||hooks;
  if(!enabled){
+  delete document.documentElement.dataset.ttkShelf; // 디자인을 끄면 책장 표시 속성도 남기지 않습니다.
   observer?.disconnect();observer=null;if(timer){clearTimeout(timer);timer=null;}dirty.clear();
   document.querySelectorAll('#chat .ttk-foot').forEach(restore);
   document.querySelectorAll('#chat .ttk-cap,#chat .ttk-stub,#chat .ttk-poster,#chat .ttk-now,#chat .ttk-shelf,#chat .ttk-bm,#chat .ttk-more').forEach(n=>n.remove());
@@ -174,6 +175,7 @@ export function syncMessageFooters(enabled,h){hooks=h||hooks;applyShelfPref();
   document.querySelectorAll('#chat .mes[data-ttk-books]').forEach(m=>delete m.dataset.ttkBooks);
   return;
  }
+ applyShelfPref();
  const chat=document.querySelector('#chat');if(!chat)return;
  scan();
  if(observer)return;
