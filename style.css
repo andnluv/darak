@@ -1771,7 +1771,7 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more:hover,html[dat
 html[data-ttk-theme] #ttk-panel > .inline-drawer-header :is(.ttk-panel-mark,.ttk-panel-name){color:var(--ttk-accent)}
 html[data-ttk-theme] #ttk-panel > .inline-drawer-header .ttk-panel-version{color:var(--ttk-muted);border-color:var(--ttk-border)}
 
-/* 미리보기: '완성형 테마' 칸 맨 위에 붙어 스크롤해도 따라옵니다(sticky). 칸의 overflow 를 풀어야 동작합니다. */
+/* 미리보기: '테마' 칸 맨 위에 붙어 스크롤해도 따라옵니다(sticky). 칸의 overflow 를 풀어야 동작합니다. */
 #ttk-panel #ttk-theme-section{overflow:visible}
 #ttk-panel #ttk-theme-section > .ttk-section-summary{border-radius:8px 8px 0 0}
 #ttk-panel #ttk-theme-section:not([open]) > .ttk-section-summary{border-radius:8px}

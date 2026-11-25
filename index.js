@@ -14,7 +14,7 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.23.2';
+const VERSION = '0.23.3';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -99,7 +99,7 @@ function build(){
  const drawer=el('div','inline-drawer-content');root.append(drawer);const body=el('div','ttk-settings-body');drawer.append(body);
  const failBox=el('div','ttk-failures');failBox.id='ttk-failures';failBox.hidden=true;failBox.setAttribute('role','alert');body.append(failBox);
  body.append(el('p','ttk-note','모듈별 ON/OFF를 지원합니다. 디자인을 끄면 확장 스타일이 제거되고 원래 실리태번 테마가 표시됩니다.'));
- const modules=el('section','ttk-module-list');const rowOf={};const addModule=(...a)=>{rowOf[a[a.length-1]]=switchRow(modules,...a);};addModule('디자인','Paper · Nocturne · Studio · Porcelain 완성형 테마','design');addModule('한글화','추론 제목 및 프롬프트 토글 표시명','localization');addModule('번역','AI 응답 한국어 번역 · 입력 번역 · 다른 번역 확장과 함께 켜지 말고 하나만 쓰세요','translation');addModule('QR 보관함','버튼 하나로 여는 서랍에서 QR 실행 · 세트 켜기/가져오기/내보내기/백업','qr');addModule('통합 조회','테마·프롬프트·확장을 한 창에서 확인하고 오류·충돌을 점검합니다','inventory');addModule('유저 인풋 대필','현재 RP 연결로 내 다음 메시지를 입력창에 써 줍니다','ghostwrite');addModule('프로필 사진','봇 캐릭터·내 페르소나에 사진을 여러 장 등록하고, 새 메시지의 기본 사진과 메시지별 사진을 고릅니다','avatars');addModule('테마 이미지 교체','테마 CSS 속 이미지를 내 파일로 바꾸고 프리셋으로 저장합니다','themeImages');addModule('이미지 모아보기','이 채팅과 서버 폴더의 생성 이미지를 한 창에서 봅니다','gallery');addModule('모바일 최적화','독립 성능 모듈 · 긴 채팅과 무거운 효과의 부담을 줄입니다','optimization');
+ const modules=el('section','ttk-module-list');const rowOf={};const addModule=(...a)=>{rowOf[a[a.length-1]]=switchRow(modules,...a);};addModule('디자인','Paper · Nocturne · Studio · Porcelain 테마','design');addModule('한글화','추론 제목 및 프롬프트 토글 표시명','localization');addModule('번역','AI 응답 한국어 번역 · 입력 번역 · 다른 번역 확장과 함께 켜지 말고 하나만 쓰세요','translation');addModule('QR 보관함','버튼 하나로 여는 서랍에서 QR 실행 · 세트 켜기/가져오기/내보내기/백업','qr');addModule('통합 조회','테마·프롬프트·확장을 한 창에서 확인하고 오류·충돌을 점검합니다','inventory');addModule('유저 인풋 대필','현재 RP 연결로 내 다음 메시지를 입력창에 써 줍니다','ghostwrite');addModule('프로필 사진','봇 캐릭터·내 페르소나에 사진을 여러 장 등록하고, 새 메시지의 기본 사진과 메시지별 사진을 고릅니다','avatars');addModule('테마 이미지 교체','테마 CSS 속 이미지를 내 파일로 바꾸고 프리셋으로 저장합니다','themeImages');addModule('이미지 모아보기','이 채팅과 서버 폴더의 생성 이미지를 한 창에서 봅니다','gallery');addModule('모바일 최적화','독립 성능 모듈 · 긴 채팅과 무거운 효과의 부담을 줄입니다','optimization');
  const locPanel=el('details','ttk-section');locPanel.id='ttk-localization-section';locPanel.append(el('summary','ttk-section-summary','한글화 · 추론 제목 / 토글 이름'));
  const locBody=el('div','ttk-controls');locPanel.append(locBody);
  locBody.append(el('p','ttk-note','추론(Thought) 제목만 화면에서 변경합니다. 접기·펼치기 상태, 추론 원문, 채팅 저장 데이터는 변경하지 않습니다.'));
@@ -227,7 +227,7 @@ function build(){
  body.append(optPanel);
  optimizer.onState=st=>{optState.textContent=!st.enabled?'':st.active?`적용 중 · ${st.mobile?'모바일 화면':'PC 화면'} · 현재 표시된 메시지 ${st.messages}개`:'대기 중 · 지금은 PC 화면이라 적용하지 않습니다. PC에서도 쓰려면 적용 대상을 "항상"으로 바꾸세요.';};
 
- const section=el('details','ttk-section');section.id='ttk-theme-section';section.hidden=!settings.modules.design;section.append(el('summary','ttk-section-summary','완성형 테마 및 가독성 설정'));
+ const section=el('details','ttk-section');section.id='ttk-theme-section';section.hidden=!settings.modules.design;section.append(el('summary','ttk-section-summary','테마 및 가독성 설정'));
  const controls=el('div','ttk-controls');section.append(controls);body.append(section);
  // v0.23: 미리보기를 맨 위에 고정(스크롤해도 따라옴) → 바꾼 값이 바로 보입니다.
  const preview=el('div','ttk-mini-preview');preview.setAttribute('aria-label','테마 미리보기');
@@ -250,7 +250,10 @@ function build(){
  controls.append(el('p','ttk-note','테마를 바꾸면 팔레트와 레이아웃만 바뀌고, 폰트와 가독성 설정은 그대로입니다.'));
  // v0.23: 글꼴 목록의 각 이름을 그 글꼴로 표시합니다. 목록을 열었을 때 화면에 보이는 글꼴만 불러옵니다.
  let openPicker=null;
- document.addEventListener('pointerdown',e=>{if(openPicker&&!openPicker.contains(e.target))openPicker.close();},true);
+ // 패널을 다시 만들어도(설정 가져오기 등) 리스너가 쌓이지 않게, 이전 것을 떼고 새로 붙입니다.
+ if(globalThis.__ttkFontPickerDown)document.removeEventListener('pointerdown',globalThis.__ttkFontPickerDown,true);
+ globalThis.__ttkFontPickerDown=e=>{if(openPicker&&!openPicker.contains(e.target))openPicker.close();};
+ document.addEventListener('pointerdown',globalThis.__ttkFontPickerDown,true);
  function makeFontRow(title,key){
   const row=el('div','ttk-field ttk-font-field');const label=el('strong','',title);const labelId=`ttk-font-label-${key}`;label.id=labelId;row.append(label);
   const wrap=el('div','ttk-font-picker');
