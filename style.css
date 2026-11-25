@@ -61,16 +61,18 @@
 /* Full-theme tokens: separate namespaces; don't contaminate SillyTavern's saved theme. */
 html[data-ttk-theme] body{background:var(--ttk-bg)!important;color:var(--ttk-text)!important}
 /* Layering: consistent top navigation, drawer, panels, and modals. */
-html[data-ttk-theme] :is(#top-bar,#top-settings-holder,#top-settings,#left-nav-panel,#right-nav-panel,#left-nav-panel .drawer-content,#right-nav-panel .drawer-content,#extensions_settings,#extensions_settings2,#character_popup,#rm_print_characters_block,#form_create,#form_rename,#form_delete,#form_import,#options,#world_popup,.popup,.dialogue_popup,.ui-dialog,.drawer-content,.floating_panel,.floating-panel){background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
-html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel,.drawer-content,.popup,.dialogue_popup,.ui-dialog,.floating_panel,.floating-panel){box-shadow:0 8px 28px var(--ttk-shadow)!important}
+html[data-ttk-theme] :is(#top-bar,#top-settings-holder,#top-settings,#left-nav-panel,#right-nav-panel,#left-nav-panel .drawer-content,#right-nav-panel .drawer-content,#extensions_settings,#extensions_settings2,#character_popup,#rm_print_characters_block,#form_create,#form_rename,#form_delete,#form_import,#options,#world_popup){background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
+/* v0.22: 일반 클래스(.popup 등)는 다른 확장 창에도 닿으므로 !important 를 걸지 않는다. */
+html[data-ttk-theme] :is(.popup,.dialogue_popup,.ui-dialog,.drawer-content,.floating_panel,.floating-panel){background-color:var(--ttk-surface);color:var(--ttk-text);border-color:var(--ttk-border)}
 html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.drawer-icon,.menu_button){color:var(--ttk-text)}
-html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.inline-drawer-header,.inline-drawer-content,.settings-section,.settings-category,.settingsBlock){border-color:var(--ttk-border)!important}
+html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.inline-drawer-header,.inline-drawer-content,.settings-section,.settings-category,.settingsBlock){border-color:var(--ttk-border)}
 /* Existing inline extension headers used black/translucent gradients that survived the original palette override. */
-html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2,#left-nav-panel,#right-nav-panel) :is(.inline-drawer-header,.inline-drawer-header.inline-drawer-toggle,.inline-drawer-content,.standoutHeader,.settingsBlock,.settings-section,.settings-category){background:var(--ttk-surface)!important;background-image:none!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;box-shadow:none!important;text-shadow:none!important}
-html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer-header{border:1px solid var(--ttk-border)!important;border-radius:8px!important;margin-block:4px!important;padding:7px 10px!important}
-html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer-header :is(span,strong,i,svg){color:inherit!important}
-html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer-content{background:var(--ttk-raised)!important;border:1px solid var(--ttk-border)!important;border-radius:8px!important}
-html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader)::before,html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader)::after{filter:none!important}
+html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel) :is(.inline-drawer-header,.inline-drawer-header.inline-drawer-toggle,.inline-drawer-content,.standoutHeader,.settingsBlock,.settings-section,.settings-category){background:var(--ttk-surface)!important;background-image:none!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;box-shadow:none!important;text-shadow:none!important}
+html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) :is(.inline-drawer-header,.inline-drawer-header.inline-drawer-toggle,.standoutHeader){background:transparent;background-image:none;box-shadow:none;text-shadow:none}
+/* v0.22: 확장 목록은 칸(테두리·배경 상자) 없이, 항목 사이에 가는 구분선 하나만 둔다. */
+html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer){border-bottom:1px solid color-mix(in srgb,var(--ttk-border) 65%,transparent)}
+html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer):last-child{border-bottom:0}
+html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader)::before,html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader)::after{filter:none}
 
 /* Conversation canvas: full palette including both chat types. */
 html[data-ttk-theme] #chat{background:var(--ttk-bg)!important;color:var(--ttk-text)!important}
@@ -95,12 +97,13 @@ html[data-ttk-theme] #send_textarea{background:var(--ttk-surface)!important;colo
 html[data-ttk-theme] #send_textarea::placeholder{color:var(--ttk-muted)!important;opacity:.85}
 html[data-ttk-theme] #send_but{color:var(--ttk-muted)!important}
 /* Toolkit-owned widgets (QR drawer, translation bar) style their own buttons and are excluded from the global button skin. */
-html[data-ttk-theme] :is(.menu_button,input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),textarea,select,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *))){border-color:var(--ttk-border)!important}
-html[data-ttk-theme] :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button,.paginationjs-page){background-color:var(--ttk-raised)!important;color:var(--ttk-text)!important;border-radius:8px}
-html[data-ttk-theme] :is(input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),textarea,select){background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important}
+html[data-ttk-theme] :is(#send_form,#chat) :is(.menu_button,input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),textarea,select,button){border-color:var(--ttk-border)}
+html[data-ttk-theme] :is(#send_form,#chat,#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2,#user-settings-block,#WorldInfo,#backgrounds,#character_popup,#world_popup,.popup,.dialogue_popup) :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button,.paginationjs-page){background-color:var(--ttk-raised);color:var(--ttk-text)}
 html[data-ttk-theme] :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--ttk-accent)}
-html[data-ttk-theme] :is(.menu_button,button,input,textarea,select):focus-visible{outline:2px solid var(--ttk-accent)!important;outline-offset:2px}
-html[data-ttk-theme] :is(.selected_option,.highlighted){border-color:var(--ttk-border)!important}
+/* v0.22: 포커스 외곽선은 다락방 화면과 입력창·채팅 안에서만. 다른 확장의 입력칸에는 닿지 않는다. */
+html[data-ttk-theme] :is(#ttk-panel,#ttk-qr-drawer,#ttk-avatar-drawer,.ttk-tr,#ttk-inventory,#ttk-themeimg,#ttk-gallery) :is(.menu_button,button,input,textarea,select):focus-visible{outline:2px solid var(--ttk-accent)!important;outline-offset:2px}
+html[data-ttk-theme] :is(#send_form,#chat) :is(.menu_button,button,input,textarea,select):focus-visible{outline:2px solid var(--ttk-accent);outline-offset:2px}
+html[data-ttk-theme] :is(.selected_option,.highlighted){border-color:var(--ttk-border)}
 /* The three themes have different layouts rather than only different palettes. */
 /* Paper: open literary page, no repeated card boxes for assistant narrative. */
 html[data-ttk-theme=paper] #chat .mes{border:0!important;border-bottom:1px solid var(--ttk-border)!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;max-width:100%;padding:17px 19px 22px!important}
@@ -114,7 +117,6 @@ html[data-ttk-theme=nocturne] #chat .mes_text :is(em,i){color:#C4CEE0}
 /* Studio: softened application cards, crisp sans serif layout. */
 html[data-ttk-theme=studio] #chat .mes{border-radius:16px!important;box-shadow:0 4px 17px var(--ttk-shadow)!important}
 html[data-ttk-theme=studio] #chat .mes[is_user=true]{max-width:100%;width:100%;box-sizing:border-box}
-html[data-ttk-theme=studio] :is(.drawer-content,.floating_panel,.popup){border-radius:12px!important}
 @media(max-width:700px){
  html[data-ttk-theme] #chat .mes{max-width:100%!important;margin:8px 3px!important;padding:10px 12px!important}
  html[data-ttk-theme] #chat .mes_text{max-width:100%}
@@ -179,29 +181,16 @@ html[data-ttk-theme=porcelain] :is(#top-bar,#top-settings-holder,#top-settings){
   border-color:transparent!important;
   box-shadow:inset 0 -1px 0 var(--ttk-border)!important;
 }
-html[data-ttk-theme=porcelain] :is(#left-nav-panel,#right-nav-panel,.drawer-content,.popup,.dialogue_popup,.ui-dialog,.floating_panel,.floating-panel){
-  border:1px solid var(--ttk-border)!important;box-shadow:inset 0 0 0 3px var(--ttk-raised),0 6px 24px var(--ttk-shadow)!important;
-  border-radius:8px!important
-}
-html[data-ttk-theme=porcelain] :is(.drawer-header,.inline-drawer-header,.standoutHeader){
-  border-bottom:1px solid var(--ttk-border)!important;
-  background:var(--ttk-raised)!important;color:var(--ttk-text)!important
-}
-html[data-ttk-theme=porcelain] :is(.drawer-header,.inline-drawer-header,.standoutHeader)::after{
-  content:'';display:block;width:37px;height:2px;margin:4px 0 0;
-  background:linear-gradient(90deg,var(--ttk-accent),var(--ttk-border),transparent);pointer-events:none
-}
 html[data-ttk-theme=porcelain] :is(#send_form,#send_form_holder,#send_textarea_wrapper){
   background:#fff!important;border-color:var(--ttk-border)!important;box-shadow:none!important
 }
 html[data-ttk-theme=porcelain] #send_form{border-top:2px double var(--ttk-border)!important}
 html[data-ttk-theme=porcelain] #send_textarea{background:#fff!important}
-html[data-ttk-theme=porcelain] :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button){
-  box-shadow:inset 0 0 0 1px var(--ttk-surface)!important;border:1px solid var(--ttk-border)!important;
-  background:var(--ttk-raised)!important;border-radius:6px!important
+html[data-ttk-theme=porcelain] :is(#send_form,#chat,#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2,#user-settings-block,#WorldInfo,#backgrounds,#character_popup,#world_popup,.popup,.dialogue_popup) :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button){
+  border-color:var(--ttk-border);background:var(--ttk-raised)
 }
-html[data-ttk-theme=porcelain] :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button):hover{
-  border-color:var(--ttk-accent)!important;box-shadow:inset 0 0 0 1px var(--ttk-border)!important
+html[data-ttk-theme=porcelain] :is(#send_form,#chat,#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2,#user-settings-block,#WorldInfo,#backgrounds,#character_popup,#world_popup,.popup,.dialogue_popup) :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button):hover{
+  border-color:var(--ttk-accent)
 }
 html[data-ttk-theme=porcelain] #ttk-panel .ttk-section-summary{
   background:var(--ttk-raised)!important;border-bottom:2px double var(--ttk-border)!important
@@ -313,37 +302,34 @@ html[data-ttk-theme] :is(#world_popup,#world_info,#world_info_settings,#extensio
 html[data-ttk-theme] :is(.select2-dropdown,.select2-results,.select2-results__option,.select2-search__field,
   .ui-menu,.ui-menu-item,.ui-autocomplete,.ui-widget-content,.list-group-item,.dropdown-menu,
   .popup-content,.popup-body,.modal-content,.extension_block) {
-  background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important;
-  border-color:var(--ttk-border)!important;text-shadow:none!important;
+  background-color:var(--ttk-surface);color:var(--ttk-text);
+  border-color:var(--ttk-border);text-shadow:none;
 }
 html[data-ttk-theme] :is(.select2-results__option--highlighted,.select2-results__option--selected,
  .ui-state-active,.ui-state-highlight,.dropdown-item.active,[aria-selected=true]) {
-  background-color:var(--ttk-raised)!important;color:var(--ttk-text)!important;
+  background-color:var(--ttk-raised);color:var(--ttk-text);
 }
 /* Disabled controls must remain identifiable but text must not become illegibly pale. */
-html[data-ttk-theme] :is(select,input,textarea,button):disabled {color:var(--ttk-muted)!important;opacity:1!important}
+html[data-ttk-theme] :is(select,input,textarea,button):disabled {color:var(--ttk-muted);opacity:1}
 /* Prevent inherited semi-transparent labels from looking anti-aliased/broken in the extension manager. */
 html[data-ttk-theme] :is(#extensions_management,#extensions_manager,#extensions_list,.extensions_list,.extension_list)
   :is(.extension_name,.extension_version,.extension-name,.extension-version,label,small,span) {
-  text-shadow:none!important;filter:none!important;-webkit-filter:none!important;
+  text-shadow:none;filter:none;-webkit-filter:none;
   -webkit-text-fill-color:currentColor;
 }
 
 /* v0.2.9: Persona, character, prompt and other native settings headers.
    Avoid dark gradient leftovers, including third-party generic standby headers. */
 html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.settings-header,.settings-header-title,.persona_management_header,.persona-header,.persona-management-header,.character-management-header,.character_management_header) {
-  background:var(--ttk-raised)!important;background-image:none!important;
-  color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;
-  text-shadow:none!important;box-shadow:none!important;filter:none!important;
+  background:var(--ttk-raised);background-image:none;
+  color:var(--ttk-text);border-color:var(--ttk-border);
+  text-shadow:none;box-shadow:none;filter:none;
 }
 html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.persona_management_header,.persona-header) :is(span,strong,label,i) {
-  color:inherit!important;text-shadow:none!important;filter:none!important;
-}
-html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.persona_management_header,.persona-header)[aria-expanded="true"] {
-  border-bottom:1px solid var(--ttk-border)!important;
+  color:inherit;text-shadow:none;filter:none;
 }
 /* Preserve readable extension/persona labels instead of inheriting pale native opacity. */
-html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.persona_management_header,.persona-header) {opacity:1!important}
+html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.persona_management_header,.persona-header) {opacity:1}
 /* Paper is now very light, including its reading canvas. */
 html[data-ttk-theme=paper] #chat .mes[is_user=true] {box-shadow:none!important}
 
@@ -411,34 +397,16 @@ html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-addre
   mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%222%22%20y%3D%225%22%20width%3D%2220%22%20height%3D%2214%22%20rx%3D%222%22%2F%3E%3Ccircle%20cx%3D%228%22%20cy%3D%2210%22%20r%3D%222%22%2F%3E%3Cpath%20d%3D%22M5%2016q3-4%206%200M14%2010h5M14%2014h5%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
   vertical-align:-.12em!important;opacity:1!important;
 }
-html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-bars::before {
-  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
-  background-color:currentColor!important;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%206h16M4%2012h16M4%2018h16%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%206h16M4%2012h16M4%2018h16%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  vertical-align:-.12em!important;opacity:1!important;
-}
-html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-wand-magic-sparkles::before {
-  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
-  background-color:currentColor!important;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m5%2019%2012-12%202%202L7%2021zM18%202v4M16%204h4M5%204v5M3%206.5h5M19%2016v5M16.5%2018.5h5%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m5%2019%2012-12%202%202L7%2021zM18%202v4M16%204h4M5%204v5M3%206.5h5M19%2016v5M16.5%2018.5h5%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  vertical-align:-.12em!important;opacity:1!important;
-}
-html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-chevron-up::before {
-  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
-  background-color:currentColor!important;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m5%2015%207-7%207%207%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m5%2015%207-7%207%207%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  vertical-align:-.12em!important;opacity:1!important;
-}
-html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-paper-plane::before {
-  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
-  background-color:currentColor!important;
-  -webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m21%203-8%2018-3.5-7.5L2%2010zM9.5%2013.5%2021%203%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  mask:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m21%203-8%2018-3.5-7.5L2%2010zM9.5%2013.5%2021%203%22%2F%3E%3C%2Fsvg%3E") center / contain no-repeat!important;
-  vertical-align:-.12em!important;opacity:1!important;
-}
+/* v0.22: 입력창 아이콘 — 다락방 자체 선 아이콘. 모양은 공통, 선 굵기·끝모양은 테마마다 다르다.
+   (메뉴 ☰ → 목록, 요술봉 → 반짝임, ⌃ → 화살표, 전송 → 접은 종이비행기) */
+html[data-ttk-theme=paper]{--ttk-ic-menu:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%207h1.6M9%207h11M4%2012h1.6M9%2012h11M4%2017h1.6M9%2017h11%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-spark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%204l1.9%205.6L19.5%2011.5l-5.6%201.9L12%2019l-1.9-5.6L4.5%2011.5l5.6-1.9zM19%202.5v3.5M17.25%204.25h3.5M5%2017.5v3M3.5%2019h3%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-up:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2019.5V5M6%2011l6-6%206%206%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-send:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20.5%203.5%203.5%2010.2l6.3%202.5%202.5%206.3zM9.8%2012.7l10.7-9.2%22%2F%3E%3C%2Fsvg%3E")}
+html[data-ttk-theme=nocturne]{--ttk-ic-menu:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.0%22%20stroke-linecap%3D%22square%22%20stroke-linejoin%3D%22miter%22%3E%3Cpath%20d%3D%22M4%207h1.6M9%207h11M4%2012h1.6M9%2012h11M4%2017h1.6M9%2017h11%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-spark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.0%22%20stroke-linecap%3D%22square%22%20stroke-linejoin%3D%22miter%22%3E%3Cpath%20d%3D%22M12%204l1.9%205.6L19.5%2011.5l-5.6%201.9L12%2019l-1.9-5.6L4.5%2011.5l5.6-1.9zM19%202.5v3.5M17.25%204.25h3.5M5%2017.5v3M3.5%2019h3%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-up:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.0%22%20stroke-linecap%3D%22square%22%20stroke-linejoin%3D%22miter%22%3E%3Cpath%20d%3D%22M12%2019.5V5M6%2011l6-6%206%206%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-send:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.0%22%20stroke-linecap%3D%22square%22%20stroke-linejoin%3D%22miter%22%3E%3Cpath%20d%3D%22M20.5%203.5%203.5%2010.2l6.3%202.5%202.5%206.3zM9.8%2012.7l10.7-9.2%22%2F%3E%3C%2Fsvg%3E")}
+html[data-ttk-theme=porcelain]{--ttk-ic-menu:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%207h1.6M9%207h11M4%2012h1.6M9%2012h11M4%2017h1.6M9%2017h11%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-spark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%204l1.9%205.6L19.5%2011.5l-5.6%201.9L12%2019l-1.9-5.6L4.5%2011.5l5.6-1.9zM19%202.5v3.5M17.25%204.25h3.5M5%2017.5v3M3.5%2019h3%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-up:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2019.5V5M6%2011l6-6%206%206%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-send:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20.5%203.5%203.5%2010.2l6.3%202.5%202.5%206.3zM9.8%2012.7l10.7-9.2%22%2F%3E%3C%2Fsvg%3E")}
+html[data-ttk-theme=studio]{--ttk-ic-menu:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%207h1.6M9%207h11M4%2012h1.6M9%2012h11M4%2017h1.6M9%2017h11%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-spark:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%204l1.9%205.6L19.5%2011.5l-5.6%201.9L12%2019l-1.9-5.6L4.5%2011.5l5.6-1.9zM19%202.5v3.5M17.25%204.25h3.5M5%2017.5v3M3.5%2019h3%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-up:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2019.5V5M6%2011l6-6%206%206%22%2F%3E%3C%2Fsvg%3E");--ttk-ic-send:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%222.3%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20.5%203.5%203.5%2010.2l6.3%202.5%202.5%206.3zM9.8%2012.7l10.7-9.2%22%2F%3E%3C%2Fsvg%3E")}
+html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-bars::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-menu) center/contain no-repeat!important;mask:var(--ttk-ic-menu) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-wand-magic-sparkles::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-spark) center/contain no-repeat!important;mask:var(--ttk-ic-spark) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-chevron-up::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-up) center/contain no-repeat!important;mask:var(--ttk-ic-up) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(.fa,.fas,.fa-solid).fa-paper-plane::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-send) center/contain no-repeat!important;mask:var(--ttk-ic-send) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
 /* Profile translation editor - only inside Toolkit panel, independent from ST menus */
 #ttk-panel .ttk-field input[type="text"]{width:100%;min-width:0;box-sizing:border-box;padding:8px 10px;border-radius:6px;border:1px solid var(--ttk-border,rgba(128,128,128,.35));background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);font:inherit;box-shadow:none;text-shadow:none;filter:none}
 #ttk-panel .ttk-translation-edit{padding:8px 0;border-bottom:1px solid var(--ttk-border,rgba(128,128,128,.2))}
@@ -541,31 +509,31 @@ html[data-ttk-theme] :is(#WorldInfo,#world_info,#WorldInfoEditor,#world_popup,#b
   #api_settings,#advanced-formatting,#left-nav-panel,#right-nav-panel,
   .drawer-content,.inline-drawer-content,.popup,.dialogue_popup,.ui-dialog,
   .select2-dropdown,.select2-results,.select2-search--dropdown) {
-  background-color:var(--ttk-surface)!important;
-  color:var(--ttk-text)!important;
-  border-color:var(--ttk-border)!important;
-  background-image:none!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
+  background-color:var(--ttk-surface);
+  color:var(--ttk-text);
+  border-color:var(--ttk-border);
+  background-image:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader,.settingsBlockHeader,
   .settings-header,.settings-header-title,.drawer-header,
   #backgrounds .inline-drawer-header,#WorldInfo .inline-drawer-header,
-  #user-settings-block .inline-drawer-header) {
-  background:var(--ttk-raised)!important;
-  border:1px solid var(--ttk-border)!important;
-  border-radius:5px!important;
-  color:var(--ttk-text)!important;
-  box-shadow:none!important;
-  text-shadow:none!important;
-  -webkit-text-stroke:0!important;
-  filter:none!important;
-  opacity:1!important;
+  #user-settings-block .inline-drawer-header):not(:is(#extensions_settings,#extensions_settings2) *) {
+  background:var(--ttk-raised);
+  border-color:var(--ttk-border);
+  
+  color:var(--ttk-text);
+  box-shadow:none;
+  text-shadow:none;
+  -webkit-text-stroke:0;
+  filter:none;
+  opacity:1;
 }
 /* Remove the extra decorative strokes appended to headers by older Toolkit builds. */
 html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader,.settingsBlockHeader,.drawer-header)::after {
-  background-image:none!important;
-  box-shadow:none!important;
+  background-image:none;
+  box-shadow:none;
 }
 /* Input and Select2 background should follow the palette, not native grey gradients. */
 html[data-ttk-theme] :is(.drawer-content,.inline-drawer-content,.popup,
@@ -573,25 +541,25 @@ html[data-ttk-theme] :is(.drawer-content,.inline-drawer-content,.popup,
   :is(.text_pole,input[type="text"],input[type="search"],input[type="number"],textarea,select,
       .select2-selection,.select2-selection--single,.select2-selection--multiple,
       .select2-selection__rendered,.dropdown,.multiselect) {
-  background:var(--ttk-surface)!important;
-  color:var(--ttk-text)!important;
-  border-color:var(--ttk-border)!important;
-  box-shadow:none!important;
-  filter:none!important;
-  opacity:1!important;
+  background:var(--ttk-surface);
+  color:var(--ttk-text);
+  border-color:var(--ttk-border);
+  box-shadow:none;
+  filter:none;
+  opacity:1;
 }
 html[data-ttk-theme] :is(.select2-container--default .select2-selection__rendered,
   .select2-selection__placeholder,.select2-results__option,
   .select2-search__field) {
-  color:var(--ttk-text)!important;
-  -webkit-text-fill-color:currentColor!important;
-  text-shadow:none!important;
-  filter:none!important;
+  color:var(--ttk-text);
+  -webkit-text-fill-color:currentColor;
+  text-shadow:none;
+  filter:none;
 }
 html[data-ttk-theme] :is(input::placeholder,textarea::placeholder) {
-  color:var(--ttk-muted)!important;
-  opacity:1!important;
-  text-shadow:none!important;
+  color:var(--ttk-muted);
+  opacity:1;
+  text-shadow:none;
 }
 
 /* Native disabled setting rows must remain readable. Disabled ACTIONS remain
@@ -633,9 +601,9 @@ html[data-ttk-theme] :is(#user-settings-block,#left-nav-panel,#right-nav-panel,
 #ttk-panel .ttk-module-row:has(input:disabled) .ttk-option-label{color:var(--ttk-muted,#606a76)!important;}
 /* Prevent the generic disabled override from washing out functional controls. */
 html[data-ttk-theme] :is(input,textarea,select):disabled {
-  background-color:var(--ttk-raised)!important;
-  color:var(--ttk-muted)!important;
-  opacity:1!important;
+  background-color:var(--ttk-raised);
+  color:var(--ttk-muted);
+  opacity:1;
 }
 
 /* Only the icon itself is transparent; a menu's containing panel stays opaque. */
@@ -643,11 +611,11 @@ html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel,
  #extensions_settings,#extensions_settings2,#WorldInfo,#backgrounds,
  .drawer-content,.inline-drawer-content,.popup,.dialogue_popup,.ui-dialog,
  .floating_panel,.floating-panel) {
-  background-color:var(--ttk-surface)!important;
-  color:var(--ttk-text)!important;
-  border-color:var(--ttk-border)!important;
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
+  background-color:var(--ttk-surface);
+  color:var(--ttk-text);
+  border-color:var(--ttk-border);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 /* Both menu frames and native inner drawer surfaces must be painted.
    Avoid global overlays, transient tooltips and the chat itself. */
@@ -718,7 +686,7 @@ html[data-ttk-theme][data-ttk-scheme=light] {
   --black70a:var(--ttk-raised);
   --black90a:var(--ttk-surface);
 }
-html[data-ttk-theme] select option {background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important}
+html[data-ttk-theme] select option {background-color:var(--ttk-surface);color:var(--ttk-text)}
 html[data-ttk-theme] ::selection {background:color-mix(in srgb,var(--ttk-accent) 26%,transparent);color:inherit}
 
 /* 2. Top rail + composer icons — one block replacing the 0.2.4–0.3.13 patches.
@@ -779,7 +747,7 @@ html[data-ttk-theme] #chat .mes_text u {color:var(--ttk-accent)}
 html[data-ttk-theme] #chat .mes_text :is(strong,b) {color:inherit}
 html[data-ttk-theme] #chat .mes_text hr {border:0;border-top:1px solid var(--ttk-border);opacity:1}
 /* Inline code is a quiet chip in palette colours. */
-html[data-ttk-theme] code:not(.hljs) {
+html[data-ttk-theme] #chat code:not(.hljs) {
   background:var(--ttk-raised)!important;color:var(--ttk-text)!important;border:1px solid var(--ttk-border)!important;
   border-radius:4px;line-height:inherit;font-size:.92em;
 }
@@ -793,10 +761,10 @@ html[data-ttk-theme] #chat .mes_text th {background:var(--ttk-raised)}
 html[data-ttk-theme] #chat .mes_reasoning {border-radius:0 0 6px 6px}
 html[data-ttk-theme] #chat .mes_reasoning :is(p,li,em,i) {color:var(--ttk-muted)!important}
 /* Sliders: a thin palette track with an accent ring, instead of the native black bar. */
-html[data-ttk-theme] input[type=range] {background:color-mix(in srgb,var(--ttk-muted) 34%,var(--ttk-surface))!important;box-shadow:none!important;height:4px}
-html[data-ttk-theme] input[type=range]:hover {filter:none!important}
-html[data-ttk-theme] input[type=range]::-webkit-slider-thumb {background:var(--ttk-surface)!important;border:2px solid var(--ttk-accent)!important;box-shadow:0 1px 3px var(--ttk-shadow)}
-html[data-ttk-theme] input[type=range]::-moz-range-thumb {background:var(--ttk-surface)!important;border:2px solid var(--ttk-accent)!important;box-shadow:0 1px 3px var(--ttk-shadow)}
+html[data-ttk-theme] input[type=range] {background:color-mix(in srgb,var(--ttk-muted) 34%,var(--ttk-surface));box-shadow:none;height:4px}
+html[data-ttk-theme] input[type=range]:hover {filter:none}
+html[data-ttk-theme] input[type=range]::-webkit-slider-thumb {background:var(--ttk-surface);border:2px solid var(--ttk-accent);box-shadow:0 1px 3px var(--ttk-shadow)}
+html[data-ttk-theme] input[type=range]::-moz-range-thumb {background:var(--ttk-surface);border:2px solid var(--ttk-accent);box-shadow:0 1px 3px var(--ttk-shadow)}
 /* Scrollbars follow the palette. */
 html[data-ttk-theme] * {scrollbar-color:color-mix(in srgb,var(--ttk-muted) 55%,transparent) transparent}
 
@@ -1278,10 +1246,6 @@ html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper .avatar{position:rel
 html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper .avatar img{width:100%!important;height:100%!important;object-fit:cover;object-position:center 20%;display:block;border-radius:inherit!important;filter:none!important}
 html[data-ttk-theme] body #chat#chat .mes .mes_block{grid-column:2;grid-row:1;min-width:0;width:auto!important;margin:0!important;padding:0!important}
 html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper :is(.mesIDDisplay,.mes_timer){display:none!important}
-html[data-ttk-theme] body #chat#chat .mes .ttk-cap{display:flex;flex-direction:column;gap:2px;min-width:0;text-align:center;font-size:11px;line-height:1.35;color:var(--ttk-muted)}
-html[data-ttk-theme] body #chat#chat .mes .ttk-cap > span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-html[data-ttk-theme] body #chat#chat .mes .ttk-cap > span:empty{display:none}
-html[data-ttk-theme] body #chat#chat .mes .ttk-stub{display:none}
 html[data-ttk-theme] body #chat#chat .mes .mes_text :is(p,li,blockquote){text-align:justify;word-break:normal;overflow-wrap:break-word!important;hyphens:manual}
 html[data-ttk-theme] body #chat#chat .mes .ch_name{margin:0 0 10px!important;padding:0!important;border:0!important}
 html[data-ttk-theme] body #chat#chat .mes .ch_name .name_text{font-size:14px!important}
@@ -1326,15 +1290,8 @@ html[data-ttk-theme=porcelain] body #chat#chat .mes{grid-template-columns:var(--
 html[data-ttk-theme=porcelain] body #chat#chat .mes[is_user=true]{background:var(--ttk-user)!important;box-shadow:inset 0 0 0 3px var(--ttk-user),0 4px 18px var(--ttk-shadow)!important}
 html[data-ttk-theme=porcelain] body #chat#chat .mes::before{content:'';position:absolute;left:1px;right:1px;top:1px;width:auto;height:14px;border:0;opacity:1;border-radius:5px 5px 0 0;background:var(--ttk-accent);-webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2722%27%20height=%2714%27%20viewBox=%270%200%2022%2014%27%3E%3Cpath%20d=%27M0%2014%20Q5.5%201%2011%2014%20Q16.5%201%2022%2014%27%20fill=%27%23000%27%20fill-opacity=%27.38%27%20stroke=%27%23000%27%20stroke-width=%271.2%27/%3E%3C/svg%3E") repeat-x left top/22px 14px;mask:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2722%27%20height=%2714%27%20viewBox=%270%200%2022%2014%27%3E%3Cpath%20d=%27M0%2014%20Q5.5%201%2011%2014%20Q16.5%201%2022%2014%27%20fill=%27%23000%27%20fill-opacity=%27.38%27%20stroke=%27%23000%27%20stroke-width=%271.2%27/%3E%3C/svg%3E") repeat-x left top/22px 14px}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper{display:contents!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap{grid-column:1/-1;grid-row:1;display:grid;grid-template-columns:auto auto;justify-content:center;column-gap:14px;row-gap:4px;padding:0 0 14px;margin-bottom:20px;border-bottom:4px double var(--ttk-accent);text-align:center}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap .ttk-cap-no::before{content:'No. '}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap :is(.ttk-cap-no,.ttk-cap-time){grid-row:1;font-size:11px;letter-spacing:.16em;color:var(--ttk-muted)}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap .ttk-cap-name{grid-column:1/-1;grid-row:2;font:700 clamp(26px,5vw,46px)/1.12 var(--ttk-font);letter-spacing:.04em;color:var(--ttk-text);white-space:normal;word-break:keep-all}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper .avatar{grid-column:1;grid-row:2;aspect-ratio:3/4;width:100%!important;margin:0!important;border-radius:0!important;box-shadow:0 0 0 1px var(--ttk-accent)!important}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper .avatar img{border-radius:0!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub{display:block;grid-column:1;grid-row:3;align-self:start;padding:6px 8px;background:var(--ttk-accent);color:#FFFFFF;text-align:center;font-size:12px;font-weight:700;letter-spacing:.14em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub b{display:none}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub i{font-style:normal}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{grid-column:2;grid-row:2/4;margin-left:22px!important;padding-left:22px!important;border-left:1px solid var(--ttk-border)}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .ch_name > .flex-container:first-child{display:none!important}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .ch_name{margin:0!important}
@@ -1346,11 +1303,6 @@ html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-foot{border-top:3px dou
 html[data-ttk-theme=studio] body #chat#chat .mes{grid-template-columns:minmax(0,1fr)!important;row-gap:12px;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:30px 0!important}
 html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{grid-column:1;grid-row:1;display:grid!important;grid-template-columns:minmax(0,46%) minmax(0,1fr);column-gap:clamp(16px,4%,34px);align-items:end!important;padding:clamp(18px,4%,34px)!important;box-sizing:border-box;background:color-mix(in srgb,var(--ttk-accent) 14%,var(--ttk-surface));border-radius:16px;overflow:hidden;box-shadow:0 4px 14px var(--ttk-shadow)}
 html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper .avatar{grid-column:1;grid-row:1;aspect-ratio:4/5.5;border-radius:4px!important;box-shadow:12px 12px 0 color-mix(in srgb,var(--ttk-accent) 34%,var(--ttk-surface))!important;overflow:hidden}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap{grid-column:2;grid-row:1;align-self:stretch;display:flex;flex-direction:column;justify-content:space-between;text-align:left;gap:0;padding:4px 0 2px;color:var(--ttk-text)}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap > span{white-space:normal}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-no{order:1;font:900 clamp(56px,13vw,132px)/.82 "Playfair Display",Georgia,serif;letter-spacing:-.03em;color:var(--ttk-accent);border-bottom:2px solid var(--ttk-text);padding-bottom:10px}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-name{order:2;margin-top:auto;font:700 clamp(20px,4.2vw,40px)/1.12 var(--ttk-font);letter-spacing:-.01em;color:var(--ttk-text);word-break:keep-all}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-time{order:3;margin-top:10px;padding-top:8px;border-top:1px solid color-mix(in srgb,var(--ttk-text) 30%,transparent);font-size:11px;letter-spacing:.18em;color:var(--ttk-muted)}
 html[data-ttk-theme=studio] body #chat#chat .mes .mes_block{grid-column:1;grid-row:2;background:var(--ttk-ai);border:1px solid var(--ttk-border);border-radius:16px;box-shadow:0 4px 14px var(--ttk-shadow);padding:var(--ttk-pad) calc(var(--ttk-pad) + 4px)!important}
 html[data-ttk-theme=studio] body #chat#chat .mes[is_user=true] .mes_block{background:var(--ttk-user)}
 html[data-ttk-theme=studio] body #chat#chat .mes .ch_name{padding-bottom:8px!important;border-bottom:1px solid var(--ttk-border)!important;margin-bottom:14px!important}
@@ -1368,32 +1320,21 @@ html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes .me
 html[data-ttk-theme] body #chat#chat .mes .ttk-foot{flex-wrap:wrap;row-gap:6px}
 html[data-ttk-theme] body #chat#chat .mes .ttk-foot .mes_buttons{flex-wrap:nowrap}
 /* 캡션·스텁·페이지 버튼 글꼴: 다른 확장이 글꼴을 강제해도 테마 글꼴 유지 */
-html[data-ttk-theme] body #chat#chat .mes :is(.ttk-cap,.ttk-cap *,.ttk-stub,.ttk-stub *){font-family:var(--ttk-font)!important}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-no{font-family:"Playfair Display",Georgia,"Times New Roman",serif!important}
 html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes .mes_text > p:first-of-type::first-letter{font-family:var(--ttk-font)!important}
 
 /* ── v0.15 · Porcelain: 꽃잎 띠를 안쪽 테두리선 안에 가운데 정렬, 제호 정렬 ── */
 html[data-ttk-theme=porcelain] body #chat#chat .mes{padding-top:calc(var(--ttk-pad) + 30px)!important}
 html[data-ttk-theme=porcelain] body #chat#chat .mes::before{top:9px!important;left:12px!important;right:12px!important;height:14px;border-radius:0!important;-webkit-mask-position:center top!important;mask-position:center top!important}
 html[data-ttk-theme=porcelain] body #chat#chat .mes::after{content:'';position:absolute;top:27px;left:12px;right:12px;height:1px;background:color-mix(in srgb,var(--ttk-accent) 45%,transparent);pointer-events:none}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap{display:flex!important;flex-flow:row wrap;align-items:baseline;justify-content:center;column-gap:0;row-gap:8px}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap .ttk-cap-name{order:0;flex:0 0 100%;letter-spacing:0;line-height:1.1;text-align:center}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap :is(.ttk-cap-no,.ttk-cap-time){order:1;letter-spacing:.08em;font-size:11px}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap .ttk-cap-time{order:2}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-cap .ttk-cap-time::before{content:'\00a0\00b7\00a0'}
 
 /* ── v0.15 · Studio: 잡지 화보 — 흰 지면·잉크색 큰 타이포·단일 강조색 블록 ── */
 html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{background:var(--ttk-surface)!important;border:1px solid color-mix(in srgb,var(--ttk-text) 14%,transparent);border-top:4px solid var(--ttk-text);border-radius:4px!important;grid-template-columns:minmax(0,54%) minmax(0,1fr)!important;padding:clamp(18px,4%,36px) clamp(18px,4%,36px) clamp(26px,5%,44px)!important;box-shadow:0 10px 30px var(--ttk-shadow)!important}
 html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper .avatar{aspect-ratio:4/5.2;border-radius:0!important;box-shadow:16px 16px 0 var(--ttk-accent)!important}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-no{color:var(--ttk-text)!important;font-style:italic;border-bottom:1px solid var(--ttk-text)!important;font-size:clamp(64px,15vw,150px)!important}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-name{font-weight:800!important;font-size:clamp(22px,4.6vw,44px)!important;color:var(--ttk-text)!important;border-left:4px solid var(--ttk-accent);padding-left:12px}
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-time{border-top:1px solid var(--ttk-text)!important;color:var(--ttk-text)!important;opacity:.75;text-transform:uppercase}
 html[data-ttk-theme=studio] body #chat#chat .mes .mes_block{border-radius:4px!important;border-top:4px solid var(--ttk-text)!important}
 html[data-ttk-theme=studio] body #chat#chat .mes .ch_name .name_text{letter-spacing:.12em;text-transform:uppercase;color:var(--ttk-text)!important}
 
 /* ===== v0.16 · Paper·Nocturne 확정안(v14 시안): 이름은 헤더에만, 왼쪽은 사진 + 번호·시간·토큰 =====
    Paper = 인화지 사진 + 좌상단·우하단 사선 마스킹 테이프 / Nocturne = 극장 포스터 + 카드 하단 가로 티켓 스텁 */
-html[data-ttk-theme] body #chat#chat .mes .ttk-cap :is(.ttk-cap-tok,.ttk-cap-clock){display:none}
 html[data-ttk-theme] body #chat#chat .mes .ttk-poster{display:none}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{background:var(--ttk-raised);border-right:1px solid var(--ttk-border);align-items:center!important;justify-content:flex-start!important;padding:34px 0 22px!important;gap:16px!important;box-sizing:border-box;overflow:visible!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper::before,:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper::after{content:none!important}
@@ -1401,20 +1342,10 @@ html[data-ttk-theme] body #chat#chat .mes .ttk-poster{display:none}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name .timestamp{display:none!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name .name_text{font-size:16px!important;color:var(--ttk-text)!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text .ttk-dialogue{font-weight:700}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-cap{display:flex!important;flex-flow:row wrap;justify-content:center;align-items:center;gap:0;row-gap:8px;width:100%;padding:0 8px;box-sizing:border-box;font-size:11px;letter-spacing:.04em;color:var(--ttk-muted)}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-cap :is(.ttk-cap-name,.ttk-cap-time){display:none!important}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-cap::after{content:'';flex-basis:100%;order:2}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-cap .ttk-cap-tok{display:inline-block;order:3;padding:1px 9px;border:1px solid var(--ttk-border);border-radius:99px;font-variant-numeric:tabular-nums}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-cap .ttk-cap-tok:empty{display:none!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-foot .tokenCounterDisplay{display:none!important}
 @media(max-width:600px){:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{padding:22px 0 14px!important;gap:12px!important}}
 
 /* Paper: 인화지 사진 + 사선 마스킹 테이프 2개(같은 방향, 대각 대칭) */
-html[data-ttk-theme=paper] body #chat#chat .mes .ttk-cap .ttk-cap-no{order:0}
-html[data-ttk-theme=paper] body #chat#chat .mes .ttk-cap .ttk-cap-no::before{content:'#'}
-html[data-ttk-theme=paper] body #chat#chat .mes .ttk-cap .ttk-cap-clock{display:inline;order:1}
-html[data-ttk-theme=paper] body #chat#chat .mes .ttk-cap .ttk-cap-clock::before{content:'\00a0\00b7\00a0'}
-html[data-ttk-theme=paper] body #chat#chat .mes .ttk-cap .ttk-cap-no:empty + .ttk-cap-name + .ttk-cap-time + .ttk-cap-tok + .ttk-cap-clock::before{content:none}
 html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar{padding:5%;box-sizing:border-box;background:#FFFDF8!important;box-shadow:0 0 0 1px rgba(0,0,0,.04),0 8px 18px var(--ttk-shadow)!important;overflow:visible!important}
 html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar img{position:static!important;display:block;width:100%!important;height:auto!important;max-height:min(52vh,460px);object-fit:contain!important;border-radius:0!important;box-shadow:none!important}
 html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar::before,html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar::after{content:'';position:absolute;z-index:2;width:36%;aspect-ratio:4.2/1;pointer-events:none;transform:rotate(-45deg);background-color:color-mix(in srgb,var(--ttk-accent) 24%,#EFE3C6);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.24) 0 3px,transparent 3px 7px);opacity:.82;clip-path:polygon(0 0,100% 0,96% 25%,100% 50%,96% 75%,100% 100%,0 100%,4% 75%,0 50%,4% 25%)}
@@ -1432,7 +1363,6 @@ html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-top{top:5cqw;font
 html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-title{bottom:15.5cqw;font-size:17cqw;line-height:1;font-weight:500;letter-spacing:.08em;color:var(--ttk-accent)}
 html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-bill{left:10%!important;right:10%!important;bottom:5cqw;padding-top:1.5cqw;border-top:1px solid color-mix(in srgb,var(--ttk-accent) 40%,transparent);font-size:max(7px,4.5cqw);line-height:1.3;letter-spacing:.06em;color:var(--ttk-muted);transform:scaleY(1.2);transform-origin:bottom}
 html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster :is(.ttk-poster-top,.ttk-poster-title,.ttk-poster-bill){font-family:'Oswald',var(--ttk-font),sans-serif!important}
-html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-cap :is(.ttk-cap-no,.ttk-cap-clock){display:none!important}
 html[data-ttk-theme=nocturne] body #chat#chat .mes .mes_block{position:static!important}
 html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot{position:absolute;left:0;right:0;bottom:0;z-index:3;height:48px;margin:0!important;padding:0 26px!important;box-sizing:border-box;flex-wrap:nowrap!important;gap:14px;border-top:2px dashed var(--ttk-border)!important;background:color-mix(in srgb,var(--ttk-bg) 55%,var(--ttk-ai))}
 html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot-btn{overflow-x:auto;scrollbar-width:none}
@@ -1444,8 +1374,7 @@ html[data-ttk-theme=nocturne] body #chat#chat .mes::after{right:-10px}
 @media(max-width:600px){
  html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot{padding:0 14px!important;gap:10px}
  html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot::after{flex-basis:44px}
- html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-cap .ttk-cap-tok{display:none!important}
- html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot .tokenCounterDisplay{display:block!important}
+  html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot .tokenCounterDisplay{display:block!important}
 }
 /* 확정안: 페이지 넘김은 헤더 줄 안의 글자 버튼(알약 배경 없음), 티켓 홈은 조금 크게 */
 html[data-ttk-theme=nocturne] body #chat#chat .mes::before,html[data-ttk-theme=nocturne] body #chat#chat .mes::after{width:24px;height:24px;bottom:36px}
@@ -1459,17 +1388,12 @@ html[data-ttk-theme],html[data-ttk-theme] body{-webkit-text-size-adjust:100%!imp
 #ttk-panel .ttk-dropcap-row{display:flex!important;flex-direction:row!important;align-items:center;gap:10px}
 #ttk-panel .ttk-dropcap-row input{flex:0 0 auto;margin:0}
 /* Porcelain: 캡션 띠에는 이름 대신 번호(이름은 제호에만) */
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub b{display:inline!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub b::before{content:'No. '}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-stub i{display:none!important}
 /* Studio: 큰 번호가 위에서 잘리지 않게 */
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-no{line-height:1!important;padding-top:.04em;overflow:visible}
 html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{overflow:visible!important}
 @media(max-width:600px){
  html[data-ttk-theme=porcelain]{--pc-img:clamp(96px,30%,130px)}
  /* Paper·Nocturne: 페이지 넘김을 이름 아래 줄로 내려 겹침 방지 */
- html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-time{letter-spacing:.06em!important;font-size:10px}
-}
+ }
 /* 컬러 선택 칸: iOS Safari 기본 무지개 테두리·타원 견본 제거 → 둥근 사각 견본 하나 */
 #ttk-panel input[type=color]{-webkit-appearance:none!important;appearance:none!important;width:44px!important;height:30px!important;padding:0!important;border:1px solid var(--ttk-border,#bbb)!important;border-radius:8px!important;background:none!important;overflow:hidden;box-shadow:none!important;cursor:pointer;flex:0 0 auto}
 #ttk-panel input[type=color]::-webkit-color-swatch-wrapper{padding:0!important}
@@ -1483,10 +1407,8 @@ html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{overflow:visi
 #ttk-panel input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ttk-accent,#4f6f8f);border:2px solid var(--ttk-surface,#fff)}
 
 /* v0.17.1 Studio: 긴 이름이 ‘…’로 잘리지 않게 (모바일은 글자를 조금 줄이고 필요하면 줄바꿈) */
-html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-name{overflow:visible!important;text-overflow:clip!important;white-space:normal!important;overflow-wrap:anywhere}
 @media (max-width:600px){
- html[data-ttk-theme=studio] body #chat#chat .mes .ttk-cap .ttk-cap-name{font-size:clamp(14px,4.1vw,22px)!important;letter-spacing:0!important}
-}
+ }
 
 /* v0.17.2 잘림 수정: 포스터엔 번호만 · 상태창 같은 자체 레이아웃 메시지는 쪽으로 자르지 않고 전체 너비로 · 모바일 본문 폭 확보 */
 html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster{background:linear-gradient(180deg,transparent 60%,rgba(6,5,3,.9) 100%)}
