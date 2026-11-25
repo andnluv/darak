@@ -9,7 +9,7 @@
  *     Bookmarks are stored per chat in chat metadata (key darak_bookmarks), matched by the message's send date so
  *     deleting or inserting messages does not shift them. Messages always read top to bottom — no pages. */
 const MOVES=[['nav','.swipe_left'],['nav','.swipeRightBlock'],['tok','.tokenCounterDisplay'],['btn','.mes_buttons']];
-const OWN='.ttk-cap,.ttk-stub,.ttk-poster,.ttk-now,.ttk-shelf,.ttk-bm';
+const OWN='.ttk-cap,.ttk-stub,.ttk-poster,.ttk-now,.ttk-shelf,.ttk-bm,.ttk-more';
 const BM_KEY='darak_bookmarks';
 const SHELF_KEY='darak-shelf';
 let hooks={};
@@ -130,6 +130,12 @@ function footer(mes){
   b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleBm(Number(mes.getAttribute('mesid')));});
   btn.prepend(b);
  }
+ // fold button — everything that is not bookmark/basic stays hidden until it is pressed
+ if(btn&&!btn.querySelector(':scope > .ttk-more')){
+  const m=document.createElement('button');m.type='button';m.className='ttk-more';m.title='더 보기';m.setAttribute('aria-label','더 보기');m.setAttribute('aria-expanded','false');
+  m.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const o=btn.classList.toggle('ttk-open');m.setAttribute('aria-expanded',String(o));});
+  btn.append(m);
+ }
 }
 function restore(foot){
  for(const {node,parent,next} of (foot._home||[]).reverse()){
@@ -163,7 +169,7 @@ export function syncMessageFooters(enabled,h){hooks=h||hooks;applyShelfPref();
  if(!enabled){
   observer?.disconnect();observer=null;if(timer){clearTimeout(timer);timer=null;}dirty.clear();
   document.querySelectorAll('#chat .ttk-foot').forEach(restore);
-  document.querySelectorAll('#chat .ttk-cap,#chat .ttk-stub,#chat .ttk-poster,#chat .ttk-now,#chat .ttk-shelf,#chat .ttk-bm').forEach(n=>n.remove());
+  document.querySelectorAll('#chat .ttk-cap,#chat .ttk-stub,#chat .ttk-poster,#chat .ttk-now,#chat .ttk-shelf,#chat .ttk-bm,#chat .ttk-more').forEach(n=>n.remove());
   document.querySelectorAll('#chat .mesAvatarWrapper').forEach(w=>w.style.removeProperty('--ttk-av-url'));
   document.querySelectorAll('#chat .mes[data-ttk-books]').forEach(m=>delete m.dataset.ttkBooks);
   return;

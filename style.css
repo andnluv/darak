@@ -1749,3 +1749,16 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn::-webkit-scrollbar{d
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot :is(.mes_buttons,.extraMesButtons){flex-wrap:nowrap!important;flex:0 0 auto!important;margin-left:auto;justify-content:flex-end;row-gap:0;column-gap:0;width:max-content}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtons{margin-left:0}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot :is(.mes_button,.extraMesButtons > div,.ttk-bm){padding:4px!important;flex:0 0 auto!important}
+
+/* v0.22.5: 메시지 버튼 — 작게, 한 줄. 책갈피·복사·수정·체크포인트만 남기고 나머지는 ⋯ 뒤로 접는다. */
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .mes_buttons{font-size:13px!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot :is(.mes_button,.extraMesButtons > div){padding:3px!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn{align-items:center}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm{width:22px;height:22px}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm::before{width:14px;height:14px}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtons{display:flex!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtonsHint{display:none!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn:not(.ttk-open) :is(.mes_buttons,.extraMesButtons) > :not(.ttk-bm,.mes_copy,.mes_edit,.mes_bookmark,.mes_delete,.extraMesButtons,.mes_edit_buttons){display:none!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more{all:unset;box-sizing:border-box;flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;color:var(--ttk-muted)}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more::before{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:var(--ttk-ic-dots) center/contain no-repeat;mask:var(--ttk-ic-dots) center/contain no-repeat}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more:hover,html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn.ttk-open .ttk-more{background:var(--ttk-raised);color:var(--ttk-text)}
