@@ -14,7 +14,7 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.23.1';
+const VERSION = '0.23.2';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -260,10 +260,10 @@ function build(){
   for(const [category,groupLabel] of Object.entries(FONT_GROUPS)){
     const ids=Object.keys(FONTS).filter(id=>FONTS[id].category===category);if(!ids.length)continue;
     list.append(el('div','ttk-font-group',groupLabel));list.lastChild.setAttribute('role','presentation');
-    for(const id of ids){const f=FONTS[id];const o=el('div','ttk-font-option',f.name);o.tabIndex=-1;o.setAttribute('role','option');o.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();o.click();}});o.dataset.font=id;o.style.fontFamily=f.family;o.addEventListener('click',()=>{api.close();if(current===id)return;api.value=id;settings.design[key]=id;syncPreview();changed();updateStatus();trigger.focus();});options.set(id,o);list.append(o);}
+    for(const id of ids){const f=FONTS[id];const o=el('div','ttk-font-option',f.name);o.tabIndex=-1;o.setAttribute('role','option');o.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();o.click();}});o.dataset.font=id;o.style.setProperty('font-family',f.family,'important');o.addEventListener('click',()=>{api.close();if(current===id)return;api.value=id;settings.design[key]=id;syncPreview();changed();updateStatus();trigger.focus();});options.set(id,o);list.append(o);}
   }
   const note=el('small','ttk-font-status');
-  const paint=()=>{const f=FONTS[current];trigger.textContent=f?.name||'';trigger.style.fontFamily=f?.family||'';for(const [id,o] of options)o.setAttribute('aria-selected',String(id===current));};
+  const paint=()=>{const f=FONTS[current];trigger.textContent=f?.name||'';if(f?.family)trigger.style.setProperty('font-family',f.family,'important');else trigger.style.removeProperty('font-family');for(const [id,o] of options)o.setAttribute('aria-selected',String(id===current));};
   const api={
    get value(){return current;},set value(v){current=FONTS[v]?v:current;paint();},
    contains:n=>wrap.contains(n),
