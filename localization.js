@@ -3,8 +3,9 @@ export const DEFAULT_LOCALIZATION = Object.freeze({reasoningLabel:'사유',showR
 const SELECTOR = '#chat .mes_reasoning_details .mes_reasoning_header_title';
 
 export function normalizeLocalization(value = {}) {
-    const label = typeof value?.reasoningLabel === 'string' ? value.reasoningLabel.trim().slice(0, 30) : '';
-    return {reasoningLabel: label || DEFAULT_LOCALIZATION.reasoningLabel,
+    // 빈 칸도 허용합니다(제목 없이 시간만 표시). 값이 아예 없을 때만 기본값.
+    const label = typeof value?.reasoningLabel === 'string' ? value.reasoningLabel.trim().slice(0, 30) : DEFAULT_LOCALIZATION.reasoningLabel;
+    return {reasoningLabel: label,
         showReasoningTime: typeof value?.showReasoningTime === 'boolean' ? value.showReasoningTime : true};
 }
 export function formatReasoningDuration(seconds) {
@@ -19,14 +20,14 @@ export function formatReasoningDuration(seconds) {
 export function getReasoningTitle(raw, seconds, config) {
     const original = String(raw || '').trim();
     const label = config.reasoningLabel;
-    if (/^(Thinking|생각 중|사유 중|추론 중)/i.test(original)) return `${label} 중...`;
+    if (/^(Thinking|생각 중|사유 중|추론 중)/i.test(original)) return label ? `${label} 중...` : '...';
     if (!config.showReasoningTime) return label;
     // The canonical data-duration (seconds) is set by native SillyTavern.
     const duration = formatReasoningDuration(seconds);
-    if (duration) return `${label} · ${duration}`;
+    if (duration) return label ? `${label} · ${duration}` : duration;
     // Preserve localized humanized durations for unknown/older markup when available.
     const timeMatch = original.match(/(?:Thought for|사유\s*[·:]?|생각한 시간\s*:?)\s*(\d+\s*(?:초|분|시간|seconds?|minutes?|hours?))/i);
-    return timeMatch ? `${label} · ${timeMatch[1]}` : label;
+    return timeMatch ? (label ? `${label} · ${timeMatch[1]}` : timeMatch[1]) : label;
 }
 let observer = null;
 let active = false;

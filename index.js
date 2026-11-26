@@ -104,7 +104,7 @@ function build(){
  const locPanel=el('details','ttk-section');locPanel.id='ttk-localization-section';locPanel.append(el('summary','ttk-section-summary','한글화 · 추론 제목 / 토글 이름'));
  const locBody=el('div','ttk-controls');locPanel.append(locBody);
  locBody.append(el('p','ttk-note','추론(Thought) 제목만 화면에서 변경합니다. 접기·펼치기 상태, 추론 원문, 채팅 저장 데이터는 변경하지 않습니다.'));
- const nameRow=el('label','ttk-field');nameRow.append(el('strong','','추론 제목'));const nameInput=el('input');nameInput.type='text';nameInput.maxLength=30;nameInput.value=settings.localization.reasoningLabel;
+ const nameRow=el('label','ttk-field');nameRow.append(el('strong','','추론 제목'));const nameInput=el('input');nameInput.type='text';nameInput.maxLength=30;nameInput.placeholder='비우면 제목 없이 표시';nameInput.value=settings.localization.reasoningLabel;
  nameInput.addEventListener('change',()=>{settings.localization=normalizeLocalization({...settings.localization,reasoningLabel:nameInput.value});nameInput.value=settings.localization.reasoningLabel;changed();});nameRow.append(nameInput);locBody.append(nameRow);
  const timeRow=el('label','ttk-module-row');timeRow.append(info('소요 시간 표시','ON일 때 사유 · 1분 형태로 표시'));const timeCheck=el('input');timeCheck.type='checkbox';timeCheck.checked=settings.localization.showReasoningTime;
  timeCheck.addEventListener('change',()=>{settings.localization.showReasoningTime=timeCheck.checked;changed();});timeRow.append(timeCheck);locBody.append(timeRow);
