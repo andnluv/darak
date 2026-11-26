@@ -14,7 +14,7 @@ const clean=s=>String(s||'').replace(/\s+/g,' ').trim().slice(0,40);
 export function normalizeMsgButtons(raw){
  const front=Array.isArray(raw?.front)?raw.front.filter(k=>typeof k==='string'&&k.length<=120).slice(0,MAX_SEEN):null;
  const seen={};
- if(raw?.seen&&typeof raw.seen==='object')for(const [k,v] of Object.entries(raw.seen).slice(0,MAX_SEEN)){
+ if(raw?.seen&&typeof raw.seen==='object'&&!Array.isArray(raw.seen))for(const [k,v] of Object.entries(raw.seen).slice(0,MAX_SEEN)){
   if(typeof k!=='string'||k.length>120)continue;
   seen[k]={label:clean(v?.label)||k,def:v?.def===true};
  }
