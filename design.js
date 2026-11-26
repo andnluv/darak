@@ -19,7 +19,7 @@ const GF=q=>`https://fonts.googleapis.com/css2?family=${q}&display=swap`;
 const JSD='https://cdn.jsdelivr.net/gh/';
 const GOTHIC='"Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif';
 const SERIF='"AppleMyungjo", "Noto Serif KR", "Batang", serif';
-export const FONTS = Object.freeze({
+export const FONTS = {
  nanummyeongjo:{name:'나눔명조',category:'serif',source:'web',css:GF('Nanum+Myeongjo:wght@400;700;800'),family:`"Nanum Myeongjo", ${SERIF}`},
  nanumbarun:{name:'나눔바른고딕',category:'gothic',source:'web',css:JSD+'moonspam/NanumBarunGothic@1.2/nanumbarungothicsubset.css',family:`"NanumBarunGothic", ${GOTHIC}`},
  nanumgothic:{name:'나눔고딕',category:'gothic',source:'web',css:GF('Nanum+Gothic:wght@400;700;800'),family:`"Nanum Gothic", ${GOTHIC}`},
@@ -50,8 +50,60 @@ export const FONTS = Object.freeze({
  oswald:{name:'Oswald (영문·숫자)',category:'decor',source:'web',css:GF('Oswald:wght@400;500;600'),family:'"Oswald", sans-serif'},
  playfair:{name:'Playfair Display (영문·숫자)',category:'decor',source:'web',css:GF('Playfair+Display:wght@700;900'),family:'"Playfair Display", Georgia, serif'},
  system:{name:'기본 시스템 글꼴',category:'gothic',source:'system',family:'system-ui, sans-serif'},
-});
-export const FONT_GROUPS = Object.freeze({gothic:'고딕',serif:'명조·바탕',decor:'꾸밈',hand:'손글씨'});
+};
+export const FONT_GROUPS = Object.freeze({user:'내 글꼴',gothic:'고딕',serif:'명조·바탕',decor:'꾸밈',hand:'손글씨'});
+// v0.24.0: 사용자가 직접 더하는 웹폰트(최대 20개). CSS 주소 / @font-face 코드 / 글꼴 파일 주소 세 가지.
+export const USER_FONT_MAX=20;
+const FACE_PROPS=new Set(['font-family','src','font-weight','font-style','font-display','unicode-range','font-stretch']);
+const okUrl=u=>/^https:\/\/[^\s'")(]+$/i.test(u)&&u.length<=500;
+const cleanName=v=>String(v||'').replace(/[\u0000-\u001f<>{}"'`\\;]/g,'').trim().slice(0,60);
+// @font-face 코드를 안전한 항목만 남겨 다시 만듭니다. 외부 @import, javascript:, 비 https 주소는 모두 버립니다.
+export function sanitizeFontFaceCode(code){
+ const out=[];let family='';
+ for(const m of String(code||'').slice(0,20000).matchAll(/@font-face\s*\{([^{}]*)\}/gi)){
+  const decls=[];
+  for(const d of m[1].split(';')){
+   const i=d.indexOf(':');if(i<0)continue;
+   const prop=d.slice(0,i).trim().toLowerCase();let val=d.slice(i+1).trim();
+   if(!FACE_PROPS.has(prop)||!val||/[<>{}\\]|expression|javascript:/i.test(val))continue;
+   if(prop==='src'){
+    const parts=[...val.matchAll(/url\(\s*(['"]?)([^'")]+)\1\s*\)(\s*format\(\s*(['"]?)([a-z0-9-]+)\4\s*\))?/gi)].filter(x=>okUrl(x[2].trim()));
+    if(!parts.length)continue;
+    val=parts.map(x=>`url('${x[2].trim()}')${x[5]?` format('${x[5]}')`:''}`).join(',');
+   }
+   if(prop==='font-family'){const f=cleanName(val.replace(/^["']|["']$/g,''));if(!f)continue;family=family||f;val=`'${f}'`;}
+   decls.push(`${prop}:${val}`);
+  }
+  if(decls.some(x=>x.startsWith('src:'))&&decls.some(x=>x.startsWith('font-family:'))){if(!decls.some(x=>x.startsWith('font-display:')))decls.push('font-display:swap');out.push(`@font-face{${decls.join(';')}}`);}
+ }
+ return out.length?{css:out.join('\n'),family}:null;
+}
+const FILE_FORMAT={woff2:'woff2',woff:'woff',ttf:'truetype',otf:'opentype'};
+// 저장된 목록을 검사해 정돈합니다. 잘못된 항목은 조용히 버립니다.
+export function normalizeUserFonts(raw){
+ const list=[];const ids=new Set();
+ for(const r of Array.isArray(raw)?raw:[]){
+  if(list.length>=USER_FONT_MAX)break;
+  const kind=['css','face','file'].includes(r?.kind)?r.kind:null;if(!kind)continue;
+  let id=String(r.id||'');if(!/^u[0-9a-z]{1,10}$/.test(id)||ids.has(id))id='u'+Math.random().toString(36).slice(2,8);
+  const name=cleanName(r.name),family=cleanName(r.family);
+  if(kind==='face'){const f=sanitizeFontFaceCode(r.code);if(!f)continue;list.push({id,kind,name:name||f.family||'내 글꼴',family:f.family||family,code:f.css});}
+  else{if(!okUrl(String(r.url||'').trim())||!family)continue;if(kind==='file'&&!FILE_FORMAT[String(r.url).split(/[?#]/)[0].split('.').pop().toLowerCase()])continue;list.push({id,kind,name:name||family,family,url:String(r.url).trim()});}
+  ids.add(id);
+ }
+ return list;
+}
+export const userFontId=u=>`user-${u.id}`;
+// FONTS에 내 글꼴을 등록합니다. normalizeDesign보다 먼저 불러야 고른 글꼴이 유지됩니다.
+export function setUserFonts(list){
+ for(const k of Object.keys(FONTS))if(k.startsWith('user-'))delete FONTS[k];
+ for(const u of list){
+  const base={name:u.name,category:'user',source:'web',family:`"${u.family}", ${GOTHIC}`,userFont:true};
+  if(u.kind==='css')FONTS[userFontId(u)]={...base,css:u.url};
+  else if(u.kind==='face')FONTS[userFontId(u)]={...base,cssText:u.code};
+  else FONTS[userFontId(u)]={...base,face:[{family:u.family,url:u.url,format:FILE_FORMAT[u.url.split(/[?#]/)[0].split('.').pop().toLowerCase()]}]};
+ }
+}
 
 const clamp = (v,min,max,fallback) => v!==undefined && v!==null && v!=='' && Number.isFinite(Number(v))? Math.min(max,Math.max(min,Number(v))): fallback;
 const safeHex=(v, fallback)=>typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v)?v:fallback;
@@ -86,19 +138,19 @@ const STYLE_ID='ttk-full-theme-runtime';
 const FONT_ATTR='data-ttk-font';
 // Keeps exactly the stylesheets of the fonts in use. Idempotent, so live slider/colour edits never re-request a font.
 export function syncFontSources(ids=[]){
- const wanted=new Set(ids.filter(id=>FONTS[id]&&(FONTS[id].css||FONTS[id].face)));
+ const wanted=new Set(ids.filter(id=>FONTS[id]&&(FONTS[id].css||FONTS[id].face||FONTS[id].cssText)));
  for(const node of document.head.querySelectorAll(`[${FONT_ATTR}]`)){if(wanted.has(node.getAttribute(FONT_ATTR)))wanted.delete(node.getAttribute(FONT_ATTR));else node.remove();}
  for(const id of wanted){
   const f=FONTS[id];let node;
   if(f.css){node=document.createElement('link');node.rel='stylesheet';node.href=f.css;node.crossOrigin='anonymous';}
-  else{node=document.createElement('style');node.textContent=[].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
+  else{node=document.createElement('style');node.textContent=fontFaceCss(f);}
   node.setAttribute(FONT_ATTR,id);document.head.append(node);
  }
 }
 // v0.23: font picker previews. Separate attribute so syncFontSources never removes a preview the list still shows.
 const PREVIEW_ATTR='data-ttk-font-pv';
 export function fontPreviewNode(id){
- const f=FONTS[id];if(!f||!(f.css||f.face))return;
+ const f=FONTS[id];if(!f||!(f.css||f.face||f.cssText))return;
  if(document.head.querySelector(`[${PREVIEW_ATTR}="${id}"]`))return;
  let node;
  if(f.css){node=document.createElement('link');node.rel='stylesheet';node.href=f.css;node.crossOrigin='anonymous';}
@@ -106,7 +158,7 @@ export function fontPreviewNode(id){
  node.setAttribute(PREVIEW_ATTR,id);document.head.append(node);
 }
 export function clearFontPreviews(){document.head.querySelectorAll(`[${PREVIEW_ATTR}]`).forEach(n=>n.remove());}
-function fontFaceCss(f){return [].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
+function fontFaceCss(f){if(f.cssText)return f.cssText;return [].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
 function luminance(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.03928?c/12.92:((c+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2];}
 export function schemeOf(palette){return luminance(palette.bg)<.3?'dark':'light';}
 const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap','data-ttk-photo'];

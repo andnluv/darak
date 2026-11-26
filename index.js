@@ -10,11 +10,12 @@ import {ThemeImages,normalizeThemeImages} from './theme-images.js';
 import {Gallery,normalizeGallery} from './gallery.js';
 import {confirmAsk} from './dialogs.js';
 import {syncMessageFooters} from './message-footer.js';
+import {normalizeMsgButtons,scanButtons,syncMessageButtons,isFront,setFront,resetFront} from './message-buttons.js';
 import {syncTyping} from './typing.js';
-import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES} from './design.js';
+import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.23.6';
+const VERSION = '0.24.0';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -22,13 +23,13 @@ let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,invento
 const ATTIC_SVG='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3.5 21 11"/><path d="M5.5 9v11.5h13V9"/><rect x="9" y="10.5" width="6" height="6" rx=".6"/><path d="M12 10.5v6M9 13.5h6"/></svg>';
 const el=(tag,cls='',text='')=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text)n.textContent=text;return n;};
 const btn=(label,action,cls='')=>{const n=el('button',`ttk-button ${cls}`,label);n.type='button';n.addEventListener('click',action);return n;};
-function merge(raw){const modules={...DEFAULT_MODULES,...(raw?.modules||{})};const old=raw?.design||{};const migrated=old.theme==='midnight'?'nocturne':old.theme==='sage'?'studio':old.theme;return {modules,design:normalizeDesign({...old,theme:migrated}),localization:normalizeLocalization(raw?.localization),promptTranslation:normalizePromptTranslation(raw?.promptTranslation),translation:normalizeTranslation(raw?.translation),glossary:normalizeGlossary(raw?.glossary),ghostwrite:normalizeGhostwrite(raw?.ghostwrite),qr:normalizeQrVault(raw?.qr),optimization:normalizeOptimization(raw?.optimization),avatars:normalizeAvatars(raw?.avatars),themeImages:normalizeThemeImages(raw?.themeImages),gallery:normalizeGallery(raw?.gallery)};}
+function merge(raw){const userFonts=normalizeUserFonts(raw?.userFonts);setUserFonts(userFonts);const modules={...DEFAULT_MODULES,...(raw?.modules||{})};const old=raw?.design||{};const migrated=old.theme==='midnight'?'nocturne':old.theme==='sage'?'studio':old.theme;return {modules,userFonts,design:normalizeDesign({...old,theme:migrated}),localization:normalizeLocalization(raw?.localization),promptTranslation:normalizePromptTranslation(raw?.promptTranslation),translation:normalizeTranslation(raw?.translation),glossary:normalizeGlossary(raw?.glossary),ghostwrite:normalizeGhostwrite(raw?.ghostwrite),qr:normalizeQrVault(raw?.qr),optimization:normalizeOptimization(raw?.optimization),avatars:normalizeAvatars(raw?.avatars),themeImages:normalizeThemeImages(raw?.themeImages),gallery:normalizeGallery(raw?.gallery),msgButtons:normalizeMsgButtons(raw?.msgButtons)};}
 // One module failing must never stop the others: every module start/stop/apply runs inside guard().
 const failed=new Map();
 function guard(name,fn,cleanup){try{return fn();}catch(e){console.error(`[DARAK] ${name} 오류`,e);try{cleanup?.();}catch{}if(!failed.has(name)){failed.set(name,String(e?.message||e).slice(0,160));globalThis.toastr?.error?.(`${name}에서 오류가 나 이 모듈만 멈췄습니다. 다른 모듈은 계속 동작합니다. 자세한 내용은 다락방 설정 맨 위에 있습니다.`,'다락방',{timeOut:9000});}showFailures();}}
 function showFailures(){const box=document.getElementById('ttk-failures');if(!box)return;box.hidden=!failed.size;if(!failed.size)return;box.replaceChildren(el('strong','','멈춘 모듈이 있습니다'),...[...failed].map(([n,m])=>el('p','',`${n}: ${m}`)),el('p','','나머지 모듈은 그대로 동작합니다. 브라우저 콘솔(F12)의 [DARAK] 줄에 자세한 오류가 있습니다. 페이지를 새로고침하면 다시 시도합니다.'));}
 const footerHooks={shelf:id=>(settings?.modules?.avatars&&avatars)?avatars.shelfFor(id):null};
-function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncMessageFooters(settings.modules.design,footerHooks);syncTyping(settings.modules.design&&settings.design.typing!==false);},()=>{teardownDesign();syncMessageFooters(false);syncTyping(false);});guard('한글화',syncLocalization);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);}
+function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncMessageFooters(settings.modules.design,footerHooks);syncMessageButtons(settings.modules.design,settings.msgButtons);syncTyping(settings.modules.design&&settings.design.typing!==false);},()=>{teardownDesign();syncMessageFooters(false);syncMessageButtons(false);syncTyping(false);});guard('한글화',syncLocalization);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);}
 function changed(){applyModules();save();}
 function syncAvatars(){if(!avatars)return;if(settings.modules.avatars)avatars.start();else avatars.stop();}
 function syncThemeImages(){if(!themeImages)return;if(settings.modules.themeImages)themeImages.start();else themeImages.stop();}
@@ -265,11 +266,12 @@ function build(){
   const trigger=el('button','ttk-font-trigger');trigger.type='button';trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-labelledby',labelId);
   const list=el('div','ttk-font-list');list.setAttribute('role','listbox');list.hidden=true;
   const options=new Map();let io=null,current=settings.design[key];
+  const build=()=>{list.replaceChildren();options.clear();io?.disconnect?.();io=null;
   for(const [category,groupLabel] of Object.entries(FONT_GROUPS)){
     const ids=Object.keys(FONTS).filter(id=>FONTS[id].category===category);if(!ids.length)continue;
     list.append(el('div','ttk-font-group',groupLabel));list.lastChild.setAttribute('role','presentation');
     for(const id of ids){const f=FONTS[id];const o=el('div','ttk-font-option',f.name);o.tabIndex=-1;o.setAttribute('role','option');o.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();o.click();}});o.dataset.font=id;o.style.setProperty('font-family',f.family,'important');o.addEventListener('click',()=>{api.close();if(current===id)return;api.value=id;settings.design[key]=id;syncPreview();changed();updateStatus();trigger.focus();});options.set(id,o);list.append(o);}
-  }
+  }};build();
   const note=el('small','ttk-font-status');
   const paint=()=>{const f=FONTS[current];trigger.textContent=f?.name||'';if(f?.family)trigger.style.setProperty('font-family',f.family,'important');else trigger.style.removeProperty('font-family');for(const [id,o] of options)o.setAttribute('aria-selected',String(id===current));};
   const api={
@@ -296,11 +298,52 @@ function build(){
       }catch{if(current===id)note.textContent='웹폰트를 불러오지 못했습니다 · 기기 기본 글꼴로 표시됩니다';}
     }else{note.textContent='시스템 기본 글꼴';}
   };
-  api.updateStatus=updateStatus;paint();
+  api.updateStatus=updateStatus;api.rebuild=()=>{build();paint();};paint();
   wrap.append(trigger,list);row.append(wrap,note);controls.append(row);return api;
  }
  const font=makeFontRow('지문 폰트','font');
  const dialogueFont=makeFontRow('대사 폰트','dialogueFont');
+ // ---- 내 글꼴 추가 (v0.24.0) ----
+ const ufSection=el('details','ttk-subsection');ufSection.append(el('summary','','내 글꼴 추가'));
+ ufSection.append(el('p','ttk-note',`웹폰트 주소나 코드를 붙여 넣으면 글꼴 목록의 "내 글꼴"에 생깁니다. 최대 ${USER_FONT_MAX}개. 글꼴 파일은 다락방에 들어 있지 않고, 고른 글꼴만 해당 주소에서 불러옵니다. https 주소만 쓸 수 있습니다.`));
+ const ufKind=el('select');for(const [v,l] of [['css','CSS 주소 (Google Fonts 등)'],['face','@font-face 코드'],['file','글꼴 파일 주소 (woff2·woff·ttf·otf)']]){const o=el('option','',l);o.value=v;ufKind.append(o);}
+ const ufKindRow=el('label','ttk-field');ufKindRow.append(el('strong','','추가 방식'),ufKind);
+ const ufName=el('input');ufName.type='text';ufName.placeholder='목록에 보일 이름 (비워도 됩니다)';ufName.maxLength=60;
+ const ufFamily=el('input');ufFamily.type='text';ufFamily.placeholder='글꼴 이름(font-family) — 예: Pretendard';ufFamily.maxLength=60;
+ const ufUrl=el('input');ufUrl.type='url';ufUrl.placeholder='https://…';ufUrl.maxLength=500;
+ const ufCode=el('textarea');ufCode.rows=5;ufCode.placeholder="@font-face{font-family:'이름';src:url('https://…/font.woff2') format('woff2');}";ufCode.maxLength=20000;
+ const ufMsg=el('small','ttk-note');ufMsg.setAttribute('role','status');
+ const ufList=el('div','ttk-uf-list');
+ const ufAdd=btn('추가',()=>addUserFont());
+ function ufSync(){const k=ufKind.value;ufFamily.hidden=k==='face';ufUrl.hidden=k==='face';ufCode.hidden=k!=='face';}
+ ufKind.addEventListener('change',ufSync);
+ function refreshFontRows(){for(const r of [font,dialogueFont]){r.rebuild();}}
+ function renderUf(){ufList.replaceChildren();const n=settings.userFonts.length;ufAdd.disabled=n>=USER_FONT_MAX;
+  if(!n){ufList.append(el('small','ttk-note','추가한 글꼴이 없습니다.'));return;}
+  ufList.append(el('small','ttk-note',`추가한 글꼴 ${n}/${USER_FONT_MAX}`));
+  for(const u of settings.userFonts){const r=el('div','ttk-uf-item');const nm=el('span','',u.name);nm.style.setProperty('font-family',FONTS[userFontId(u)]?.family||'inherit','important');
+   const del=btn('삭제',async()=>{if(!await confirmAsk(`"${u.name}" 글꼴을 목록에서 지울까요?`))return;settings.userFonts=settings.userFonts.filter(x=>x.id!==u.id);setUserFonts(settings.userFonts);settings.design=normalizeDesign(settings.design);refreshFontRows();syncControls();renderUf();changed();});
+   r.append(nm,del);ufList.append(r);}}
+ async function addUserFont(){
+  ufMsg.textContent='';
+  if(settings.userFonts.length>=USER_FONT_MAX){ufMsg.textContent=`글꼴은 최대 ${USER_FONT_MAX}개까지 추가할 수 있습니다.`;return;}
+  const k=ufKind.value;const entry={kind:k,name:ufName.value,family:ufFamily.value,url:ufUrl.value.trim(),code:ufCode.value};
+  if(k==='face'&&!sanitizeFontFaceCode(entry.code)){ufMsg.textContent='@font-face 코드를 읽지 못했습니다. font-family와 https 주소의 src가 있는 코드인지 확인해 주세요. (@import와 http 주소는 쓸 수 없습니다)';return;}
+  if(k!=='face'&&!/^https:\/\//i.test(entry.url)){ufMsg.textContent='https:// 로 시작하는 주소를 넣어 주세요.';return;}
+  if(k!=='face'&&!entry.family.trim()){ufMsg.textContent='글꼴 이름(font-family)을 적어 주세요. CSS 주소 방식은 그 CSS 안의 font-family 이름과 같아야 합니다.';return;}
+  const next=normalizeUserFonts([...settings.userFonts,entry]);
+  if(next.length!==settings.userFonts.length+1){ufMsg.textContent=k==='file'?'글꼴 파일 주소는 .woff2 .woff .ttf .otf 로 끝나야 합니다.':'추가하지 못했습니다. 입력한 값을 확인해 주세요.';return;}
+  settings.userFonts=next;setUserFonts(next);const added=next[next.length-1];
+  ufName.value='';ufFamily.value='';ufUrl.value='';ufCode.value='';
+  refreshFontRows();renderUf();save();
+  // 실제로 불러와지는지 확인합니다(저장은 이미 됨).
+  const id=userFontId(added);ufMsg.textContent=`"${added.name}" 추가됨 · 불러오는지 확인 중…`;
+  try{fontPreviewNode(id);await new Promise(r=>setTimeout(r,80));const fam=FONTS[id].family.split(',')[0];await document.fonts?.load?.(`16px ${fam}`,'가나다 Abc');
+   ufMsg.textContent=document.fonts?.check?.(`16px ${fam}`,'가나다 Abc')?`"${added.name}" 추가됨 · 불러오기 확인됨. 위 글꼴 목록의 "내 글꼴"에서 고르세요.`:`"${added.name}" 추가됨 · 하지만 지금은 불러오지 못했습니다. 주소와 글꼴 이름을 확인해 주세요. (목록에서 지울 수 있습니다)`;
+  }catch{ufMsg.textContent=`"${added.name}" 추가됨 · 불러오기를 확인하지 못했습니다. 주소와 글꼴 이름을 확인해 주세요.`;}
+ }
+ ufSection.append(ufKindRow,ufName,ufFamily,ufUrl,ufCode,el('div','ttk-actions'),ufMsg,ufList);ufSection.querySelector('.ttk-actions').append(ufAdd);
+ ufSync();renderUf();controls.append(ufSection);
  const dialogueColorRow=el('label','ttk-color-field ttk-dialogue-color-row');dialogueColorRow.append(el('strong','','대사 글자색'));
  const dialogueColorInput=el('input');dialogueColorInput.type='color';dialogueColorInput.title='현재 테마의 대사 색상';
  dialogueColorInput.addEventListener('input',()=>{settings.design.dialogueColors[settings.design.theme]=dialogueColorInput.value;syncPreview();changed();});
@@ -324,6 +367,15 @@ function build(){
  iconSection.append(el('p','ttk-note','상단·하단의 지원 아이콘을 정돈된 선형 심볼로 교체합니다. 윤곽형은 선만, 부드러운 버튼형은 옅은 바탕, 미니멀형은 작고 옅게 표시합니다. 버튼 기능과 클릭 동작은 유지합니다.'));
  const iconStyleRow=el('label','ttk-field');iconStyleRow.append(el('strong','','아이콘 스타일'));const iconStyle=el('select');for(const [value,label] of [['outline','윤곽형'],['soft','부드러운 버튼형'],['minimal','미니멀형']]){const o=el('option','',label);o.value=value;iconStyle.append(o)}iconStyle.addEventListener('change',()=>{settings.design.iconStyle=iconStyle.value;changed()});iconStyleRow.append(iconStyle);iconSection.append(iconStyleRow);
  const iconToneRow=el('label','ttk-field');iconToneRow.append(el('strong','','아이콘 색상'));const iconTone=el('select');for(const [value,label] of [['neutral','중립색 (기본)'],['accent','테마 강조색']]){const o=el('option','',label);o.value=value;iconTone.append(o)}iconTone.addEventListener('change',()=>{settings.design.iconTone=iconTone.value;changed()});iconToneRow.append(iconTone);iconSection.append(iconToneRow);controls.append(iconSection);
+ // ---- 메시지 버튼 고르기 (v0.24.0) ----
+ const mbSection=el('details','ttk-subsection');mbSection.append(el('summary','','메시지 버튼 고르기'));
+ mbSection.append(el('p','ttk-note','메시지 아래 버튼 중 앞줄에 둘 것을 고릅니다. 켜지 않은 버튼은 ⋯ 안에 접힙니다. 숨기거나 순서를 바꾸지는 않습니다.'));
+ const mbList=el('div','ttk-chips');mbSection.append(mbList);
+ function renderMb(){const cfg=settings.msgButtons;mbList.replaceChildren();const keys=Object.keys(cfg.seen);if(!keys.length){mbList.append(el('small','ttk-note','아직 읽은 버튼이 없습니다. 채팅을 연 뒤 "버튼 다시 읽기"를 눌러 주세요.'));return;}
+  for(const k of keys){const b=el('button','ttk-chip',cfg.seen[k].label);b.type='button';b.title=k;const on=isFront(cfg,k);b.setAttribute('aria-pressed',String(on));b.addEventListener('click',()=>{setFront(cfg,k,!isFront(cfg,k));b.setAttribute('aria-pressed',String(isFront(cfg,k)));changed();});mbList.append(b);}}
+ const mbActions=el('div','ttk-actions');mbActions.append(btn('버튼 다시 읽기',()=>{scanButtons(settings.msgButtons);renderMb();changed();}),btn('기본값으로',()=>{resetFront(settings.msgButtons);renderMb();changed();}));mbSection.append(mbActions);
+ mbSection.addEventListener('toggle',()=>{if(mbSection.open){if(scanButtons(settings.msgButtons))save();renderMb();}});
+ controls.append(mbSection);
  const dropRow=el('label','ttk-field ttk-dropcap-row');const dropCap=el('input');dropCap.type='checkbox';dropCap.addEventListener('change',()=>{settings.design.dropCap=dropCap.checked;changed()});dropRow.append(dropCap,el('span','','Studio 첫 글자 장식(드롭캡)'));controls.append(dropRow);
  const typeRow=el('label','ttk-field ttk-typing-row');const typeBox=el('input');typeBox.type='checkbox';typeBox.addEventListener('change',()=>{settings.design.typing=typeBox.checked;changed()});typeRow.append(typeBox,el('span','','입력 중 표시(AI가 응답을 쓰는 동안 표시)'));controls.append(typeRow);
  function syncPreview(){const d=settings.design,c=d.custom;preview.dataset.theme=d.theme;preview.dataset.porcelainVariant=d.theme==='porcelain'?(c.border.toLowerCase()==='#c5b18a'?'trim':c.accent.toLowerCase()==='#153e82'?'royal':'classic'):'';for(const [key,value] of Object.entries(c))preview.style.setProperty(`--pv-${key}`,value);preview.style.setProperty('--pv-font',FONTS[d.font].family);preview.style.setProperty('--pv-dialogue-font',FONTS[d.dialogueFont].family);preview.style.setProperty('--pv-dialogue-color',d.dialogueColors[d.theme]);preview.style.setProperty('--pv-size',`${d.size}px`);preview.style.setProperty('--pv-line',d.lineHeight);preview.style.setProperty('--pv-tracking',`${d.letterSpacing}px`);preview.style.setProperty('--pv-para',`${d.paragraphSpacing}px`);}

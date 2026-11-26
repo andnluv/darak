@@ -1762,7 +1762,6 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm{width:22px;heigh
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm::before{width:14px;height:14px}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtons{display:flex!important}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtonsHint{display:none!important}
-html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn:not(.ttk-open) :is(.mes_buttons,.extraMesButtons) > :not(.ttk-bm,.mes_copy,.mes_edit,.mes_bookmark,.mes_delete,.ttk-tr-button,.mes_translate,[class*=interpres i],[id*=interpres i],[title*=interpres i],.extraMesButtons,.mes_edit_buttons){display:none!important}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more{all:unset;box-sizing:border-box;flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;color:var(--ttk-muted)}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more::before{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:var(--ttk-ic-dots) center/contain no-repeat;mask:var(--ttk-ic-dots) center/contain no-repeat}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more:hover,html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn.ttk-open .ttk-more{background:var(--ttk-raised);color:var(--ttk-text)}
@@ -1859,3 +1858,10 @@ html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now-eyebrow{letter-spac
 html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now-name{word-break:normal}
 html[data-ttk-theme=paper][data-ttk-photo=lg] body #chat#chat .mes.mes .ttk-now-name{font-size:calc(clamp(17px,5vw,26px) * .9)}
 }
+
+/* v0.24.0: 접힌 버튼 숨김 규칙은 message-buttons.js가 동적으로 만듭니다(display:none 미사용 — 재단사 호환). */
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn{position:relative}
+/* v0.24.0 메시지 버튼 고르기 칩 */
+#ttk-panel .ttk-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+#ttk-panel .ttk-chips .ttk-chip{padding:4px 10px;border-radius:999px;font-size:12px;cursor:pointer;border:1px solid rgba(128,128,128,.4);background:transparent;color:inherit;opacity:.65}
+#ttk-panel .ttk-chips .ttk-chip[aria-pressed=true]{opacity:1;border-color:currentColor;font-weight:700}
