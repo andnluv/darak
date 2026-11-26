@@ -15,7 +15,7 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.24.0';
+const VERSION = '0.24.1';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -305,18 +305,14 @@ function build(){
  const dialogueFont=makeFontRow('대사 폰트','dialogueFont');
  // ---- 내 글꼴 추가 (v0.24.0) ----
  const ufSection=el('details','ttk-subsection');ufSection.append(el('summary','','내 글꼴 추가'));
- ufSection.append(el('p','ttk-note',`웹폰트 주소나 코드를 붙여 넣으면 글꼴 목록의 "내 글꼴"에 생깁니다. 최대 ${USER_FONT_MAX}개. 글꼴 파일은 다락방에 들어 있지 않고, 고른 글꼴만 해당 주소에서 불러옵니다. https 주소만 쓸 수 있습니다.`));
- const ufKind=el('select');for(const [v,l] of [['css','CSS 주소 (Google Fonts 등)'],['face','@font-face 코드'],['file','글꼴 파일 주소 (woff2·woff·ttf·otf)']]){const o=el('option','',l);o.value=v;ufKind.append(o);}
- const ufKindRow=el('label','ttk-field');ufKindRow.append(el('strong','','추가 방식'),ufKind);
- const ufName=el('input');ufName.type='text';ufName.placeholder='목록에 보일 이름 (비워도 됩니다)';ufName.maxLength=60;
- const ufFamily=el('input');ufFamily.type='text';ufFamily.placeholder='글꼴 이름(font-family) — 예: Pretendard';ufFamily.maxLength=60;
- const ufUrl=el('input');ufUrl.type='url';ufUrl.placeholder='https://…';ufUrl.maxLength=500;
- const ufCode=el('textarea');ufCode.rows=5;ufCode.placeholder="@font-face{font-family:'이름';src:url('https://…/font.woff2') format('woff2');}";ufCode.maxLength=20000;
+ ufSection.append(el('p','ttk-note',`웹폰트를 세 칸으로 추가합니다. 세 번째 칸에는 CSS 주소(Google Fonts 등), 글꼴 파일 주소(woff2·woff·ttf·otf), @font-face 코드 중 아무거나 붙여 넣으면 알아서 구분합니다. 최대 ${USER_FONT_MAX}개, https 주소만 쓸 수 있고 고른 글꼴만 불러옵니다.`));
+ const ufField=(title,node)=>{const r=el('label','ttk-field ttk-uf-field');r.append(el('strong','',title),node);return r;};
+ const ufName=el('input');ufName.type='text';ufName.placeholder='예: 부크크 명조';ufName.maxLength=60;
+ const ufFamily=el('input');ufFamily.type='text';ufFamily.placeholder='예: BookkMyungjo (@font-face 코드면 비워도 됩니다)';ufFamily.maxLength=60;
+ const ufSrc=el('textarea');ufSrc.rows=5;ufSrc.placeholder="https://…  또는  @font-face{font-family:'이름';src:url('https://…/font.woff2') format('woff2');}";ufSrc.maxLength=20000;
  const ufMsg=el('small','ttk-note');ufMsg.setAttribute('role','status');
  const ufList=el('div','ttk-uf-list');
  const ufAdd=btn('추가',()=>addUserFont());
- function ufSync(){const k=ufKind.value;ufFamily.hidden=k==='face';ufUrl.hidden=k==='face';ufCode.hidden=k!=='face';}
- ufKind.addEventListener('change',ufSync);
  function refreshFontRows(){for(const r of [font,dialogueFont]){r.rebuild();}}
  function renderUf(){ufList.replaceChildren();const n=settings.userFonts.length;ufAdd.disabled=n>=USER_FONT_MAX;
   if(!n){ufList.append(el('small','ttk-note','추가한 글꼴이 없습니다.'));return;}
@@ -327,23 +323,25 @@ function build(){
  async function addUserFont(){
   ufMsg.textContent='';
   if(settings.userFonts.length>=USER_FONT_MAX){ufMsg.textContent=`글꼴은 최대 ${USER_FONT_MAX}개까지 추가할 수 있습니다.`;return;}
-  const k=ufKind.value;const entry={kind:k,name:ufName.value,family:ufFamily.value,url:ufUrl.value.trim(),code:ufCode.value};
-  if(k==='face'&&!sanitizeFontFaceCode(entry.code)){ufMsg.textContent='@font-face 코드를 읽지 못했습니다. font-family와 https 주소의 src가 있는 코드인지 확인해 주세요. (@import와 http 주소는 쓸 수 없습니다)';return;}
-  if(k!=='face'&&!/^https:\/\//i.test(entry.url)){ufMsg.textContent='https:// 로 시작하는 주소를 넣어 주세요.';return;}
-  if(k!=='face'&&!entry.family.trim()){ufMsg.textContent='글꼴 이름(font-family)을 적어 주세요. CSS 주소 방식은 그 CSS 안의 font-family 이름과 같아야 합니다.';return;}
-  const next=normalizeUserFonts([...settings.userFonts,entry]);
-  if(next.length!==settings.userFonts.length+1){ufMsg.textContent=k==='file'?'글꼴 파일 주소는 .woff2 .woff .ttf .otf 로 끝나야 합니다.':'추가하지 못했습니다. 입력한 값을 확인해 주세요.';return;}
+  const src=ufSrc.value.trim();
+  if(!src){ufMsg.textContent='세 번째 칸에 주소나 @font-face 코드를 넣어 주세요.';return;}
+  const kind=/@font-face/i.test(src)?'face':/^https:\/\/[^\s]+$/i.test(src)?(/\.(woff2|woff|ttf|otf)$/i.test(src.split(/[?#]/)[0])?'file':'css'):'';
+  if(!kind){ufMsg.textContent='https:// 로 시작하는 주소 한 줄이거나 @font-face 코드여야 합니다. (http 주소, @import는 쓸 수 없습니다)';return;}
+  if(kind==='face'&&!sanitizeFontFaceCode(src)){ufMsg.textContent='@font-face 코드를 읽지 못했습니다. font-family와 https 주소의 src가 있는지 확인해 주세요.';return;}
+  if(kind!=='face'&&!ufFamily.value.trim()){ufMsg.textContent='글꼴 이름(font-family)을 적어 주세요. 주소 안의 CSS에 적힌 font-family 이름과 같아야 합니다.';return;}
+  const next=normalizeUserFonts([...settings.userFonts,{kind,name:ufName.value,family:ufFamily.value,url:src,code:src}]);
+  if(next.length!==settings.userFonts.length+1){ufMsg.textContent='추가하지 못했습니다. 입력한 값을 확인해 주세요.';return;}
   settings.userFonts=next;setUserFonts(next);const added=next[next.length-1];
-  ufName.value='';ufFamily.value='';ufUrl.value='';ufCode.value='';
+  ufName.value='';ufFamily.value='';ufSrc.value='';
   refreshFontRows();renderUf();save();
-  // 실제로 불러와지는지 확인합니다(저장은 이미 됨).
   const id=userFontId(added);ufMsg.textContent=`"${added.name}" 추가됨 · 불러오는지 확인 중…`;
   try{fontPreviewNode(id);await new Promise(r=>setTimeout(r,80));const fam=FONTS[id].family.split(',')[0];await document.fonts?.load?.(`16px ${fam}`,'가나다 Abc');
    ufMsg.textContent=document.fonts?.check?.(`16px ${fam}`,'가나다 Abc')?`"${added.name}" 추가됨 · 불러오기 확인됨. 위 글꼴 목록의 "내 글꼴"에서 고르세요.`:`"${added.name}" 추가됨 · 하지만 지금은 불러오지 못했습니다. 주소와 글꼴 이름을 확인해 주세요. (목록에서 지울 수 있습니다)`;
   }catch{ufMsg.textContent=`"${added.name}" 추가됨 · 불러오기를 확인하지 못했습니다. 주소와 글꼴 이름을 확인해 주세요.`;}
  }
- ufSection.append(ufKindRow,ufName,ufFamily,ufUrl,ufCode,el('div','ttk-actions'),ufMsg,ufList);ufSection.querySelector('.ttk-actions').append(ufAdd);
- ufSync();renderUf();controls.append(ufSection);
+ const ufActions=el('div','ttk-actions');ufActions.append(ufAdd);
+ ufSection.append(ufField('표시명',ufName),ufField('글꼴 이름 (font-family)',ufFamily),ufField('주소 또는 CSS 코드',ufSrc),ufActions,ufMsg,ufList);
+ renderUf();controls.append(ufSection);
  const dialogueColorRow=el('label','ttk-color-field ttk-dialogue-color-row');dialogueColorRow.append(el('strong','','대사 글자색'));
  const dialogueColorInput=el('input');dialogueColorInput.type='color';dialogueColorInput.title='현재 테마의 대사 색상';
  dialogueColorInput.addEventListener('input',()=>{settings.design.dialogueColors[settings.design.theme]=dialogueColorInput.value;syncPreview();changed();});
@@ -370,9 +368,9 @@ function build(){
  // ---- 메시지 버튼 고르기 (v0.24.0) ----
  const mbSection=el('details','ttk-subsection');mbSection.append(el('summary','','메시지 버튼 고르기'));
  mbSection.append(el('p','ttk-note','메시지 아래 버튼 중 앞줄에 둘 것을 고릅니다. 켜지 않은 버튼은 ⋯ 안에 접힙니다. 숨기거나 순서를 바꾸지는 않습니다.'));
- const mbList=el('div','ttk-chips');mbSection.append(mbList);
+ const mbList=el('div','ttk-chips');mbSection.append(mbList,el('p','ttk-note','"재단사 불가"는 ST 재단사가 읽는 버튼 줄(⋯ 안쪽) 밖에 있는 버튼입니다. 재단사 자체의 수집 방식 때문이라 다락방에서는 바꿀 수 없습니다.'));
  function renderMb(){const cfg=settings.msgButtons;mbList.replaceChildren();const keys=Object.keys(cfg.seen);if(!keys.length){mbList.append(el('small','ttk-note','아직 읽은 버튼이 없습니다. 채팅을 연 뒤 "버튼 다시 읽기"를 눌러 주세요.'));return;}
-  for(const k of keys){const b=el('button','ttk-chip',cfg.seen[k].label);b.type='button';b.title=k;const on=isFront(cfg,k);b.setAttribute('aria-pressed',String(on));b.addEventListener('click',()=>{setFront(cfg,k,!isFront(cfg,k));b.setAttribute('aria-pressed',String(isFront(cfg,k)));changed();});mbList.append(b);}}
+  for(const k of keys){const b=el('button','ttk-chip',cfg.seen[k].label);b.type='button';b.title=cfg.seen[k].ext===false?`${k} · ST 재단사는 이 버튼을 읽지 못합니다(⋯ 안쪽 줄 밖에 있음)`:k;if(cfg.seen[k].ext===false)b.append(el('small','ttk-chip-note',' · 재단사 불가'));const on=isFront(cfg,k);b.setAttribute('aria-pressed',String(on));b.addEventListener('click',()=>{setFront(cfg,k,!isFront(cfg,k));b.setAttribute('aria-pressed',String(isFront(cfg,k)));changed();});mbList.append(b);}}
  const mbActions=el('div','ttk-actions');mbActions.append(btn('버튼 다시 읽기',()=>{scanButtons(settings.msgButtons);renderMb();changed();}),btn('기본값으로',()=>{resetFront(settings.msgButtons);renderMb();changed();}));mbSection.append(mbActions);
  mbSection.addEventListener('toggle',()=>{if(mbSection.open){if(scanButtons(settings.msgButtons))save();renderMb();}});
  controls.append(mbSection);
@@ -381,8 +379,8 @@ function build(){
  function syncPreview(){const d=settings.design,c=d.custom;preview.dataset.theme=d.theme;preview.dataset.porcelainVariant=d.theme==='porcelain'?(c.border.toLowerCase()==='#c5b18a'?'trim':c.accent.toLowerCase()==='#153e82'?'royal':'classic'):'';for(const [key,value] of Object.entries(c))preview.style.setProperty(`--pv-${key}`,value);preview.style.setProperty('--pv-font',FONTS[d.font].family);preview.style.setProperty('--pv-dialogue-font',FONTS[d.dialogueFont].family);preview.style.setProperty('--pv-dialogue-color',d.dialogueColors[d.theme]);preview.style.setProperty('--pv-size',`${d.size}px`);preview.style.setProperty('--pv-line',d.lineHeight);preview.style.setProperty('--pv-tracking',`${d.letterSpacing}px`);preview.style.setProperty('--pv-para',`${d.paragraphSpacing}px`);}
  
  const actions=el('div','ttk-actions');actions.append(btn('현재 테마 초기화',()=>{settings.design=resetPalette(settings.design,settings.design.theme);syncControls();changed();}));
- actions.append(btn('설정 내보내기',()=>{const payload={format:'darak-design',version:4,design:settings.design};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='darak-design-v4.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}));
- const upload=el('input');upload.type='file';upload.accept='.json,application/json';upload.hidden=true;actions.append(btn('설정 가져오기',()=>upload.click()),upload);upload.addEventListener('change',async()=>{const file=upload.files?.[0];if(!file)return;try{if(file.size>100000)throw Error('100KB 이하 JSON만 지원합니다.');const value=JSON.parse(await file.text());if(!['darak-design','tavern-toolkit-design'].includes(value.format)||![1,2,3,4].includes(value.version)||typeof value.design!=='object')throw Error('호환되지 않는 형식입니다.');settings.design=normalizeDesign(value.design);changed();const replacement=build();openDrawer(replacement);replacement.querySelector('#ttk-theme-section').open=true;root.replaceWith(replacement);}catch(error){globalThis.toastr?.error?.(`설정 가져오기 실패: ${error.message}`,'다락방');}finally{upload.value='';}});controls.append(actions);
+ actions.append(btn('설정 내보내기',()=>{const payload={format:'darak-design',version:5,design:settings.design,userFonts:settings.userFonts,msgButtons:settings.msgButtons};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='darak-design-v5.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}));
+ const upload=el('input');upload.type='file';upload.accept='.json,application/json';upload.hidden=true;actions.append(btn('설정 가져오기',()=>upload.click()),upload);upload.addEventListener('change',async()=>{const file=upload.files?.[0];if(!file)return;try{if(file.size>300000)throw Error('300KB 이하 JSON만 지원합니다.');const value=JSON.parse(await file.text());if(!['darak-design','tavern-toolkit-design'].includes(value.format)||![1,2,3,4,5].includes(value.version)||typeof value.design!=='object')throw Error('호환되지 않는 형식입니다.');if(Array.isArray(value.userFonts)){settings.userFonts=normalizeUserFonts(value.userFonts);setUserFonts(settings.userFonts);}if(value.msgButtons&&typeof value.msgButtons==='object')settings.msgButtons=normalizeMsgButtons(value.msgButtons);settings.design=normalizeDesign(value.design);changed();const replacement=build();openDrawer(replacement);replacement.querySelector('#ttk-theme-section').open=true;root.replaceWith(replacement);}catch(error){globalThis.toastr?.error?.(`설정 가져오기 실패: ${error.message}`,'다락방');}finally{upload.value='';}});controls.append(actions);
  function syncControls(){for(const [id,b] of themeButtons)b.setAttribute('aria-pressed',String(id===settings.design.theme));themeDesc.textContent=`${THEMES[settings.design.theme].name} — ${THEMES[settings.design.theme].description}`;font.value=settings.design.font;dialogueFont.value=settings.design.dialogueFont;dialogueColorInput.value=settings.design.dialogueColors[settings.design.theme];font.updateStatus();dialogueFont.updateStatus();for(const [key,input] of Object.entries(colorInputs))input.value=settings.design.custom[key];iconStyle.value=settings.design.iconStyle;iconTone.value=settings.design.iconTone;dropCap.checked=settings.design.dropCap!==false;typeBox.checked=settings.design.typing!==false;renderPaletteChips();sliders.replaceChildren();slider(sliders,'글자 크기','size',10,23,1,v=>`${v}px`,syncPreview);slider(sliders,'줄간격','lineHeight',1.4,2.4,.05,v=>Number(v).toFixed(2),syncPreview);slider(sliders,'자간','letterSpacing',-.6,1.8,.1,v=>`${Number(v).toFixed(1)}px`,syncPreview);slider(sliders,'문단 간격','paragraphSpacing',0,32,1,v=>`${v}px`,syncPreview);syncPreview();}
  // ---- 묶음: 채팅 보조 / 화면 / 도구 ----
  {const groups=[['채팅 보조','번역 · 대필 · 프로필 사진',[['translation','ttk-translation-section'],['ghostwrite','ttk-ghostwrite-section'],['avatars','ttk-avatars-section']],['ttk-glossary-section']],['화면','디자인 · 한글화 · 테마 이미지 · 모바일 최적화',[['design','ttk-theme-section'],['localization','ttk-localization-section'],['themeImages','ttk-themeimg-section'],['optimization','ttk-optimization-section']],[]],['도구','QR 보관함 · 통합 조회 · 이미지 모아보기',[['qr','ttk-qr-section'],['inventory','ttk-inventory-section'],['gallery','ttk-gallery-section']],[]]];

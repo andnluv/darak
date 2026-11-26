@@ -26,6 +26,9 @@ v0.3.14부터 이 확장은 **폰트 파일을 하나도 포함하지 않습니�
 | 고운바탕 | Google Fonts | Google Fonts 최신 |
 | 북엔드 바탕 (R·SB) | jsDelivr · `projectnoonnu/2410-2` | `1.0` |
 | HS활공명조 | jsDelivr · `projectnoonnu/2604-1` | `1.0` |
+| 부크크 명조 (Lt·Bd), 부크크 고딕 (Lt·Bd) | jsDelivr · `projectnoonnu/noonfonts_2302` | `1.0` |
+| 조선굴림체 | jsDelivr · `projectnoonnu/noonfonts_20-04` | `1.0` |
+| 갈무리14 | jsDelivr · `projectnoonnu/2506-1` | `1.0` |
 | G마켓 산스 (L·M·B) | jsDelivr · `projectnoonnu/noonfonts_2001` | `1.1` |
 | 카페24 써라운드에어 | jsDelivr · `projectnoonnu/noonfonts_2105_2` | `1.0` |
 | 레벨업 (400·700·이탤릭 400) | jsDelivr · `Project-Noonnu/2610132210` | 태그 `levelup-regular`·`levelup-italic` |

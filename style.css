@@ -1865,3 +1865,7 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn{position:relative}
 #ttk-panel .ttk-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 #ttk-panel .ttk-chips .ttk-chip{padding:4px 10px;border-radius:999px;font-size:12px;cursor:pointer;border:1px solid rgba(128,128,128,.4);background:transparent;color:inherit;opacity:.65}
 #ttk-panel .ttk-chips .ttk-chip[aria-pressed=true]{opacity:1;border-color:currentColor;font-weight:700}
+#ttk-panel .ttk-uf-field{margin-top:8px}
+#ttk-panel .ttk-uf-list{display:grid;gap:4px;margin-top:8px}
+#ttk-panel .ttk-uf-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--ttk-border,rgba(128,128,128,.25))}
+#ttk-panel .ttk-chip-note{font-size:10px;opacity:.7}

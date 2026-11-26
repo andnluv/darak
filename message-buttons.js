@@ -16,7 +16,7 @@ export function normalizeMsgButtons(raw){
  const seen={};
  if(raw?.seen&&typeof raw.seen==='object')for(const [k,v] of Object.entries(raw.seen).slice(0,MAX_SEEN)){
   if(typeof k!=='string'||k.length>120)continue;
-  seen[k]={label:clean(v?.label)||k,def:v?.def===true};
+  seen[k]={label:clean(v?.label)||k,def:v?.def===true,ext:v?.ext!==false};
  }
  return {front,seen};
 }
@@ -29,7 +29,8 @@ export function keyOf(node){
  if(t)return `[title="${t.replace(/["\\]/g,'')}"]`;
  return '';
 }
-const labelOf=(node,key)=>clean(node.getAttribute('title')||node.getAttribute('aria-label'))||clean(node.textContent)||key.replace(/^[.#]/,'');
+const KNOWN={'.mes_edit':'편집','.mes_bookmark':'체크포인트 표시','.mes_copy':'복사','.mes_translate':'번역','.mes_narrate':'나레이션','.mes_hide':'메시지 숨기기','.mes_unhide':'메시지 보이기','.mes_create_bookmark':'체크포인트 만들기','.mes_create_branch':'분기 생성'};
+const labelOf=(node,key)=>clean(node.getAttribute('title')||node.getAttribute('aria-label'))||clean(node.textContent)||KNOWN[key]||key.replace(/^[.#]/,'');
 // 현재 화면에 있는 메시지 버튼을 훑어 목록(seen)에 더합니다. 바뀐 것이 있으면 true.
 export function scanButtons(cfg){
  let dirty=false;
@@ -39,9 +40,10 @@ export function scanButtons(cfg){
   const key=keyOf(n);if(!key)continue;
   const def=DEFAULT_FRONT.some(s=>{try{return n.matches(s)}catch{return false}});
   const label=labelOf(n,key);
+  const ext=!!n.closest('.extraMesButtons');
   const prev=cfg.seen[key];
-  if(!prev){if(Object.keys(cfg.seen).length>=MAX_SEEN)continue;cfg.seen[key]={label,def};dirty=true;}
-  else if(prev.label!==label&&label){prev.label=label;dirty=true;}
+  if(!prev){if(Object.keys(cfg.seen).length>=MAX_SEEN)continue;cfg.seen[key]={label,def,ext};dirty=true;}
+  else{if(prev.label!==label&&label){prev.label=label;dirty=true;}if(prev.ext!==ext){prev.ext=ext;dirty=true;}}
  }
  return dirty;
 }
