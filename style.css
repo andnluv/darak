@@ -79,17 +79,17 @@ html[data-ttk-theme] #chat{background:var(--ttk-bg)!important;color:var(--ttk-te
 html[data-ttk-theme] #chat .mes{background:var(--ttk-ai)!important;color:var(--ttk-text)!important;border:1px solid var(--ttk-border)!important;border-radius:13px!important;margin:12px auto!important;max-width:100%;padding:12px 17px!important;box-shadow:0 3px 10px var(--ttk-shadow)!important}
 html[data-ttk-theme] #chat .mes[is_user="true"]{background:var(--ttk-user)!important}
 html[data-ttk-theme] #chat .mes[is_user="false"]{background:var(--ttk-ai)!important}
-html[data-ttk-theme] #chat :is(.mes_text,.mes_text p,.mes_text li,.mes_text blockquote){font-family:var(--ttk-font)!important;font-size:var(--ttk-size)!important;line-height:var(--ttk-line)!important;letter-spacing:var(--ttk-tracking)!important;color:var(--ttk-text)!important;overflow-wrap:anywhere}
+html[data-ttk-theme] #chat :is(:is(.mes_text,.ttk-tr-text),:is(.mes_text,.ttk-tr-text) p,:is(.mes_text,.ttk-tr-text) li,:is(.mes_text,.ttk-tr-text) blockquote){font-family:var(--ttk-font)!important;font-size:var(--ttk-size)!important;line-height:var(--ttk-line)!important;letter-spacing:var(--ttk-tracking)!important;color:var(--ttk-text)!important;overflow-wrap:anywhere}
 html[data-ttk-theme] #chat .mes_text{max-width:100%;margin-inline:0}
-html[data-ttk-theme] #chat .mes_text p{margin:0 0 var(--ttk-para)!important}
-html[data-ttk-theme] #chat .mes_text p:last-child{margin-bottom:0!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) p{margin:0 0 var(--ttk-para)!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) p:last-child{margin-bottom:0!important}
 /* Separate dialogue and narration faces, wrapping only complete quoted text segments. */
-html[data-ttk-theme] #chat .mes_text .ttk-dialogue{font-family:var(--ttk-dialogueFont)!important;font-size:inherit!important;font-style:inherit!important;letter-spacing:inherit!important}
-html[data-ttk-theme] #chat .mes_text q{font-family:var(--ttk-dialogueFont)!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) .ttk-dialogue{font-family:var(--ttk-dialogueFont)!important;font-size:inherit!important;font-style:inherit!important;letter-spacing:inherit!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) q{font-family:var(--ttk-dialogueFont)!important}
 
 html[data-ttk-theme] #chat :is(.name_text,.ch_name,.mes_name){color:var(--ttk-accent)!important;font-weight:700!important}
 html[data-ttk-theme] #chat :is(.mesIDDisplay,.mes_timer,.tokenCounterDisplay){color:var(--ttk-muted)!important}
-html[data-ttk-theme] #chat .mes_text :is(blockquote,pre){background:var(--ttk-raised)!important;border-left:2px solid var(--ttk-accent)!important;border-radius:4px;padding:8px 12px}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(blockquote,pre){background:var(--ttk-raised)!important;border-left:2px solid var(--ttk-accent)!important;border-radius:4px;padding:8px 12px}
 html[data-ttk-theme] #chat .mes_text a{color:var(--ttk-accent)}
 /* Composer, action buttons, option controls. */
 html[data-ttk-theme] :is(#send_form,#send_form_holder,#send_textarea_wrapper){background:var(--ttk-surface)!important;border-color:var(--ttk-border)!important;color:var(--ttk-text)!important}
@@ -113,7 +113,7 @@ html[data-ttk-theme=paper] #send_form{border-top:1px solid var(--ttk-border)!imp
 /* Nocturne: restrained side-accent and low-glare cards. */
 html[data-ttk-theme=nocturne] #chat .mes{border:1px solid var(--ttk-border)!important;border-left:3px solid var(--ttk-accent)!important;border-radius:4px 13px 13px 4px!important}
 html[data-ttk-theme=nocturne] #chat .mes[is_user=true]{border-left-color:var(--ttk-muted)!important}
-html[data-ttk-theme=nocturne] #chat .mes_text :is(em,i){color:#C4CEE0}
+html[data-ttk-theme=nocturne] #chat :is(.mes_text,.ttk-tr-text) :is(em,i){color:#C4CEE0}
 /* Studio: softened application cards, crisp sans serif layout. */
 html[data-ttk-theme=studio] #chat .mes{border-radius:16px!important;box-shadow:0 4px 17px var(--ttk-shadow)!important}
 html[data-ttk-theme=studio] #chat .mes[is_user=true]{max-width:100%;width:100%;box-sizing:border-box}
@@ -149,7 +149,7 @@ html[data-ttk-theme] #chat :is(.mes_edit_buttons,.mes_edit_buttons *, .mes_butto
 html[data-ttk-theme] #chat :is(.mes_edit_buttons,.mes_button,.mes_edit){color:var(--ttk-muted)!important}
 html[data-ttk-theme] #chat :is(.mes_edit_buttons,.mes_button,.mes_edit):hover{color:var(--ttk-text)!important}
 /* Native text rendering: no synthetic shadows or blurred glyph treatments. */
-html[data-ttk-theme] #chat .mes_text,html[data-ttk-theme] #chat .mes_text *{text-shadow:none!important;filter:none!important;-webkit-filter:none!important;font-synthesis:none;text-rendering:optimizeLegibility}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text),html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) *{text-shadow:none!important;filter:none!important;-webkit-filter:none!important;font-synthesis:none;text-rendering:optimizeLegibility}
 #ttk-panel .ttk-palette-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
 #ttk-panel .ttk-palette-chip{display:flex;flex-direction:column;gap:5px;align-items:stretch;padding:5px!important;min-width:0}
 #ttk-panel .ttk-palette-chip-swatch{display:block;height:23px;border:1px solid #8886;border-radius:4px}
@@ -174,7 +174,7 @@ html[data-ttk-theme=porcelain] #chat .mes::before{
   border-radius:0 5px 0 0;opacity:.7;
 }
 html[data-ttk-theme=porcelain] #chat .mes[is_user=true]::before{right:auto;left:9px;border-right:0;border-left:1px solid var(--ttk-accent);border-radius:5px 0 0 0}
-html[data-ttk-theme=porcelain] #chat .mes_text{color:var(--ttk-text)!important}
+html[data-ttk-theme=porcelain] #chat :is(.mes_text,.ttk-tr-text){color:var(--ttk-text)!important}
 html[data-ttk-theme=porcelain] #chat :is(.mes_edit_buttons,.mes_button,.mes_edit){border-radius:5px!important;color:var(--ttk-muted)!important;background:transparent!important;box-shadow:none!important;opacity:1!important}
 html[data-ttk-theme=porcelain] :is(#top-bar,#top-settings-holder,#top-settings){
   background:var(--ttk-surface)!important;
@@ -279,10 +279,10 @@ html[data-ttk-theme] #chat .mes_reasoning{
 #ttk-panel .ttk-palette-chip {align-items:center!important;justify-content:center!important;min-height:54px}
 #ttk-panel .ttk-dialogue-color-row {padding:6px 0;border-top:1px solid var(--ttk-border,#bbb)}
 /* Keep dialogue colour independent of accent, font face, and the underlying theme. */
-html[data-ttk-theme] #chat .mes_text .ttk-dialogue,
-html[data-ttk-theme] #chat .mes_text .ttk-dialogue *,
-html[data-ttk-theme] #chat .mes_text q,
-html[data-ttk-theme] #chat .mes_text q * {color:var(--ttk-dialogue)!important;-webkit-text-fill-color:var(--ttk-dialogue)!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) .ttk-dialogue,
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) .ttk-dialogue *,
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) q,
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) q * {color:var(--ttk-dialogue)!important;-webkit-text-fill-color:var(--ttk-dialogue)!important}
 #ttk-panel .ttk-mini-preview .ttk-preview-message .ttk-preview-dialogue {color:var(--pv-dialogue-color)!important;-webkit-text-fill-color:var(--pv-dialogue-color)!important}
 /* Menu coverage: only common SillyTavern widgets; preserve interaction and native disabled semantics.
    Do not blanket force all descendants to white, and do not recolour SVG fills. */
@@ -775,10 +775,10 @@ html[data-ttk-theme][data-ttk-icon-style=minimal] #send_form :is(#leftSendForm,#
 /* 3. Chat details the palette did not reach. */
 html[data-ttk-theme] #chat .mes .timestamp,
 html[data-ttk-theme] #chat .mes :is(.mesIDDisplay,.mes_timer,.tokenCounterDisplay) {color:var(--ttk-muted)!important;opacity:1!important;text-shadow:none!important}
-html[data-ttk-theme] #chat .mes_text :is(em,i) {color:var(--ttk-muted)}
-html[data-ttk-theme] #chat .mes_text u {color:var(--ttk-accent)}
-html[data-ttk-theme] #chat .mes_text :is(strong,b) {color:inherit}
-html[data-ttk-theme] #chat .mes_text hr {border:0;border-top:1px solid var(--ttk-border);opacity:1}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(em,i) {color:var(--ttk-muted)}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) u {color:var(--ttk-accent)}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(strong,b) {color:inherit}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) hr {border:0;border-top:1px solid var(--ttk-border);opacity:1}
 /* Inline code is a quiet chip in palette colours. */
 html[data-ttk-theme] #chat code:not(.hljs) {
   background:var(--ttk-raised)!important;color:var(--ttk-text)!important;border:1px solid var(--ttk-border)!important;
@@ -787,10 +787,10 @@ html[data-ttk-theme] #chat code:not(.hljs) {
 /* A code block is one box: the <pre> no longer wears the blockquote frame around the <code>. */
 html[data-ttk-theme] #chat .mes_text pre {background:transparent!important;border:0!important;border-left:0!important;padding:0!important;margin:0 0 var(--ttk-para)}
 html[data-ttk-theme] #chat :is(.mes_text,.mes_reasoning) pre code {display:block;padding:12px 14px!important;border-radius:8px!important;border:1px solid var(--ttk-border)!important;line-height:1.55!important;font-size:.88em}
-html[data-ttk-theme] #chat .mes_text blockquote {margin-inline:0}
-html[data-ttk-theme] #chat .mes_text table {border-collapse:collapse}
-html[data-ttk-theme] #chat .mes_text :is(th,td) {border:1px solid var(--ttk-border)!important;padding:5px 9px}
-html[data-ttk-theme] #chat .mes_text th {background:var(--ttk-raised)}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) blockquote {margin-inline:0}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) table {border-collapse:collapse}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(th,td) {border:1px solid var(--ttk-border)!important;padding:5px 9px}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) th {background:var(--ttk-raised)}
 html[data-ttk-theme] #chat .mes_reasoning {border-radius:0 0 6px 6px}
 html[data-ttk-theme] #chat .mes_reasoning :is(p,li,em,i) {color:var(--ttk-muted)!important}
 /* Sliders: a thin palette track with an accent ring, instead of the native black bar. */
@@ -1232,11 +1232,11 @@ dialog.ttk-ask .ttk-ask-danger{background:#c0392b}
 /* ===== v0.11.0 · 글꼴 우선 적용 =====
    다른 확장(예: 글꼴 관리 확장)이 `html body :not(...)` 같은 높은 우선순위로 글꼴을 !important 로 강제해도
    도구함의 글꼴 설정이 이기도록 id 를 겹쳐 우선순위를 올립니다. */
-html[data-ttk-theme] body #chat#chat .mes .mes_text,
-html[data-ttk-theme] body #chat#chat .mes .mes_text :is(p,li,blockquote,h1,h2,h3,h4,h5,h6,span,em,strong,b,u,s,del,a,div,td,th){font-family:var(--ttk-font)!important}
-html[data-ttk-theme] body #chat#chat .mes .mes_text :is(.ttk-dialogue,.ttk-dialogue *,q,q *){font-family:var(--ttk-dialogueFont)!important}
-html[data-ttk-theme] body #chat#chat .mes .mes_text :is(code,pre,pre *,kbd,samp,.hljs,.hljs *,i[class*="fa-"]){font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"D2Coding",monospace!important}
-html[data-ttk-theme] body #chat#chat .mes .mes_text i[class*="fa-"]{font-family:"Font Awesome 6 Free","Font Awesome 6 Brands"!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text),
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote,h1,h2,h3,h4,h5,h6,span,em,strong,b,u,s,del,a,div,td,th){font-family:var(--ttk-font)!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,.ttk-dialogue *,q,q *){font-family:var(--ttk-dialogueFont)!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(code,pre,pre *,kbd,samp,.hljs,.hljs *,i[class*="fa-"]){font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"D2Coding",monospace!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) i[class*="fa-"]{font-family:"Font Awesome 6 Free","Font Awesome 6 Brands"!important}
 html[data-ttk-theme] body #chat#chat .ttk-tr-text :is(p,li,blockquote,span,em,strong){font-family:var(--ttk-font)!important}
 html[data-ttk-theme] body #chat#chat .ttk-tr-text .ttk-dialogue{font-family:var(--ttk-dialogueFont)!important}
 html[data-ttk-theme] body #send_textarea#send_textarea{font-family:var(--ttk-font)!important}
@@ -1279,11 +1279,11 @@ html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper .avatar{position:rel
 html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper .avatar img{width:100%!important;height:100%!important;object-fit:cover;object-position:center 20%;display:block;border-radius:inherit!important;filter:none!important}
 html[data-ttk-theme] body #chat#chat .mes .mes_block{grid-column:2;grid-row:1;min-width:0;width:auto!important;margin:0!important;padding:0!important}
 html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper :is(.mesIDDisplay,.mes_timer){display:none!important}
-html[data-ttk-theme] body #chat#chat .mes .mes_text :is(p,li,blockquote){text-align:justify;word-break:normal;overflow-wrap:break-word!important;hyphens:manual}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote){text-align:justify;word-break:normal;overflow-wrap:break-word!important;hyphens:manual}
 html[data-ttk-theme] body #chat#chat .mes .ch_name{margin:0 0 10px!important;padding:0!important;border:0!important}
 html[data-ttk-theme] body #chat#chat .mes .ch_name .name_text{font-size:14px!important}
 html[data-ttk-theme] body #chat#chat .mes .ch_name .timestamp{font-size:11px;color:var(--ttk-muted)!important;opacity:1}
-html[data-ttk-theme] body #chat#chat .mes .mes_text .ttk-dialogue{background:var(--ttk-dialogueBg);border-radius:3px;padding:.04em .28em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-dialogue{background:var(--ttk-dialogueBg);border-radius:3px;padding:.04em .28em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 /* 하단 줄 */
 html[data-ttk-theme] body #chat#chat .mes .ttk-foot{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:9px;border-top:1px solid var(--ttk-border);min-height:28px}
 html[data-ttk-theme] body #chat#chat .mes .ttk-foot-nav{display:flex;align-items:center;gap:2px;flex:0 0 auto}
@@ -1306,10 +1306,10 @@ html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(150px,3
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name{flex:0 0 auto;margin-bottom:14px!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_reasoning_details,.mes_media_wrapper,.mes_file_wrapper){flex:0 0 auto}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text{flex:1 1 auto;min-height:0;padding:0!important;max-height:none!important;-webkit-mask:none!important;mask:none!important}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text p{text-indent:1em}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text :is(p,li,blockquote){word-break:normal;text-justify:auto}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) p{text-indent:1em}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote){word-break:normal;text-justify:auto}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{overflow:hidden;isolation:isolate}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text :is(p,li,blockquote){break-inside:auto}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote){break-inside:auto}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-foot{flex:0 0 auto;margin-top:10px}
 @media(max-width:600px){
  :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{padding:14px 14px 8px 14px!important}
@@ -1328,7 +1328,7 @@ html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper .avatar im
 html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{grid-column:2;grid-row:2/4;margin-left:22px!important;padding-left:22px!important;border-left:1px solid var(--ttk-border)}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .ch_name > .flex-container:first-child{display:none!important}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .ch_name{margin:0!important}
-html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_text p{text-indent:1em}
+html[data-ttk-theme=porcelain] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) p{text-indent:1em}
 html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-foot{border-top:3px double var(--ttk-border)}
 @media(max-width:600px){html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{margin-left:12px!important;padding-left:12px!important}}
 
@@ -1354,6 +1354,7 @@ html[data-ttk-theme] body #chat#chat .mes .ttk-foot{flex-wrap:wrap;row-gap:6px}
 html[data-ttk-theme] body #chat#chat .mes .ttk-foot .mes_buttons{flex-wrap:nowrap}
 /* 캡션·스텁·페이지 버튼 글꼴: 다른 확장이 글꼴을 강제해도 테마 글꼴 유지 */
 html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes .mes_text > p:first-of-type::first-letter{font-family:var(--ttk-font)!important}
+html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes.ttk-tr-replace:not(.ttk-tr-original) .ttk-tr-text > p:first-of-type::first-letter{float:left;font:700 3.2em/.86 var(--ttk-font)!important;color:var(--ttk-accent);margin:.08em .12em 0 0}
 
 /* ── v0.15 · Porcelain: 꽃잎 띠를 안쪽 테두리선 안에 가운데 정렬, 제호 정렬 ── */
 html[data-ttk-theme=porcelain] body #chat#chat .mes{padding-top:calc(var(--ttk-pad) + 30px)!important}
@@ -1374,7 +1375,7 @@ html[data-ttk-theme] body #chat#chat .mes .ttk-poster{display:none}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper .avatar{position:relative;flex:0 0 auto;width:74%!important;height:auto!important;aspect-ratio:auto!important;border-radius:0!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name .timestamp{display:none!important}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name .name_text{font-size:16px!important;color:var(--ttk-text)!important}
-:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text .ttk-dialogue{font-weight:700}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-dialogue{font-weight:700}
 :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-foot .tokenCounterDisplay{display:none!important}
 @media(max-width:600px){:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{padding:22px 0 14px!important;gap:12px!important}}
 
@@ -1508,8 +1509,8 @@ html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(1){width:44px}ht
 @media(prefers-reduced-motion:reduce){html[data-ttk-theme] #chat :is(.ttk-typing,.ttk-typing-motif i){animation:none!important}html[data-ttk-theme] #chat .ttk-typing-motif i{opacity:.7}}
 
 /* v0.19.1 한글은 단어(띄어쓰기) 단위로 줄바꿈: 음절 중간에서 끊기지 않게. 한 단어가 한 줄보다 길 때만 예외로 끊는다 */
-html[data-ttk-theme] body #chat#chat .mes .mes_text,
-html[data-ttk-theme] body #chat#chat .mes .mes_text :is(p,li,blockquote,div,span,q,em,strong,td,th,summary){word-break:keep-all!important;overflow-wrap:break-word!important;line-break:strict}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text),
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote,div,span,q,em,strong,td,th,summary){word-break:keep-all!important;overflow-wrap:break-word!important;line-break:strict}
 
 
 /* ── v0.20 서재 — Paper·Nocturne·Porcelain 공통 골격 + 테마별 책장·책등·소품 (Studio 제외) ── */
