@@ -16,7 +16,7 @@ export function normalizeMsgButtons(raw){
  const seen={};
  if(raw?.seen&&typeof raw.seen==='object')for(const [k,v] of Object.entries(raw.seen).slice(0,MAX_SEEN)){
   if(typeof k!=='string'||k.length>120)continue;
-  seen[k]={label:clean(v?.label)||k,def:v?.def===true,ext:v?.ext!==false};
+  seen[k]={label:clean(v?.label)||k,def:v?.def===true};
  }
  return {front,seen};
 }
@@ -40,10 +40,9 @@ export function scanButtons(cfg){
   const key=keyOf(n);if(!key)continue;
   const def=DEFAULT_FRONT.some(s=>{try{return n.matches(s)}catch{return false}});
   const label=labelOf(n,key);
-  const ext=!!n.closest('.extraMesButtons');
   const prev=cfg.seen[key];
-  if(!prev){if(Object.keys(cfg.seen).length>=MAX_SEEN)continue;cfg.seen[key]={label,def,ext};dirty=true;}
-  else{if(prev.label!==label&&label){prev.label=label;dirty=true;}if(prev.ext!==ext){prev.ext=ext;dirty=true;}}
+  if(!prev){if(Object.keys(cfg.seen).length>=MAX_SEEN)continue;cfg.seen[key]={label,def};dirty=true;}
+  else if(prev.label!==label&&label){prev.label=label;dirty=true;}
  }
  return dirty;
 }

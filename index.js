@@ -15,7 +15,7 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.24.1';
+const VERSION = '0.24.2';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -368,9 +368,9 @@ function build(){
  // ---- 메시지 버튼 고르기 (v0.24.0) ----
  const mbSection=el('details','ttk-subsection');mbSection.append(el('summary','','메시지 버튼 고르기'));
  mbSection.append(el('p','ttk-note','메시지 아래 버튼 중 앞줄에 둘 것을 고릅니다. 켜지 않은 버튼은 ⋯ 안에 접힙니다. 숨기거나 순서를 바꾸지는 않습니다.'));
- const mbList=el('div','ttk-chips');mbSection.append(mbList,el('p','ttk-note','"재단사 불가"는 ST 재단사가 읽는 버튼 줄(⋯ 안쪽) 밖에 있는 버튼입니다. 재단사 자체의 수집 방식 때문이라 다락방에서는 바꿀 수 없습니다.'));
+ const mbList=el('div','ttk-chips');mbSection.append(mbList);
  function renderMb(){const cfg=settings.msgButtons;mbList.replaceChildren();const keys=Object.keys(cfg.seen);if(!keys.length){mbList.append(el('small','ttk-note','아직 읽은 버튼이 없습니다. 채팅을 연 뒤 "버튼 다시 읽기"를 눌러 주세요.'));return;}
-  for(const k of keys){const b=el('button','ttk-chip',cfg.seen[k].label);b.type='button';b.title=cfg.seen[k].ext===false?`${k} · ST 재단사는 이 버튼을 읽지 못합니다(⋯ 안쪽 줄 밖에 있음)`:k;if(cfg.seen[k].ext===false)b.append(el('small','ttk-chip-note',' · 재단사 불가'));const on=isFront(cfg,k);b.setAttribute('aria-pressed',String(on));b.addEventListener('click',()=>{setFront(cfg,k,!isFront(cfg,k));b.setAttribute('aria-pressed',String(isFront(cfg,k)));changed();});mbList.append(b);}}
+  for(const k of keys){const b=el('button','ttk-chip',cfg.seen[k].label);b.type='button';b.title=k;const on=isFront(cfg,k);b.setAttribute('aria-pressed',String(on));b.addEventListener('click',()=>{setFront(cfg,k,!isFront(cfg,k));b.setAttribute('aria-pressed',String(isFront(cfg,k)));changed();});mbList.append(b);}}
  const mbActions=el('div','ttk-actions');mbActions.append(btn('버튼 다시 읽기',()=>{scanButtons(settings.msgButtons);renderMb();changed();}),btn('기본값으로',()=>{resetFront(settings.msgButtons);renderMb();changed();}));mbSection.append(mbActions);
  mbSection.addEventListener('toggle',()=>{if(mbSection.open){if(scanButtons(settings.msgButtons))save();renderMb();}});
  controls.append(mbSection);
