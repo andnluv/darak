@@ -77,7 +77,7 @@ export function normalizeDesign(raw={}){
  // v0.3.14: the old Nocturne dialogue default was indistinguishable from body text (1.19:1). Move only that exact default.
  if(dialogueColors.nocturne.toUpperCase()==='#CAD6F1')dialogueColors.nocturne=dialogueDefaults.nocturne;
  for(const id of Object.keys(THEMES))if(dialogueColors[id].toUpperCase()===legacyDialogue[id].toUpperCase())dialogueColors[id]=dialogueDefaults[id];
- return {theme,font,dialogueFont,dialogueColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false,photoSize:['sm','md','lg'].includes(raw.photoSize)?raw.photoSize:'md'};
+ return {theme,font,dialogueFont,dialogueColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false,photoSize:['off','sm','md','lg'].includes(raw.photoSize)?raw.photoSize:'md'};
 }
 // A theme switch changes only the palette + layout. Typography and all theme palettes survive.
 export function selectTheme(raw,id){if(!THEMES[id])return normalizeDesign(raw);return normalizeDesign({...normalizeDesign(raw),theme:id});}
@@ -110,7 +110,7 @@ function fontFaceCss(f){return [].concat(f.face).map(face=>`@font-face{font-fami
 function luminance(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.03928?c/12.92:((c+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2];}
 export function schemeOf(palette){return luminance(palette.bg)<.3?'dark':'light';}
 const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap','data-ttk-photo'];
-export const PHOTO_SIZES=[['sm','작게'],['md','기본'],['lg','크게']];
+export const PHOTO_SIZES=[['off','끄기'],['sm','작게'],['md','기본'],['lg','크게']];
 // v0.11.0: while the design is ON, the original ST theme's user CSS (#custom-style) is switched off so it
 // cannot decide avatar size/position or message structure. media="not all" survives ST rewriting the
 // style's contents on a theme switch; it is removed again when the design is turned off.

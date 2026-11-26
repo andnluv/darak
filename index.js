@@ -14,7 +14,7 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.23.5';
+const VERSION = '0.23.6';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -229,9 +229,14 @@ function build(){
 
  const section=el('details','ttk-section');section.id='ttk-theme-section';section.hidden=!settings.modules.design;section.append(el('summary','ttk-section-summary','테마 및 가독성 설정'));
  const controls=el('div','ttk-controls');section.append(controls);body.append(section);
- // v0.23: 미리보기를 맨 위에 고정(스크롤해도 따라옴) → 바꾼 값이 바로 보입니다.
+ // v0.23.6: 미리보기는 기본이 고정 해제 — 필요할 때만 머리말의 '고정'으로 화면 위에 붙입니다(기기별 저장).
  const preview=el('div','ttk-mini-preview');preview.setAttribute('aria-label','테마 미리보기');
- const previewHead=el('div','ttk-preview-header','미리보기 · 실시간');
+ const previewHead=el('div','ttk-preview-header');previewHead.append(el('span','','미리보기 · 실시간'));
+ const PIN_KEY='darak-preview-pin';const pinned=()=>{try{return localStorage.getItem(PIN_KEY)==='on';}catch{return false;}};
+ const pinBtn=el('button','ttk-preview-pin','고정');pinBtn.type='button';
+ const syncPin=()=>{const on=pinned();preview.dataset.pinned=on?'true':'false';pinBtn.setAttribute('aria-pressed',String(on));pinBtn.title=on?'미리보기 고정 해제':'미리보기를 화면 위에 고정';};
+ pinBtn.addEventListener('click',()=>{try{localStorage.setItem(PIN_KEY,pinned()?'off':'on');}catch{}syncPin();});
+ previewHead.append(pinBtn);syncPin();
  const previewBox=el('div','ttk-preview-message');
  const previewName=el('strong','ttk-preview-name','CHARACTER');
  const narration=el('p','ttk-preview-narration','그는 창밖을 바라보다 천천히 고개를 돌렸다. 비에 젖은 유리창 너머로 가로등 불빛이 번지고, 방 안에는 식어 가는 찻잔의 김만 희미하게 남아 있었다.');
@@ -303,7 +308,7 @@ function build(){
 
  controls.append(el('p','ttk-note','“큰따옴표” 또는 「낫표」로 묶인 대사를 화면에서만 구분합니다. HTML 서식으로 끊긴 대사, 따옴표 없는 대사는 지문 폰트가 유지될 수 있습니다.'));
  const sliders=el('div','ttk-slider-grid');slider(sliders,'글자 크기','size',10,23,1,v=>`${v}px`,syncPreview);slider(sliders,'줄간격','lineHeight',1.4,2.4,.05,v=>Number(v).toFixed(2),syncPreview);slider(sliders,'자간','letterSpacing',-.6,1.8,.1,v=>`${Number(v).toFixed(1)}px`,syncPreview);slider(sliders,'문단 간격','paragraphSpacing',0,32,1,v=>`${v}px`,syncPreview);controls.append(sliders);
- const photoRow=el('div','ttk-field ttk-photo-row');photoRow.append(el('strong','','메시지 사진 크기'));const photoSeg=el('div','ttk-seg');photoSeg.setAttribute('role','group');photoSeg.setAttribute('aria-label','메시지 사진 크기');const photoBtns={};for(const [value,label] of PHOTO_SIZES){const b=el('button','ttk-seg-btn',label);b.type='button';b.addEventListener('click',()=>{settings.design.photoSize=value;syncPhoto();changed();});photoBtns[value]=b;photoSeg.append(b);}photoRow.append(photoSeg,el('small','ttk-note','테마 기본 크기를 기준으로 사진만 줄이거나 키웁니다. 배치는 그대로입니다.'));controls.append(photoRow);
+ const photoRow=el('div','ttk-field ttk-photo-row');photoRow.append(el('strong','','메시지 프로필 사진'));const photoSeg=el('div','ttk-seg');photoSeg.setAttribute('role','group');photoSeg.setAttribute('aria-label','메시지 프로필 사진');const photoBtns={};for(const [value,label] of PHOTO_SIZES){const b=el('button','ttk-seg-btn',label);b.type='button';b.addEventListener('click',()=>{settings.design.photoSize=value;syncPhoto();changed();});photoBtns[value]=b;photoSeg.append(b);}photoRow.append(photoSeg,el('small','ttk-note','끄면 사진 없이 이름과 시간만 표시합니다. 작게·크게는 테마 기본 크기를 기준으로 사진만 줄이거나 키웁니다.'));controls.append(photoRow);
  const syncPhoto=()=>{for(const [v,b] of Object.entries(photoBtns))b.setAttribute('aria-pressed',String(settings.design.photoSize===v));};syncPhoto();
  const colors=el('details','ttk-subsection');colors.open=true;colors.append(el('summary','','테마 컬러 변경 · 컬러칩')); const grid=el('div','ttk-color-grid');const colorInputs={};const paletteLabels={bg:'전체 배경',surface:'패널',raised:'보조 패널',text:'본문 글자',muted:'보조 글자',accent:'강조색',border:'테두리',user:'사용자 메시지',ai:'AI 메시지'};
  for(const [key,label] of Object.entries(paletteLabels)){const cell=el('label','ttk-color-field');cell.append(el('span','',label));const input=el('input');input.type='color';input.addEventListener('input',()=>{settings.design.palettes[settings.design.theme][key]=input.value;settings.design.custom=settings.design.palettes[settings.design.theme];syncPreview();changed();});cell.append(input);grid.append(cell);colorInputs[key]=input;}

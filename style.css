@@ -1779,7 +1779,9 @@ html[data-ttk-theme] #ttk-panel > .inline-drawer-header .ttk-panel-version{color
 #ttk-panel #ttk-theme-section{overflow:visible}
 #ttk-panel #ttk-theme-section > .ttk-section-summary{border-radius:8px 8px 0 0}
 #ttk-panel #ttk-theme-section:not([open]) > .ttk-section-summary{border-radius:8px}
-#ttk-panel #ttk-theme-section .ttk-mini-preview{position:sticky;top:0;z-index:3;max-height:42vh;overflow:hidden;gap:6px;padding:10px;box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
+#ttk-panel #ttk-theme-section .ttk-mini-preview{gap:6px;padding:10px}
+/* v0.23.6: 고정은 켰을 때만 */
+#ttk-panel #ttk-theme-section .ttk-mini-preview[data-pinned=true]{position:sticky;top:0;z-index:3;max-height:42vh;overflow:hidden;box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
 #ttk-panel #ttk-theme-section .ttk-preview-message{padding:10px 12px}
 
 /* 테마 칩: 한 줄 4칸, 색 견본 + 이름만 */
@@ -1824,3 +1826,36 @@ html[data-ttk-theme] #ttk-panel .ttk-font-list{background:var(--ttk-surface)!imp
 #ttk-panel .ttk-seg-btn{all:unset;box-sizing:border-box;padding:6px 14px;font-size:13px;line-height:1.2;cursor:pointer;color:inherit;opacity:.65}
 #ttk-panel .ttk-seg-btn+.ttk-seg-btn{border-left:1px solid rgba(128,128,128,.35)}
 #ttk-panel .ttk-seg-btn[aria-pressed=true]{opacity:1;font-weight:700;background:color-mix(in srgb,var(--ttk-accent,#888) 16%,transparent)}
+
+/* ===== v0.23.6 ===== */
+/* 미리보기 머리말 + 고정 토글 */
+#ttk-panel .ttk-preview-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#ttk-panel .ttk-preview-pin{all:unset;box-sizing:border-box;flex:0 0 auto;font-size:10.5px;line-height:1;padding:3px 9px;border:1px solid currentColor;border-radius:99px;cursor:pointer;opacity:.7}
+#ttk-panel .ttk-preview-pin[aria-pressed=true]{opacity:1;font-weight:700;background:var(--pv-accent,rgba(128,128,128,.25));color:var(--pv-bg,#fff)!important;border-color:transparent}
+/* Nocturne: 사진 크기에 따라 이름 글씨·여백도 같이 줄이고 키움(작게에서 넘치거나 3줄로 꺾이던 문제) */
+html[data-ttk-theme=nocturne]{--fk:1}
+html[data-ttk-theme=nocturne][data-ttk-photo=sm]{--fk:.68}
+html[data-ttk-theme=nocturne][data-ttk-photo=lg]{--fk:1.08}
+html[data-ttk-theme=nocturne] body #chat#chat .mes.mes .ttk-now > .ttk-now-name{font:700 calc(clamp(22px,6.4vw,30px) * var(--fk,1))/1.12 'Oswald',var(--ttk-font),sans-serif!important;overflow-wrap:anywhere;word-break:normal;text-wrap:balance}
+html[data-ttk-theme=nocturne][data-ttk-photo=sm] body #chat#chat .mes.mes .mesAvatarWrapper{padding:10px 10px 0!important}
+html[data-ttk-theme=nocturne][data-ttk-photo=sm] body #chat#chat .mes.mes .ttk-now{padding:12px 10px 10px}
+html[data-ttk-theme=nocturne][data-ttk-photo=sm] body #chat#chat .mes.mes .ttk-now > .ttk-now-eyebrow{letter-spacing:.3em}
+html[data-ttk-theme=nocturne][data-ttk-photo=sm] body #chat#chat .mes.mes .ttk-now > .ttk-now-meta{letter-spacing:.06em}
+/* Paper 모바일: 사진이 너무 커져 이름 칸이 좁아지지 않게 폭 상한 */
+@media(max-width:600px){html[data-ttk-theme=paper] body{--pw:min(calc(var(--pw0) * var(--pw-k,1)),48vw)}}
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now-name{overflow-wrap:anywhere}
+/* 프로필 사진 끄기: 사진·장식을 숨기고 이름/번호/시간 머리만 남김 */
+html[data-ttk-theme][data-ttk-photo=off] body #chat#chat .mes.mes .mesAvatarWrapper{display:none!important}
+html[data-ttk-theme=paper][data-ttk-photo=off] body #chat#chat .mes.mes{grid-template-columns:minmax(0,1fr)!important}
+html[data-ttk-theme=paper][data-ttk-photo=off] body #chat#chat .mes.mes .ttk-now{grid-column:1;align-self:start;padding:0!important}
+html[data-ttk-theme=nocturne][data-ttk-photo=off] body #chat#chat .mes.mes .ttk-now{width:100%;border-top:1px solid color-mix(in srgb,var(--ttk-accent) 55%,transparent)}
+html[data-ttk-theme=studio][data-ttk-photo=off] body #chat#chat .mes.mes .ttk-now > .ttk-now-eyebrow{margin-top:0}
+html[data-ttk-theme=porcelain][data-ttk-photo=off] body #chat#chat .mes.mes .ttk-now > .ttk-now-name{margin-top:0}
+/* Paper 모바일: 사진이 커져도 이름 칸이 좁아지지 않게 오른쪽 여백을 없애고, 크게일 땐 이름 글씨를 조금 줄임 */
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now-name{text-wrap:balance}
+@media(max-width:600px){
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now{padding-right:0}
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now-eyebrow{letter-spacing:.14em}
+html[data-ttk-theme=paper] body #chat#chat .mes.mes .ttk-now-name{word-break:normal}
+html[data-ttk-theme=paper][data-ttk-photo=lg] body #chat#chat .mes.mes .ttk-now-name{font-size:calc(clamp(17px,5vw,26px) * .9)}
+}
