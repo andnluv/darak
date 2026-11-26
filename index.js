@@ -11,10 +11,10 @@ import {Gallery,normalizeGallery} from './gallery.js';
 import {confirmAsk} from './dialogs.js';
 import {syncMessageFooters} from './message-footer.js';
 import {syncTyping} from './typing.js';
-import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS} from './design.js';
+import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '0.23.4';
+const VERSION = '0.23.5';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,themeImages:false,gallery:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,themeImages,gallery,conflictToastShown=false;
@@ -234,9 +234,9 @@ function build(){
  const previewHead=el('div','ttk-preview-header','미리보기 · 실시간');
  const previewBox=el('div','ttk-preview-message');
  const previewName=el('strong','ttk-preview-name','CHARACTER');
- const narration=el('p','ttk-preview-narration','그는 창밖을 바라보다 천천히 고개를 돌렸다.');
- const dialogue=el('p','ttk-preview-dialogue','“오늘은 여기까지 이야기해도 괜찮아.”');
- const narration2=el('p','ttk-preview-narration','소리 없이 책장이 넘어갔다. 짧은 침묵이 이어졌다.');
+ const narration=el('p','ttk-preview-narration','그는 창밖을 바라보다 천천히 고개를 돌렸다. 비에 젖은 유리창 너머로 가로등 불빛이 번지고, 방 안에는 식어 가는 찻잔의 김만 희미하게 남아 있었다.');
+ const dialogue=el('p','ttk-preview-dialogue','“오늘은 여기까지 이야기해도 괜찮아. 나머지는 내일 다시 듣고 싶어.”');
+ const narration2=el('p','ttk-preview-narration','소리 없이 책장이 넘어갔다. 짧은 침묵이 이어지는 동안 누구도 먼저 입을 열지 않았고, 시계 초침 소리만 또렷하게 들렸다.');
  previewBox.append(previewName,narration,dialogue,narration2);preview.append(previewHead,previewBox);controls.append(preview);
  // v0.23: 테마는 한 줄 4칸 칩(색 견본 + 이름), 설명은 고른 테마 하나만 아래에.
  const themes=el('div','ttk-theme-chips');themes.setAttribute('role','group');themes.setAttribute('aria-label','테마');const themeButtons=[];
@@ -303,6 +303,8 @@ function build(){
 
  controls.append(el('p','ttk-note','“큰따옴표” 또는 「낫표」로 묶인 대사를 화면에서만 구분합니다. HTML 서식으로 끊긴 대사, 따옴표 없는 대사는 지문 폰트가 유지될 수 있습니다.'));
  const sliders=el('div','ttk-slider-grid');slider(sliders,'글자 크기','size',10,23,1,v=>`${v}px`,syncPreview);slider(sliders,'줄간격','lineHeight',1.4,2.4,.05,v=>Number(v).toFixed(2),syncPreview);slider(sliders,'자간','letterSpacing',-.6,1.8,.1,v=>`${Number(v).toFixed(1)}px`,syncPreview);slider(sliders,'문단 간격','paragraphSpacing',0,32,1,v=>`${v}px`,syncPreview);controls.append(sliders);
+ const photoRow=el('div','ttk-field ttk-photo-row');photoRow.append(el('strong','','메시지 사진 크기'));const photoSeg=el('div','ttk-seg');photoSeg.setAttribute('role','group');photoSeg.setAttribute('aria-label','메시지 사진 크기');const photoBtns={};for(const [value,label] of PHOTO_SIZES){const b=el('button','ttk-seg-btn',label);b.type='button';b.addEventListener('click',()=>{settings.design.photoSize=value;syncPhoto();changed();});photoBtns[value]=b;photoSeg.append(b);}photoRow.append(photoSeg,el('small','ttk-note','테마 기본 크기를 기준으로 사진만 줄이거나 키웁니다. 배치는 그대로입니다.'));controls.append(photoRow);
+ const syncPhoto=()=>{for(const [v,b] of Object.entries(photoBtns))b.setAttribute('aria-pressed',String(settings.design.photoSize===v));};syncPhoto();
  const colors=el('details','ttk-subsection');colors.open=true;colors.append(el('summary','','테마 컬러 변경 · 컬러칩')); const grid=el('div','ttk-color-grid');const colorInputs={};const paletteLabels={bg:'전체 배경',surface:'패널',raised:'보조 패널',text:'본문 글자',muted:'보조 글자',accent:'강조색',border:'테두리',user:'사용자 메시지',ai:'AI 메시지'};
  for(const [key,label] of Object.entries(paletteLabels)){const cell=el('label','ttk-color-field');cell.append(el('span','',label));const input=el('input');input.type='color';input.addEventListener('input',()=>{settings.design.palettes[settings.design.theme][key]=input.value;settings.design.custom=settings.design.palettes[settings.design.theme];syncPreview();changed();});cell.append(input);grid.append(cell);colorInputs[key]=input;}
  colors.append(grid);

@@ -77,7 +77,7 @@ export function normalizeDesign(raw={}){
  // v0.3.14: the old Nocturne dialogue default was indistinguishable from body text (1.19:1). Move only that exact default.
  if(dialogueColors.nocturne.toUpperCase()==='#CAD6F1')dialogueColors.nocturne=dialogueDefaults.nocturne;
  for(const id of Object.keys(THEMES))if(dialogueColors[id].toUpperCase()===legacyDialogue[id].toUpperCase())dialogueColors[id]=dialogueDefaults[id];
- return {theme,font,dialogueFont,dialogueColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false};
+ return {theme,font,dialogueFont,dialogueColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false,photoSize:['sm','md','lg'].includes(raw.photoSize)?raw.photoSize:'md'};
 }
 // A theme switch changes only the palette + layout. Typography and all theme palettes survive.
 export function selectTheme(raw,id){if(!THEMES[id])return normalizeDesign(raw);return normalizeDesign({...normalizeDesign(raw),theme:id});}
@@ -109,7 +109,8 @@ export function clearFontPreviews(){document.head.querySelectorAll(`[${PREVIEW_A
 function fontFaceCss(f){return [].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
 function luminance(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.03928?c/12.92:((c+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2];}
 export function schemeOf(palette){return luminance(palette.bg)<.3?'dark':'light';}
-const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap'];
+const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap','data-ttk-photo'];
+export const PHOTO_SIZES=[['sm','작게'],['md','기본'],['lg','크게']];
 // v0.11.0: while the design is ON, the original ST theme's user CSS (#custom-style) is switched off so it
 // cannot decide avatar size/position or message structure. media="not all" survives ST rewriting the
 // style's contents on a theme switch; it is removed again when the design is turned off.
@@ -131,7 +132,7 @@ export function applyDesign(enabled,raw){
  if(!enabled){teardownDesign();return;}
  const d=normalizeDesign(raw),p=d.custom;
  const root=document.documentElement;
- root.dataset.ttkTheme=d.theme;root.dataset.ttkIconStyle=d.iconStyle;root.dataset.ttkIconTone=d.iconTone;root.dataset.ttkScheme=schemeOf(p);root.dataset.ttkDropcap=d.dropCap?'on':'off';
+ root.dataset.ttkTheme=d.theme;root.dataset.ttkIconStyle=d.iconStyle;root.dataset.ttkIconTone=d.iconTone;root.dataset.ttkScheme=schemeOf(p);root.dataset.ttkDropcap=d.dropCap?'on':'off';root.dataset.ttkPhoto=d.photoSize;
  setOriginalThemeCss(true);
  // Studio's cover numerals are set in Playfair Display; it is requested only while Studio is active.
  syncFontSources([d.font,d.dialogueFont,...(d.theme==='studio'?['playfair']:[]),...(d.theme==='nocturne'?['oswald']:[])]);

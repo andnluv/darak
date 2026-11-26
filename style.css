@@ -1574,13 +1574,17 @@ html[data-ttk-theme=studio] body #chat#chat .mes .mes_text > :is(div,section,tab
 
 /* ===== v0.21 · 세로 레이아웃(전 테마) + 쪽 넘김 제거 + 북마크 책장 =====
    머리(사진 + 이름·번호·시각) → 책장(마지막 메시지만) → 본문 전폭. 본문은 항상 위에서 아래로 스크롤됩니다. */
-html[data-ttk-theme]{--cp:24px;--pw:min(240px,60%)}
-html[data-ttk-theme=paper],html[data-ttk-theme=porcelain]{--pw:clamp(180px,22vw,240px)}
-html[data-ttk-theme=nocturne],html[data-ttk-theme=studio]{--pw:clamp(240px,24vw,280px)}
+html[data-ttk-theme]{--cp:24px;--pw0:min(240px,60%)}
+/* v0.23.5: 메시지 사진 크기 3단계 — 테마 기본 크기(--pw0)에 비율만 곱합니다. */
+html[data-ttk-theme] body{--pw:calc(var(--pw0) * var(--pw-k,1))}
+html[data-ttk-theme][data-ttk-photo=sm]{--pw-k:.7}
+html[data-ttk-theme][data-ttk-photo=lg]{--pw-k:1.2}
+html[data-ttk-theme=paper],html[data-ttk-theme=porcelain]{--pw0:clamp(180px,22vw,240px)}
+html[data-ttk-theme=nocturne],html[data-ttk-theme=studio]{--pw0:clamp(240px,24vw,280px)}
 @media(max-width:600px){
  html[data-ttk-theme]{--cp:16px}
- html[data-ttk-theme=paper],html[data-ttk-theme=porcelain]{--pw:clamp(150px,44vw,190px)}
- html[data-ttk-theme=nocturne],html[data-ttk-theme=studio]{--pw:min(240px,62vw)}
+ html[data-ttk-theme=paper],html[data-ttk-theme=porcelain]{--pw0:clamp(150px,44vw,190px)}
+ html[data-ttk-theme=nocturne],html[data-ttk-theme=studio]{--pw0:min(240px,62vw)}
 }
 /* 공통 카드 */
 html[data-ttk-theme] body #chat#chat .mes.mes{display:flex!important;flex-direction:column;align-items:center;position:relative;width:100%!important;max-width:100%!important;box-sizing:border-box;margin:22px 0!important;padding:var(--cp)!important;gap:0!important;background:var(--ttk-ai)!important;border:1px solid var(--ttk-border)!important;border-radius:20px!important;box-shadow:0 14px 34px var(--ttk-shadow)!important;overflow:visible!important;height:auto!important;min-height:0!important;max-height:none!important}
@@ -1758,7 +1762,7 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm{width:22px;heigh
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-bm::before{width:14px;height:14px}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtons{display:flex!important}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .extraMesButtonsHint{display:none!important}
-html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn:not(.ttk-open) :is(.mes_buttons,.extraMesButtons) > :not(.ttk-bm,.mes_copy,.mes_edit,.mes_bookmark,.mes_delete,.extraMesButtons,.mes_edit_buttons){display:none!important}
+html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn:not(.ttk-open) :is(.mes_buttons,.extraMesButtons) > :not(.ttk-bm,.mes_copy,.mes_edit,.mes_bookmark,.mes_delete,.ttk-tr-button,.mes_translate,[class*=interpres i],[id*=interpres i],[title*=interpres i],.extraMesButtons,.mes_edit_buttons){display:none!important}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more{all:unset;box-sizing:border-box;flex:0 0 auto;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;color:var(--ttk-muted)}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more::before{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:var(--ttk-ic-dots) center/contain no-repeat;mask:var(--ttk-ic-dots) center/contain no-repeat}
 html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot .ttk-more:hover,html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn.ttk-open .ttk-more{background:var(--ttk-raised);color:var(--ttk-text)}
@@ -1813,3 +1817,10 @@ html[data-ttk-theme] #ttk-panel .ttk-font-list{background:var(--ttk-surface)!imp
  #ttk-panel .ttk-font-option{padding:9px 12px;font-size:14px}
  #ttk-panel #ttk-theme-section .ttk-mini-preview{max-height:34vh}
 }
+
+/* v0.23.5: 사진 크기 버튼 */
+#ttk-panel .ttk-photo-row{display:grid;gap:6px}
+#ttk-panel .ttk-seg{display:flex;gap:0;border:1px solid rgba(128,128,128,.35);border-radius:8px;overflow:hidden;width:max-content;max-width:100%}
+#ttk-panel .ttk-seg-btn{all:unset;box-sizing:border-box;padding:6px 14px;font-size:13px;line-height:1.2;cursor:pointer;color:inherit;opacity:.65}
+#ttk-panel .ttk-seg-btn+.ttk-seg-btn{border-left:1px solid rgba(128,128,128,.35)}
+#ttk-panel .ttk-seg-btn[aria-pressed=true]{opacity:1;font-weight:700;background:color-mix(in srgb,var(--ttk-accent,#888) 16%,transparent)}
