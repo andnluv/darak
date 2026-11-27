@@ -232,6 +232,7 @@ export function setOriginalThemeCss(muted){
   if(node?.hasAttribute(MUTE_ATTR)){const prev=node.getAttribute(MUTE_ATTR);if(prev)node.setAttribute('media',prev);else node.removeAttribute('media');node.removeAttribute(MUTE_ATTR);}
  }
 }
+function syncFx(id,on){let n=document.getElementById(id);if(on&&!n){n=document.createElement('div');n.id=id;n.setAttribute('aria-hidden','true');document.body?.append(n);}else if(!on)n?.remove();}
 let enterObs=null;
 function syncEnter(mode){
  if(enterObs){enterObs.disconnect();enterObs=null;}
@@ -241,7 +242,7 @@ function syncEnter(mode){
  enterObs=new MutationObserver(list=>{const add=list.flatMap(m=>[...m.addedNodes]).filter(n=>n.nodeType===1&&n.classList?.contains('mes'));if(!add.length||add.length>2)return;for(const n of add){n.classList.add('ttk-enter');n.addEventListener('animationend',()=>n.classList.remove('ttk-enter'),{once:true});}});
  enterObs.observe(chat,{childList:true});
 }
-export function teardownDesign(){syncEnter(false);setOriginalThemeCss(false);clearFontPreviews();document.getElementById(STYLE_ID)?.remove();syncFontSources([]);for(const a of ROOT_ATTRS)document.documentElement.removeAttribute(a);}
+export function teardownDesign(){syncEnter(false);syncFx('ttk-fx-grain',false);syncFx('ttk-fx-vig',false);setOriginalThemeCss(false);clearFontPreviews();document.getElementById(STYLE_ID)?.remove();syncFontSources([]);for(const a of ROOT_ATTRS)document.documentElement.removeAttribute(a);}
 export function applyDesign(enabled,raw){
  if(!enabled){teardownDesign();return;}
  const d=normalizeDesign(raw),p=d.custom;
@@ -251,7 +252,7 @@ export function applyDesign(enabled,raw){
  const ns=d.narrationStyle,ds=d.dialogueStyle,nw=resolveWeight(d.font,ns.weight),dw=resolveWeight(d.dialogueFont,ds.weight),emph=emphasisOf(d.font,ns.weight);
  const flag=(name,on)=>{if(on)root.setAttribute(name,typeof on==='string'?on:'on');else root.removeAttribute(name);};
  flag('data-ttk-narr-w',nw.value!==null);flag('data-ttk-dlg-w',dw.value!==null);flag('data-ttk-narr-i',ns.italic);flag('data-ttk-dlg-i',ds.italic);
- flag('data-ttk-narr-u',ns.underline!=='none'&&ns.underline);flag('data-ttk-dlg-u',ds.underline!=='none'&&ds.underline);flag('data-ttk-emph',d.emphasis&&emph.mode);flag('data-ttk-grain',d.grain);flag('data-ttk-vignette',d.vignette);flag('data-ttk-enter',d.entrance!=='off'&&d.entrance);syncEnter(d.entrance!=='off'&&d.entrance);
+ flag('data-ttk-narr-u',ns.underline!=='none'&&ns.underline);flag('data-ttk-dlg-u',ds.underline!=='none'&&ds.underline);flag('data-ttk-emph',d.emphasis&&emph.mode);flag('data-ttk-grain',d.grain);flag('data-ttk-vignette',d.vignette);flag('data-ttk-enter',d.entrance!=='off'&&d.entrance);syncEnter(d.entrance!=='off'&&d.entrance);syncFx('ttk-fx-grain',d.grain);syncFx('ttk-fx-vig',d.vignette);
  setOriginalThemeCss(true);
  // Studio's cover numerals are set in Playfair Display; it is requested only while Studio is active.
  syncFontSources([d.font,d.dialogueFont,...(d.theme==='studio'?['playfair']:[]),...(d.theme==='nocturne'?['oswald']:[])]);

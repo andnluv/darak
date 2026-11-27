@@ -355,21 +355,21 @@ html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-font:
   mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNHYxNiIgLz4gPHBhdGggZD0iTTQgN1Y1YTEgMSAwIDAgMSAxLTFoMTRhMSAxIDAgMCAxIDEgMXYyIiAvPiA8cGF0aCBkPSJNOSAyMGg2IiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
   vertical-align:-.12em!important;opacity:1!important;
 }
-html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-book::before {
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:is(.fa-book,.fa-book-atlas)::before {
   content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
   background-color:currentColor!important;
   -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNXYxNiIgLz4gPHBhdGggZD0iTTIwLjAwMSAxOUEyIDIgMCAwMDIyIDE3VjVhMiAyIDAgMDAtMS45OTktMkwxNiAzLjAwMkE1IDUgMCAwMDEyIDVhNSA1IDAgMDAtNC0ySDRhMiAyIDAgMDAtMiAydjEyYTIgMiAwIDAwMS45OTkgMkg4YTUgNSAwIDAxNCAyIDUgNSAwIDAxNC0yeiIgLz4gPC9zdmc+") center / contain no-repeat!important;
   mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNXYxNiIgLz4gPHBhdGggZD0iTTIwLjAwMSAxOUEyIDIgMCAwMDIyIDE3VjVhMiAyIDAgMDAtMS45OTktMkwxNiAzLjAwMkE1IDUgMCAwMDEyIDVhNSA1IDAgMDAtNC0ySDRhMiAyIDAgMDAtMiAydjEyYTIgMiAwIDAwMS45OTkgMkg4YTUgNSAwIDAxNCAyIDUgNSAwIDAxNC0yeiIgLz4gPC9zdmc+") center / contain no-repeat!important;
   vertical-align:-.12em!important;opacity:1!important;
 }
-html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-user-gear::before {
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:is(.fa-user-gear,.fa-user-cog)::before {
   content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
   background-color:currentColor!important;
   -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTQuMzA1IDE5LjUzLjkyMy0uMzgyIiAvPiA8cGF0aCBkPSJtMTUuMjI4IDE2Ljg1Mi0uOTIzLS4zODMiIC8+IDxwYXRoIGQ9Im0xNi44NTIgMTUuMjI4LS4zODMtLjkyMyIgLz4gPHBhdGggZD0ibTE2Ljg1MiAyMC43NzItLjM4My45MjQiIC8+IDxwYXRoIGQ9Im0xOS4xNDggMTUuMjI4LjM4My0uOTIzIiAvPiA8cGF0aCBkPSJtMTkuNTMgMjEuNjk2LS4zODItLjkyNCIgLz4gPHBhdGggZD0iTTIgMjFhOCA4IDAgMCAxIDEwLjQzNC03LjYyIiAvPiA8cGF0aCBkPSJtMjAuNzcyIDE2Ljg1Mi45MjQtLjM4MyIgLz4gPHBhdGggZD0ibTIwLjc3MiAxOS4xNDguOTI0LjM4MyIgLz4gPGNpcmNsZSBjeD0iMTAiIGN5PSI4IiByPSI1IiAvPiA8Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIzIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
   mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTQuMzA1IDE5LjUzLjkyMy0uMzgyIiAvPiA8cGF0aCBkPSJtMTUuMjI4IDE2Ljg1Mi0uOTIzLS4zODMiIC8+IDxwYXRoIGQ9Im0xNi44NTIgMTUuMjI4LS4zODMtLjkyMyIgLz4gPHBhdGggZD0ibTE2Ljg1MiAyMC43NzItLjM4My45MjQiIC8+IDxwYXRoIGQ9Im0xOS4xNDggMTUuMjI4LjM4My0uOTIzIiAvPiA8cGF0aCBkPSJtMTkuNTMgMjEuNjk2LS4zODItLjkyNCIgLz4gPHBhdGggZD0iTTIgMjFhOCA4IDAgMCAxIDEwLjQzNC03LjYyIiAvPiA8cGF0aCBkPSJtMjAuNzcyIDE2Ljg1Mi45MjQtLjM4MyIgLz4gPHBhdGggZD0ibTIwLjc3MiAxOS4xNDguOTI0LjM4MyIgLz4gPGNpcmNsZSBjeD0iMTAiIGN5PSI4IiByPSI1IiAvPiA8Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIzIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
   vertical-align:-.12em!important;opacity:1!important;
 }
-html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-image::before {
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:is(.fa-image,.fa-panorama)::before {
   content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
   background-color:currentColor!important;
   -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiByeT0iMiIgLz4gPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjIiIC8+IDxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
@@ -1773,8 +1773,9 @@ html[data-ttk-theme] #ttk-panel > .inline-drawer-header .ttk-panel-version{color
 #ttk-panel #ttk-theme-section > .ttk-section-summary{border-radius:8px 8px 0 0}
 #ttk-panel #ttk-theme-section:not([open]) > .ttk-section-summary{border-radius:8px}
 #ttk-panel #ttk-theme-section .ttk-mini-preview{gap:6px;padding:10px}
+#ttk-panel #ttk-theme-section .ttk-mini-preview:not([data-pinned=true]){max-height:none!important;overflow:visible}
 /* v0.23.6: 고정은 켰을 때만 */
-#ttk-panel #ttk-theme-section .ttk-mini-preview[data-pinned=true]{position:sticky;top:0;z-index:3;max-height:42vh;overflow:hidden;box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
+#ttk-panel #ttk-theme-section .ttk-mini-preview[data-pinned=true]{position:sticky;top:0;z-index:3;max-height:42vh;overflow-y:auto;overscroll-behavior:contain;box-shadow:0 6px 14px -8px rgba(0,0,0,.35)}
 #ttk-panel #ttk-theme-section .ttk-preview-message{padding:10px 12px}
 
 /* 테마 칩: 한 줄 4칸, 색 견본 + 이름만 */
@@ -1810,7 +1811,7 @@ html[data-ttk-theme] #ttk-panel .ttk-font-list{background:var(--ttk-surface)!imp
 @media (max-width:1000px),(pointer:coarse){
  #ttk-panel .ttk-font-trigger{min-height:40px;font-size:14px}
  #ttk-panel .ttk-font-option{padding:9px 12px;font-size:14px}
- #ttk-panel #ttk-theme-section .ttk-mini-preview{max-height:34vh}
+ #ttk-panel #ttk-theme-section .ttk-mini-preview[data-pinned=true]{max-height:34vh}
 }
 
 /* v0.23.5: 사진 크기 버튼 */
@@ -2029,9 +2030,9 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 #ttk-face-import .ttk-actions{padding:18px 12px;border:1.5px dashed color-mix(in srgb,currentColor 30%,transparent);border-radius:14px;justify-content:center;flex-wrap:wrap}
 
 /* v1.3.2 테마 효과: 필름 그레인 · 비네트 · 새 응답 등장 (설정에서 켤 때만) */
-html[data-ttk-grain]::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.07;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-html[data-ttk-scheme=dark][data-ttk-grain]::after{mix-blend-mode:screen;opacity:.05}
-html[data-ttk-vignette]::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,.22) 100%)}
+#ttk-fx-grain{position:fixed;inset:0;z-index:2147483000;pointer-events:none;opacity:.13;background-size:160px 160px;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-ttk-scheme=dark] #ttk-fx-grain{mix-blend-mode:screen;opacity:.09}
+#ttk-fx-vig{position:fixed;inset:0;z-index:2147482999;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.34) 100%)}
 @keyframes ttk-enter-fade{from{opacity:0}to{opacity:1}}
 @keyframes ttk-enter-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 html[data-ttk-enter=fade] #chat .mes.ttk-enter{animation:ttk-enter-fade .45s ease-out both}
