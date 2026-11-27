@@ -407,16 +407,18 @@ export class Faces {
         const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '표정 묶음(zip)에서 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
         box.append(el('p', 'ttk-note', '“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 얼굴 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
-        const file = el('input'); file.type = 'file'; file.accept = '.zip,application/zip'; file.setAttribute('aria-label', 'zip 파일');
+        const file = el('input'); file.type = 'file'; file.accept = '.zip,application/zip'; file.hidden = true; file.setAttribute('aria-label', 'zip 파일'); // 테마가 파일 입력칸을 가릴 수 있어 자체 버튼을 쓴다
+        const pickRow = el('div', 'ttk-actions'), pickBtn = el('button', 'ttk-button', 'zip 파일 고르기'); pickBtn.type = 'button'; pickBtn.addEventListener('click', () => file.click());
+        const pickName = el('span', 'ttk-note', '고른 파일 없음'); pickRow.append(pickBtn, pickName, file);
         const cropRow = el('label', 'ttk-style-check'), crop = el('input'); crop.type = 'checkbox'; crop.checked = true; cropRow.append(crop, el('span', '', '가로·세로가 긴 그림은 처음 위치를 위쪽 가운데(얼굴)에 맞추기 (나중에 목록의 [위치 조정]으로 바꿀 수 있음)'));
         const status = el('p', 'ttk-note'), list = el('div', 'ttk-fi-list'), go = el('button', 'ttk-button', '선택한 인물 가져오기'); go.type = 'button'; go.hidden = true;
-        box.append(file, cropRow, status, list, go);
+        box.append(pickRow, cropRow, status, list, go);
         let groups = [];
         const have = () => new Set(this.entries().map(e => norm(e.name)));
         const chosen = () => groups.filter(g => g.cb.checked && !g.cb.disabled);
         const count = () => { go.textContent = `선택한 인물 가져오기 (${chosen().length}명)`; };
         file.addEventListener('change', async () => {
-            const f = file.files?.[0]; list.replaceChildren(); go.hidden = true; groups = []; if (!f) return;
+            const f = file.files?.[0]; list.replaceChildren(); go.hidden = true; groups = []; pickName.textContent = f ? f.name : '고른 파일 없음'; if (!f) return;
             status.textContent = '읽는 중…';
             try {
                 const entries = (await readZip(f)).filter(e => /\.(png|jpe?g|webp|gif|avif)$/i.test(e.name)), map = new Map();
@@ -435,7 +437,7 @@ export class Faces {
         go.addEventListener('click', async () => {
             const picks = chosen(); if (!picks.length) return;
             if (picks.length + this.entries().length > MAX_FACES) return window.toastr?.warning?.(`카드마다 최대 ${MAX_FACES}명입니다.`);
-            go.disabled = file.disabled = true; let ok = 0, fail = 0, n = 0, i = 0;
+            go.disabled = pickBtn.disabled = true; let ok = 0, fail = 0, n = 0, i = 0;
             const one = async g => {
                 let dims = null;
                 const up = async f => { const src = await f.entry.blob(); if (!dims) { const bmp = await createImageBitmap(src); dims = [bmp.width, bmp.height]; bmp.close?.(); } return this.putBlob(await faceBlob(src, false, 512)); };
@@ -449,7 +451,7 @@ export class Faces {
             await Promise.all([work(), work(), work()]);
             this.save(); this.refresh(); status.textContent = `${ok}명을 가져왔습니다.${fail ? ` ${fail}명은 실패했습니다.` : ''}`;
             for (const g of groups) if (have().has(norm(g.name))) { g.cb.checked = false; g.cb.disabled = true; }
-            go.disabled = file.disabled = false; count(); this.onChange?.();
+            go.disabled = pickBtn.disabled = false; count(); this.onChange?.();
         });
         const onKey = e => { if (e.key === 'Escape') close(); }; document.addEventListener('keydown', onKey, true);
         document.body.append(wrap);
