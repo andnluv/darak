@@ -138,7 +138,7 @@ export class ThemeImages {
         const menu = document.getElementById('extensionsMenu');
         if (menu && !document.getElementById('ttk_themeimg_menu')) {
             const item = el('div', 'list-group-item flex-container flexGap5 interactable'); item.id = 'ttk_themeimg_menu'; item.tabIndex = 0;
-            item.append(el('div', 'fa-solid fa-image extensionsMenuExtensionButton'), el('span', '', '테마 이미지 교체'));
+            item.append(el('div', 'ttk-lc ttk-lc-img extensionsMenuExtensionButton'), el('span', '', '테마 이미지 교체'));
             item.addEventListener('click', () => this.open()); menu.append(item);
         }
         this.apply();

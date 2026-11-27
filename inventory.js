@@ -133,7 +133,7 @@ export class Inventory {
         const menu = document.getElementById('extensionsMenu');
         if (menu && !document.getElementById('ttk_inventory_menu')) {
             const item = el('div', 'list-group-item flex-container flexGap5 interactable'); item.id = 'ttk_inventory_menu'; item.tabIndex = 0;
-            item.append(el('div', 'fa-solid fa-clipboard-list extensionsMenuExtensionButton'), el('span', '', '통합 조회'));
+            item.append(el('div', 'ttk-lc ttk-lc-clip-list extensionsMenuExtensionButton'), el('span', '', '통합 조회'));
             item.addEventListener('click', () => this.open());
             menu.append(item);
         }
@@ -194,7 +194,7 @@ export class Inventory {
         const title = el('div', 'ttk-inv-title'); title.append(el('strong', '', '통합 조회'), el('small', '', `${d.version ? `SillyTavern ${d.version} · ` : ''}${d.loadedAt.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준`));
         const actions = el('div', 'ttk-inv-head-actions');
         const again = el('button', 'ttk-inv-btn', '다시 점검'); again.type = 'button'; again.addEventListener('click', () => this.open());
-        const x = el('button', 'ttk-inv-x'); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.title = '닫기'; x.append(el('i', 'fa-solid fa-xmark')); x.addEventListener('click', () => dlg.close());
+        const x = el('button', 'ttk-inv-x'); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.title = '닫기'; x.append(el('i', 'ttk-lc ttk-lc-x')); x.addEventListener('click', () => dlg.close());
         actions.append(again, x); head.append(title, actions);
         const tabs = el('div', 'ttk-inv-tabs'); tabs.setAttribute('role', 'tablist');
         const defs = [['check', '점검', count('error') + count('warn')], ['themes', '테마', d.themes.length], ['presets', '프롬프트', d.presets.length], ['exts', '확장', d.exts.length]];

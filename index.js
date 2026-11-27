@@ -17,12 +17,12 @@ import {syncTyping} from './typing.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.3.1';
+const VERSION = '1.3.2';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false;
 // v0.23: 확장 목록 제목의 작은 다락창(지붕 + 십자 창) 아이콘.
-const ATTIC_SVG='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3.5 21 11"/><path d="M5.5 9v11.5h13V9"/><rect x="9" y="10.5" width="6" height="6" rx=".6"/><path d="M12 10.5v6M9 13.5h6"/></svg>';
+const ATTIC_SVG='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3.5 21 11"/><path d="M5.5 9v11.5h13V9"/><rect x="9" y="10.5" width="6" height="6" rx=".6"/><path d="M12 10.5v6M9 13.5h6"/></svg>';
 const el=(tag,cls='',text='')=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text)n.textContent=text;return n;};
 const btn=(label,action,cls='')=>{const n=el('button',`ttk-button ${cls}`,label);n.type='button';n.addEventListener('click',action);return n;};
 function merge(raw){const userFonts=normalizeUserFonts(raw?.userFonts);setUserFonts(userFonts);const modules={...DEFAULT_MODULES,...(raw?.modules||{})};const old=raw?.design||{};const migrated=old.theme==='midnight'?'nocturne':old.theme==='sage'?'studio':old.theme;return {modules,userFonts,design:normalizeDesign({...old,theme:migrated}),localization:normalizeLocalization(raw?.localization),promptTranslation:normalizePromptTranslation(raw?.promptTranslation),translation:normalizeTranslation(raw?.translation),glossary:normalizeGlossary(raw?.glossary),ghostwrite:normalizeGhostwrite(raw?.ghostwrite),qr:normalizeQrVault(raw?.qr),optimization:normalizeOptimization(raw?.optimization),avatars:normalizeAvatars(raw?.avatars),faces:normalizeFaces(raw?.faces),themeImages:normalizeThemeImages(raw?.themeImages),gallery:normalizeGallery(raw?.gallery),weather:normalizeWeather(raw?.weather),msgButtons:normalizeMsgButtons(raw?.msgButtons)};}

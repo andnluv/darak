@@ -43,7 +43,7 @@ export class Gallery {
         const menu = document.getElementById('extensionsMenu');
         if (menu && !document.getElementById('ttk_gallery_menu')) {
             const item = el('div', 'list-group-item flex-container flexGap5 interactable'); item.id = 'ttk_gallery_menu'; item.tabIndex = 0;
-            item.append(el('div', 'fa-solid fa-images extensionsMenuExtensionButton'), el('span', '', '이미지 모아보기'));
+            item.append(el('div', 'ttk-lc ttk-lc-images extensionsMenuExtensionButton'), el('span', '', '이미지 모아보기'));
             item.addEventListener('click', () => this.open()); menu.append(item);
         }
     }
