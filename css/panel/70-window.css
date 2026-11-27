@@ -160,10 +160,11 @@ html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
 }
 
 /* ==== v1.7.1 정비 ==== */
-/* 글꼴: 글꼴 관리 같은 다른 확장이 문서 전체 글꼴을 !important로 바꿔도 창 글꼴을 지킵니다.
+/* 글꼴: 다른 확장(예: 글꼴 관리 stt-font-style의 `html body :not(#chat …)`, 명시도 1·2·2)이 문서 전체 글꼴을 !important로 바꿔도
+   창 글꼴을 지킵니다. 아이디 두 번(#ttk-win#ttk-win)으로 명시도 2 이상을 확보합니다.
    글꼴 미리보기(테마 미리보기·글꼴 목록)와 아이콘은 제외합니다. */
-html body .ttk-win,html body .ttk-win :not([class*="fa-"],.ttk-lc,.ttk-preview-message,.ttk-preview-message *,.ttk-font-option,.ttk-font-trigger,.ttk-uf-item *){font-family:var(--w-font)!important}
-html body .ttk-win :is(.ttk-win-brand,.ttk-win-brand-m) .ttk-win-brand-name,html body .ttk-win #ttk-panel .ttk-group-head strong{font-family:var(--w-serif)!important}
+html body #ttk-win#ttk-win,html body #ttk-win#ttk-win :not([class*="fa-"],.ttk-lc,.ttk-preview-message,.ttk-preview-message *,.ttk-font-option,.ttk-font-trigger,.ttk-uf-item *){font-family:var(--w-font)!important}
+html body #ttk-win#ttk-win :is(.ttk-win-brand,.ttk-win-brand-m) .ttk-win-brand-name,html body #ttk-win#ttk-win #ttk-panel .ttk-group-head strong,html body #ttk-win#ttk-win .ttk-win-ovhead .ttk-win-ovtitle{font-family:var(--w-serif)!important}
 /* 왼쪽 목록·본문 스크롤 막대: 얇게, 창 색으로 */
 /* 30-theme-bridge의 전체 scrollbar-color가 상속되면 크롬이 ::-webkit-scrollbar를 무시하고 화살표 달린 기본 막대를 그립니다 → 창 안에서는 auto로 되돌립니다. */
 html .ttk-win :is(.ttk-win-nav,.ttk-win-body,.ttk-win-body *){scrollbar-color:auto!important;scrollbar-width:auto!important}
