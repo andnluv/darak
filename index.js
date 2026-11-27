@@ -247,8 +247,13 @@ function build(){
  const avPanel=el('details','ttk-section');avPanel.id='ttk-avatars-section';avPanel.hidden=!settings.modules.avatars;avPanel.append(el('summary','ttk-section-summary','프로필 사진'));
  const avBody=el('div','ttk-controls');avPanel.append(avBody);
  avBody.append(el('p','ttk-note',`봇 캐릭터와 내 페르소나마다 사진을 최대 ${MAX_PER_OWNER}장까지 등록합니다. SillyTavern의 원래 아바타 파일은 바꾸지 않고, 채팅에 보이는 사진만 바꿉니다. 사진은 서버의 사용자 파일로 올라가며 긴 변 512px로 줄입니다.`));
- avBody.append(el('p','ttk-note','입력창 옆 "프로필 사진" 버튼에서 등록하고 기본 사진을 고릅니다. 새 메시지는 그 시점의 기본 사진을 기억하므로 이전 메시지는 바뀌지 않습니다. 메시지마다 바꾸려면 메시지의 ⋯ 메뉴에 생기는 ID 아이콘을 쓰세요.'));
- const avActions=el('div','ttk-actions');avActions.append(btn('프로필 사진 열기',()=>avatars.open()));avBody.append(avActions);
+ if(inWindow&&avatars){
+  avBody.append(el('p','ttk-note','여기서 바로 사진을 올리고 기본 사진을 고릅니다. 사진 변경은 즉시 저장되며 「취소」로 되돌리지 않습니다. 새 메시지는 그 시점의 기본 사진을 기억하므로 이전 메시지는 바뀌지 않습니다. 메시지마다 바꾸려면 메시지의 ⋯ 메뉴에 생기는 ID 아이콘을 쓰세요.'));
+  const avBox=el('div','ttk-av-inline');avBody.append(avBox);avatars.mountInline(avBox);
+ }else{
+  avBody.append(el('p','ttk-note','입력창 옆 "프로필 사진" 버튼에서 등록하고 기본 사진을 고릅니다. 새 메시지는 그 시점의 기본 사진을 기억하므로 이전 메시지는 바뀌지 않습니다. 메시지마다 바꾸려면 메시지의 ⋯ 메뉴에 생기는 ID 아이콘을 쓰세요.'));
+  const avActions=el('div','ttk-actions');avActions.append(btn('프로필 사진 열기',()=>avatars.open()));avBody.append(avActions);
+ }
  body.append(avPanel);
 
  // ---- 화자 얼굴 ----
@@ -513,6 +518,8 @@ function build(){
 }
 // ---- v1.7.0: 설정 창 ----
 // 창을 여는 동안 설정은 복사본으로 편집합니다. 화면에는 바로 반영되지만 저장(확장 설정 파일 쓰기)은 [저장 후 닫기]에서만 합니다.
+// 프로필 사진은 서버 파일과 채팅 기록을 바로 바꾸므로, 설정 창이 열려 있어도 「취소」 대상에서 빼고 즉시 저장합니다.
+function saveAvatars(){if(hold&&committed){committed.avatars=settings.avatars;ctxRef?.saveSettingsDebounced?.();return;}save();}
 function beginEdit(){if(hold)return;committed=settings;settings=merge(JSON.parse(JSON.stringify(committed)));hold=true;pending=false;inWindow=true;}
 function commitEdit(){if(!hold)return;hold=false;inWindow=false;const had=pending;pending=false;committed=null;ctxRef.extensionSettings[KEY]=settings;if(had)ctxRef.saveSettingsDebounced();}
 function rollbackEdit(){if(!hold)return;hold=false;inWindow=false;pending=false;settings=committed;committed=null;setUserFonts(settings.userFonts);ctxRef.extensionSettings[KEY]=settings;applyModules();}
@@ -535,7 +542,7 @@ async function main(){
  guard('대필',()=>{ghostwriter=new Ghostwriter({getSettings:()=>settings.ghostwrite,getGlossary:()=>settings.glossary});});
  guard('QR 보관함',()=>{qrVault=new QrVault({getSettings:()=>settings.qr,save:()=>save()});});
  guard('모바일 최적화',()=>{optimizer=new MobileOptimizer({getSettings:()=>settings.optimization});});
- guard('프로필 사진',()=>{avatars=new Avatars({getSettings:()=>settings.avatars,save:()=>save()});});
+ guard('프로필 사진',()=>{avatars=new Avatars({getSettings:()=>settings.avatars,save:saveAvatars});});
  guard('화자 얼굴',()=>{faces=new Faces({getSettings:()=>settings.faces,save:()=>save()});});
  guard('테마 이미지 교체',()=>{themeImages=new ThemeImages({getSettings:()=>settings.themeImages,save:()=>save()});});
  guard('이미지 모아보기',()=>{gallery=new Gallery({getSettings:()=>settings.gallery,save:()=>save()});});

@@ -178,14 +178,23 @@ export class Avatars {
         this.onDown = e => { if (this.drawer && !this.drawer.contains(e.target) && !e.target.closest?.('#ttk_avatar_button,.ttk_avatar_btn')) this.close(); };
         setTimeout(() => document.addEventListener('pointerdown', this.onDown, true));
     }
+    /** v1.7.1: 설정 창 안에 같은 목록을 그립니다(입력창 위 서랍과 별개, 메시지 단위 모드 없음). */
+    mountInline(host) { this.inline = host; this.paintInto(host, null, false); }
     render() {
-        const d = this.drawer; if (!d) return; d.replaceChildren();
-        const c = this.ctx(), head = el('div', 'ttk-av-head'); head.append(el('strong', '', this.mode == null ? '프로필 사진' : '이 메시지의 프로필 사진'));
-        const x = el('button', 'ttk-av-x', '닫기'); x.type = 'button'; x.addEventListener('click', () => this.close()); head.append(x); d.append(head);
-        if (this.mode != null) {
-            const msg = c?.chat?.[this.mode], key = msg && this.ownerOf(msg);
+        if (this.drawer) this.paintInto(this.drawer, this.mode, true);
+        if (this.inline) { if (this.inline.isConnected) this.paintInto(this.inline, null, false); else this.inline = null; }
+    }
+    paintInto(d, mode, withHead) {
+        d.replaceChildren();
+        const c = this.ctx();
+        if (withHead) {
+            const head = el('div', 'ttk-av-head'); head.append(el('strong', '', mode == null ? '프로필 사진' : '이 메시지의 프로필 사진'));
+            const x = el('button', 'ttk-av-x', '닫기'); x.type = 'button'; x.addEventListener('click', () => this.close()); head.append(x); d.append(head);
+        }
+        if (mode != null) {
+            const msg = c?.chat?.[mode], key = msg && this.ownerOf(msg);
             if (!key) { d.append(el('p', 'ttk-av-empty', '이 메시지의 주인을 알 수 없습니다.')); return; }
-            d.append(this.group(key, { messageId: this.mode, msg })); return;
+            d.append(this.group(key, { messageId: mode, msg })); return;
         }
         const ch = c?.characters?.[c?.characterId]?.avatar, pk = this.personaKey();
         if (ch) d.append(this.group(`char:${ch}`, {})); else d.append(el('p', 'ttk-av-empty', c?.groupId ? '그룹 채팅에서는 메시지 단위로 바꿔 주세요. (메시지 메뉴의 ID 아이콘)' : '캐릭터가 선택되어 있지 않습니다.'));

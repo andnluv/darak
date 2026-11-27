@@ -14,6 +14,7 @@ const NAV_ICON = {
     design: 'w-palette', localization: 'w-globe', translation: 'w-languages', ghostwrite: 'w-pen-line',
     avatars: 'w-user-round', faces: 'smile', weather: 'w-cloud', themeImages: 'img',
     optimization: 'w-smartphone', qr: 'w-qr-code', inventory: 'clip-list', gallery: 'images',
+    'x:ttk-glossary-section': 'w-book-a',
 };
 
 const el = (tag, cls = '', text = '') => { const n = document.createElement(tag); if (cls) n.className = cls; if (text) n.textContent = text; return n; };
@@ -81,7 +82,11 @@ export class SettingsWindow {
     markDirty() { this.dirty = true; this.updateFoot(); }
     loadFonts() {
         if (document.getElementById(FONT_ID)) return;
-        const link = el('link'); link.id = FONT_ID; link.rel = 'stylesheet'; link.href = FONT_HREF; document.head.append(link);
+        const link = el('link'); link.id = FONT_ID; link.rel = 'stylesheet'; link.href = FONT_HREF; link.crossOrigin = 'anonymous';
+        // 글꼴을 못 받으면(오프라인·차단) 기본 명조/고딕으로 보이므로 콘솔에만 남깁니다.
+        link.addEventListener('load', () => document.fonts?.load?.("400 22px 'Gowun Batang'", '다락방').then(f => { if (!f?.length) console.warn('[DARAK] 설정 창 글꼴(Gowun Batang)을 불러오지 못했습니다.'); }).catch(() => {}));
+        link.addEventListener('error', () => console.warn('[DARAK] 설정 창 글꼴 CSS(Google Fonts)를 불러오지 못했습니다.'));
+        document.head.append(link);
     }
 
     // ---- 화면 ----
@@ -176,6 +181,8 @@ export class SettingsWindow {
                 const row = it.els.find(e => e.matches('.ttk-module-row'));
                 it.section = it.els.find(e => e.matches('details'));
                 it.input = row?.querySelector('input[type=checkbox]') || null;
+                it.sections = it.els.filter(e => e.matches('details'));
+                if (row) for (const d of it.sections) d.classList.add('ttk-win-sub');   // 모듈 카드 아래에 붙여 그립니다
                 it.label = (row?.querySelector('.ttk-option-label strong')?.textContent || it.section?.querySelector(':scope > summary')?.textContent || '').split(' · ')[0].trim();
             }
             this.groups.push({ name: g.querySelector('.ttk-group-head strong')?.textContent || '', el: g, items: [...items.values()] });
@@ -227,7 +234,9 @@ export class SettingsWindow {
                 else if (solo) vis = this.tab === `m:${it.key}`;
                 if (vis && q) vis = this.textOf(it).includes(q);
                 for (const e of it.els) e.classList.toggle('ttk-win-hide', !vis);
-                if (vis) { n++; if ((solo || q) && it.section) it.section.open = true; }
+                if (vis) { n++; if (solo || q) for (const d of it.sections) d.open = true; }
+                // 모듈 하나만 볼 때 카드 제목과 같은 접힘 칸 제목은 숨깁니다.
+                for (const d of it.sections) { const sm = d.querySelector(':scope > summary'); sm?.classList.toggle('ttk-win-dup', solo && vis && sm.textContent.trim() === it.label); }
             }
             g.el.classList.toggle('ttk-win-hide', !n); shown += n;
         });
