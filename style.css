@@ -1,4 +1,4 @@
-/* DARAK — style entry (v1.7.6).
+/* DARAK — style entry (v1.7.7).
    SillyTavern은 manifest의 css 파일 하나만 불러오므로, 여기서 css/ 아래 파일을 순서대로 @import 합니다.
    순서가 곧 우선순위입니다. 파일들은 v1.5.2까지의 style.css를 위에서부터 그대로 잘라 나눈 것이라,
    순서를 바꾸면 같은 선택자 사이의 덮어쓰기 결과가 달라집니다. 새 규칙은 관련 파일 끝이나 맨 뒤 새 파일에 더하세요.
