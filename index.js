@@ -14,6 +14,7 @@ import {Gallery,normalizeGallery} from './gallery.js';
 import {Weather,normalizeWeather} from './weather.js';
 import {fxDiagRow} from './fx-diag.js';
 import {confirmAsk} from './dialogs.js';
+import {SettingsWindow} from './settings-window.js';
 import {syncMessageFooters} from './message-footer.js';
 import {normalizeMsgButtons,scanButtons,syncMessageButtons,isFront,setFront,resetFront} from './message-buttons.js';
 import {syncTyping} from './typing.js';
@@ -21,10 +22,10 @@ import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.6.0';
+const VERSION = '1.7.0';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
-let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false;
+let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
 // v0.23: 확장 목록 제목의 작은 다락창(지붕 + 십자 창) 아이콘.
 const ATTIC_SVG='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3.5 21 11"/><path d="M5.5 9v11.5h13V9"/><rect x="9" y="10.5" width="6" height="6" rx=".6"/><path d="M12 10.5v6M9 13.5h6"/></svg>';
 const el=(tag,cls='',text='')=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text)n.textContent=text;return n;};
@@ -33,7 +34,7 @@ function merge(raw){const userFonts=normalizeUserFonts(raw?.userFonts);setUserFo
 // One module failing must never stop the others: every module start/stop/apply runs inside guard().
 const failed=new Map();
 function guard(name,fn,cleanup){try{return fn();}catch(e){console.error(`[DARAK] ${name} 오류`,e);try{cleanup?.();}catch{}if(!failed.has(name)){failed.set(name,String(e?.message||e).slice(0,160));globalThis.toastr?.error?.(`${name}에서 오류가 나 이 모듈만 멈췄습니다. 다른 모듈은 계속 동작합니다. 자세한 내용은 다락방 설정 맨 위에 있습니다.`,'다락방',{timeOut:9000});}showFailures();}}
-function showFailures(){const box=document.getElementById('ttk-failures');if(!box)return;box.hidden=!failed.size;if(!failed.size)return;box.replaceChildren(el('strong','','멈춘 모듈이 있습니다'),...[...failed].map(([n,m])=>el('p','',`${n}: ${m}`)),el('p','','나머지 모듈은 그대로 동작합니다. 브라우저 콘솔(F12)의 [DARAK] 줄에 자세한 오류가 있습니다. 페이지를 새로고침하면 다시 시도합니다.'));}
+function showFailures(){const lf=document.getElementById('ttk-launcher-fail');if(lf){lf.hidden=!failed.size;lf.textContent=failed.size?`멈춘 모듈 ${failed.size}개 — 설정 창을 열면 맨 위에 자세한 내용이 있습니다.`:'';}const box=document.getElementById('ttk-failures');if(!box)return;box.hidden=!failed.size;if(!failed.size)return;box.replaceChildren(el('strong','','멈춘 모듈이 있습니다'),...[...failed].map(([n,m])=>el('p','',`${n}: ${m}`)),el('p','','나머지 모듈은 그대로 동작합니다. 브라우저 콘솔(F12)의 [DARAK] 줄에 자세한 오류가 있습니다. 페이지를 새로고침하면 다시 시도합니다.'));}
 const footerHooks={shelf:id=>(settings?.modules?.avatars&&avatars)?avatars.shelfFor(id):null};
 function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncStyleMarks();syncMessageFooters(settings.modules.design,footerHooks);syncMessageButtons(settings.modules.design,settings.msgButtons);syncTyping(settings.modules.design&&settings.design.typing!==false);},()=>{teardownDesign();syncMessageFooters(false);syncMessageButtons(false);syncTyping(false);});guard('한글화',syncLocalization);guard('화면 전체 한국어',syncUiTranslation);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('화자 얼굴',syncFaces);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);guard('날씨·분위기',syncWeather);}
 function changed(){applyModules();save();}
@@ -144,10 +145,10 @@ function syncDialogueHighlights(enabled){
 function info(label,detail){const n=el('span','ttk-option-label');n.append(el('strong','',label));if(detail)n.append(el('small','',detail));return n;}
 function openDrawer(r){r.classList.add('open');const c=r.querySelector(':scope > .inline-drawer-content');if(c)c.style.display='block';const i=r.querySelector('.inline-drawer-icon');if(i){i.classList.remove('down','fa-circle-chevron-down');i.classList.add('up','fa-circle-chevron-up');}}
 function syncGlossaryVisibility(){const g=document.getElementById('ttk-glossary-section');if(g)g.hidden=!(settings.modules.translation||settings.modules.ghostwrite);}
-function switchRow(parent,label,desc,key,disabled=false){const row=el('label','ttk-module-row');row.append(info(label,desc));const check=el('input');check.type='checkbox';check.checked=!!settings.modules[key];check.disabled=disabled;check.addEventListener('change',()=>{settings.modules[key]=check.checked;changed();if(key==='design')document.getElementById('ttk-theme-section').hidden=!check.checked;if(key==='localization')document.getElementById('ttk-localization-section').hidden=!check.checked;if(key==='translation')document.getElementById('ttk-translation-section').hidden=!check.checked;if(key==='ghostwrite')document.getElementById('ttk-ghostwrite-section').hidden=!check.checked;if(key==='qr')document.getElementById('ttk-qr-section').hidden=!check.checked;if(key==='faces')document.getElementById('ttk-faces-section').hidden=!check.checked;if(key==='inventory')document.getElementById('ttk-inventory-section').hidden=!check.checked;if(key==='optimization')document.getElementById('ttk-optimization-section').hidden=!check.checked;if(key==='avatars')document.getElementById('ttk-avatars-section').hidden=!check.checked;if(key==='themeImages')document.getElementById('ttk-themeimg-section').hidden=!check.checked;if(key==='gallery')document.getElementById('ttk-gallery-section').hidden=!check.checked;if(key==='weather')document.getElementById('ttk-weather-section').hidden=!check.checked;if(key==='translation'||key==='ghostwrite')syncGlossaryVisibility();});row.append(check);parent.append(row);return row;}
+function switchRow(parent,label,desc,key,disabled=false){const row=el('label','ttk-module-row');row.dataset.module=key;row.append(info(label,desc));const check=el('input');check.type='checkbox';check.checked=!!settings.modules[key];check.disabled=disabled;check.addEventListener('change',()=>{settings.modules[key]=check.checked;changed();if(key==='design')document.getElementById('ttk-theme-section').hidden=!check.checked;if(key==='localization')document.getElementById('ttk-localization-section').hidden=!check.checked;if(key==='translation')document.getElementById('ttk-translation-section').hidden=!check.checked;if(key==='ghostwrite')document.getElementById('ttk-ghostwrite-section').hidden=!check.checked;if(key==='qr')document.getElementById('ttk-qr-section').hidden=!check.checked;if(key==='faces')document.getElementById('ttk-faces-section').hidden=!check.checked;if(key==='inventory')document.getElementById('ttk-inventory-section').hidden=!check.checked;if(key==='optimization')document.getElementById('ttk-optimization-section').hidden=!check.checked;if(key==='avatars')document.getElementById('ttk-avatars-section').hidden=!check.checked;if(key==='themeImages')document.getElementById('ttk-themeimg-section').hidden=!check.checked;if(key==='gallery')document.getElementById('ttk-gallery-section').hidden=!check.checked;if(key==='weather')document.getElementById('ttk-weather-section').hidden=!check.checked;if(key==='translation'||key==='ghostwrite')syncGlossaryVisibility();});row.append(check);parent.append(row);return row;}
 function slider(parent,label,key,min,max,step,fmt,onUpdate){const row=el('label','ttk-slider');const line=el('span','ttk-slider-label');const out=el('output','',fmt(settings.design[key]));line.append(el('strong','',label),out);const input=el('input');input.type='range';Object.assign(input,{min,max,step,value:settings.design[key]});input.addEventListener('input',()=>{settings.design[key]=Number(input.value);out.textContent=fmt(settings.design[key]);onUpdate?.();changed();});row.append(line,input);parent.append(row);}
 function build(){
- const root=el('div','inline-drawer ttk-settings');root.id='ttk-panel';const sum=el('div','inline-drawer-toggle inline-drawer-header');const title=el('b','ttk-panel-title');const mark=el('span','ttk-panel-mark');mark.setAttribute('aria-hidden','true');mark.innerHTML=ATTIC_SVG;title.append(mark,el('span','ttk-panel-name','다락방'),el('small','ttk-panel-version',`v${VERSION}`));sum.append(title,el('div','inline-drawer-icon fa-solid fa-circle-chevron-down down'));root.append(sum);
+ const root=el('div','inline-drawer ttk-settings');root.id='ttk-panel';if(inWindow)root.classList.add('ttk-in-window');const sum=el('div','inline-drawer-toggle inline-drawer-header');const title=el('b','ttk-panel-title');const mark=el('span','ttk-panel-mark');mark.setAttribute('aria-hidden','true');mark.innerHTML=ATTIC_SVG;title.append(mark,el('span','ttk-panel-name','다락방'),el('small','ttk-panel-version',`v${VERSION}`));sum.append(title,el('div','inline-drawer-icon fa-solid fa-circle-chevron-down down'));root.append(sum);
  const drawer=el('div','inline-drawer-content');root.append(drawer);const body=el('div','ttk-settings-body');drawer.append(body);
  const failBox=el('div','ttk-failures');failBox.id='ttk-failures';failBox.hidden=true;failBox.setAttribute('role','alert');body.append(failBox);
  body.append(el('p','ttk-note','모듈별 ON/OFF를 지원합니다. 디자인을 끄면 확장 스타일이 제거되고 원래 실리태번 테마가 표시됩니다.'));
@@ -504,17 +505,30 @@ function build(){
  {const groups=[['채팅 보조','번역 · 대필 · 프로필 사진 · 화자 얼굴',[['translation','ttk-translation-section'],['ghostwrite','ttk-ghostwrite-section'],['avatars','ttk-avatars-section'],['faces','ttk-faces-section']],['ttk-glossary-section']],['화면','디자인 · 한글화 · 날씨 · 테마 이미지 · 모바일 최적화',[['design','ttk-theme-section'],['localization','ttk-localization-section'],['weather','ttk-weather-section'],['themeImages','ttk-themeimg-section'],['optimization','ttk-optimization-section']],[]],['도구','QR 보관함 · 통합 조회 · 이미지 모아보기',[['qr','ttk-qr-section'],['inventory','ttk-inventory-section'],['gallery','ttk-gallery-section']],[]]];
   const holder=el('div','ttk-groups');
   for(const [name,sub,items,extra] of groups){const g=el('section','ttk-group');const h=el('div','ttk-group-head');h.append(el('strong','',name),el('small','',sub));g.append(h);
-   for(const [key,secId] of items){const row=rowOf[key],sec=root.querySelector('#'+secId);if(row)g.append(row);if(sec)g.append(sec);}
+   for(const [key,secId] of items){const row=rowOf[key],sec=root.querySelector('#'+secId);if(row)g.append(row);if(sec){sec.dataset.module=key;g.append(sec);}}
    for(const id of extra){const sec=root.querySelector('#'+id);if(sec)g.append(sec);}
    holder.append(g);}
   body.append(holder);}
  syncControls();return root;
 }
+// ---- v1.7.0: 설정 창 ----
+// 창을 여는 동안 설정은 복사본으로 편집합니다. 화면에는 바로 반영되지만 저장(확장 설정 파일 쓰기)은 [저장 후 닫기]에서만 합니다.
+function beginEdit(){if(hold)return;committed=settings;settings=merge(JSON.parse(JSON.stringify(committed)));hold=true;pending=false;inWindow=true;}
+function commitEdit(){if(!hold)return;hold=false;inWindow=false;const had=pending;pending=false;committed=null;ctxRef.extensionSettings[KEY]=settings;if(had)ctxRef.saveSettingsDebounced();}
+function rollbackEdit(){if(!hold)return;hold=false;inWindow=false;pending=false;settings=committed;committed=null;setUserFonts(settings.userFonts);ctxRef.extensionSettings[KEY]=settings;applyModules();}
+// 확장 설정 목록에는 시작 버튼만 둡니다. 설정 자체는 요술봉 메뉴의 「다락방」 또는 이 버튼으로 연 창에서 바꿉니다.
+function buildLauncher(){
+ const root=el('div','ttk-launcher');root.id='ttk-launcher';
+ const head=el('div','ttk-launcher-head');const mark=el('span','ttk-panel-mark');mark.setAttribute('aria-hidden','true');mark.innerHTML=ATTIC_SVG;
+ head.append(mark,el('b','ttk-launcher-name','다락방'),el('small','ttk-panel-version',`v${VERSION}`));
+ const open=btn('다락방 열기',()=>{if(settingsWindow)settingsWindow.open();else globalThis.toastr?.error?.('설정 창을 열 수 없습니다. 페이지를 새로고침해 주세요.','다락방');},'menu_button ttk-launcher-open');
+ const fail=el('p','ttk-launcher-fail');fail.id='ttk-launcher-fail';fail.hidden=true;fail.setAttribute('role','alert');
+ root.append(head,el('p','ttk-note','설정은 별도 창에서 바꿉니다. 요술봉(확장) 메뉴의 「다락방」으로도 열 수 있어요.'),open,fail);return root;}
 async function main(){
  const ctx=window.SillyTavern?.getContext?.();
  if(!ctx?.extensionSettings||!ctx?.saveSettingsDebounced){console.error('[DARAK] Initialization failed: SillyTavern context unavailable');return;}
  try{settings=merge(ctx.extensionSettings[KEY]??ctx.extensionSettings[LEGACY_KEY]);}catch(e){console.error('[DARAK] 저장된 설정을 읽지 못했습니다. 기본값으로 시작합니다.',e);settings=merge({});}
- ctx.extensionSettings[KEY]=settings;save=()=>ctx.saveSettingsDebounced();
+ ctx.extensionSettings[KEY]=settings;ctxRef=ctx;save=()=>{if(hold){pending=true;settingsWindow?.markDirty();return;}ctx.saveSettingsDebounced();};
  guard('프롬프트 이름 번역',()=>{promptTranslator=new PromptNameTranslator({getSettings:()=>settings.promptTranslation,save});});
  guard('화면 전체 한국어',()=>{uiTranslator=new UiTranslator({getSettings:()=>settings.uiTranslation,getGlossary:()=>settings.glossary,getProfiles:()=>promptTranslator.getProfiles(),getFallbackProfile:()=>settings.translation.profileId||settings.promptTranslation.profileId,save:()=>save()});});
  guard('번역',()=>{messageTranslator=new MessageTranslator({getSettings:()=>settings.translation,getGlossary:()=>settings.glossary,save,getProfiles:()=>promptTranslator.getProfiles(),selfFolder:SELF_FOLDER});});
@@ -528,8 +542,9 @@ async function main(){
  guard('날씨·분위기',()=>{weather=new Weather({getSettings:()=>settings.weather,save:()=>save()});});
  guard('통합 조회',()=>{inventory=new Inventory({getToolkit:()=>({design:settings.modules.design,translation:settings.modules.translation}),selfFolder:SELF_FOLDER});});
  const target=document.querySelector('#extensions_settings2')||document.querySelector('#extensions_settings');
- if(target)guard('설정 패널',()=>{document.getElementById('ttk-panel')?.remove();target.append(build());},()=>document.getElementById('ttk-panel')?.remove());
- else console.error('[DARAK] 확장 설정 패널을 찾을 수 없습니다. 모듈은 저장된 설정대로 동작합니다.');
+ guard('설정 창',()=>{settingsWindow=new SettingsWindow({version:VERSION,buildPanel:build,begin:beginEdit,commit:commitEdit,rollback:rollbackEdit,ask:confirmAsk});settingsWindow.registerMenu();},()=>settingsWindow?.unregister());
+ if(target)guard('설정 패널',()=>{document.getElementById('ttk-launcher')?.remove();document.getElementById('ttk-panel')?.remove();target.append(buildLauncher());},()=>document.getElementById('ttk-launcher')?.remove());
+ else console.error('[DARAK] 확장 설정 목록을 찾을 수 없습니다. 요술봉 메뉴의 「다락방」으로 설정 창을 열 수 있습니다.');
  applyModules();showFailures();
  console.info(`[DARAK] v${VERSION} ready`);
 }
