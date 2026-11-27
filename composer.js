@@ -23,7 +23,7 @@ export function addComposerButton({ id, icon, label, title, order = 0, onClick }
         b.style.order = String(10 + order); // after SillyTavern's own left buttons
         bar.append(b);
     }
-    b.dataset.label = label; b.title = title; b.setAttribute('aria-label', title);
+    b.dataset.label = label; b.setAttribute('aria-label', title);
     return b;
 }
 export function removeComposerButton(id) {

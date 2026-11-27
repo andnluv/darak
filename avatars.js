@@ -108,7 +108,7 @@ export class Avatars {
     paintAll() { const chat = this.ctx()?.chat || []; document.querySelectorAll('#chat .mes').forEach(e => this.paint(e, chat[Number(e.getAttribute('mesid'))])); }
     addMesButtons(root = document) {
         root.querySelectorAll?.('#chat .mes .extraMesButtons:not(:has(.ttk_avatar_btn))').forEach(box => {
-            const b = el('div', 'mes_button ttk_avatar_btn fa-solid fa-id-badge'); b.title = '이 메시지의 프로필 사진 바꾸기'; b.tabIndex = 0;
+            const b = el('div', 'mes_button ttk_avatar_btn fa-solid fa-id-badge'); b.setAttribute('aria-label', '이 메시지의 프로필 사진 바꾸기'); b.tabIndex = 0;
             b.addEventListener('click', e => { e.stopPropagation(); this.open({ mesId: Number(box.closest('.mes')?.getAttribute('mesid')) }); });
             box.prepend(b);
         });
@@ -211,14 +211,14 @@ export class Avatars {
         const grid = el('div', 'ttk-av-grid'), cur = msg?.extra?.ttk_avatar?.url;
         for (const p of pics) {
             const cell = el('div', 'ttk-av-cell'), b = el('button', 'ttk-av-pic'), img = el('img'); b.type = 'button'; img.src = p.url; img.alt = p.name || '프로필 사진'; img.loading = 'lazy'; b.append(img);
-            const on = messageId != null ? cur === p.url : act === p.id; if (on) cell.classList.add('ttk-av-on'); b.title = p.name || '';
+            const on = messageId != null ? cur === p.url : act === p.id; if (on) cell.classList.add('ttk-av-on'); b.setAttribute('aria-label', p.name || '사진');
             b.addEventListener('click', () => {
                 if (messageId != null) { msg.extra = { ...(msg.extra || {}), ttk_avatar: { key, url: p.url } }; this.paint(this.mesEl(messageId), msg); this.ctx().saveChat?.(); }
                 else { this.S().owners[key].active = p.id; this.save(); }
                 this.render();
             });
             cell.append(b);
-            if (messageId == null) { const del = el('button', 'ttk-av-del', '×'); del.type = 'button'; del.title = '이 사진 지우기'; del.setAttribute('aria-label', '사진 지우기'); del.addEventListener('click', async () => { if (!(await confirmAsk('이 사진을 목록에서 지우고 서버 파일도 삭제합니다. 이미 이 사진을 쓴 메시지는 기본 이미지로 보일 수 있습니다.', { ok: '지우기', danger: true }))) return; await this.remove(key, p.id); this.render(); }); cell.append(del); }
+            if (messageId == null) { const del = el('button', 'ttk-av-del', '×'); del.type = 'button'; del.setAttribute('aria-label', '사진 지우기'); del.addEventListener('click', async () => { if (!(await confirmAsk('이 사진을 목록에서 지우고 서버 파일도 삭제합니다. 이미 이 사진을 쓴 메시지는 기본 이미지로 보일 수 있습니다.', { ok: '지우기', danger: true }))) return; await this.remove(key, p.id); this.render(); }); cell.append(del); }
             grid.append(cell);
         }
         if (messageId != null) {

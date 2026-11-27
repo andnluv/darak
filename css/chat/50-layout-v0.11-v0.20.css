@@ -1,0 +1,344 @@
+/* ===== v0.11.0 · 글꼴 우선 적용 =====
+   다른 확장(예: 글꼴 관리 확장)이 `html body :not(...)` 같은 높은 우선순위로 글꼴을 !important 로 강제해도
+   도구함의 글꼴 설정이 이기도록 id 를 겹쳐 우선순위를 올립니다. */
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text),
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote,h1,h2,h3,h4,h5,h6,span,em,strong,b,u,s,del,a,div,td,th){font-family:var(--ttk-font)!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,.ttk-dialogue *,q,q *){font-family:var(--ttk-dialogueFont)!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(code,pre,pre *,kbd,samp,.hljs,.hljs *,i[class*="fa-"]){font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"D2Coding",monospace!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) i[class*="fa-"]{font-family:"Font Awesome 6 Free","Font Awesome 6 Brands"!important}
+html[data-ttk-theme] body #chat#chat .ttk-tr-text :is(p,li,blockquote,span,em,strong){font-family:var(--ttk-font)!important}
+html[data-ttk-theme] body #chat#chat .ttk-tr-text .ttk-dialogue{font-family:var(--ttk-dialogueFont)!important}
+html[data-ttk-theme] body #send_textarea#send_textarea{font-family:var(--ttk-font)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview .ttk-preview-message,
+html body #ttk-panel#ttk-panel .ttk-mini-preview .ttk-preview-message :is(.ttk-preview-name,.ttk-preview-narration){font-family:var(--pv-font,serif)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview .ttk-preview-message .ttk-preview-dialogue{font-family:var(--pv-dialogue-font,serif)!important}
+
+/* ===== v0.11.0 · 테마별 프로필 사진 =====
+   원래 테마의 사용자 CSS 를 끈 상태에서 도구함이 사진의 크기·모양·테두리를 정합니다. */
+html[data-ttk-theme] #chat .mes .mesAvatarWrapper{width:auto!important;min-width:0!important;flex:0 0 auto!important;padding-bottom:0!important;align-items:center;gap:3px}
+html[data-ttk-theme] #chat .mes .mesAvatarWrapper .avatar{flex:0 0 auto!important;width:var(--ttk-av)!important;height:var(--ttk-av)!important;min-width:0;border:0!important;border-radius:var(--ttk-av-radius)!important;overflow:visible;box-shadow:var(--ttk-av-ring)}
+html[data-ttk-theme] #chat .mes .mesAvatarWrapper .avatar img{width:100%!important;height:100%!important;max-width:none;object-fit:cover;object-position:center top;border-radius:var(--ttk-av-radius)!important;display:block}
+html[data-ttk-theme] #chat .mes .mesAvatarWrapper :is(.mesIDDisplay,.mes_timer,.tokenCounterDisplay){margin-top:3px;max-width:var(--ttk-av);text-align:center;font-size:10px;line-height:1.2;color:var(--ttk-muted);opacity:.9;overflow:hidden;text-overflow:ellipsis}
+html[data-ttk-theme] #chat .mes{gap:var(--ttk-av-gap)!important;align-items:flex-start}
+html[data-ttk-theme=paper]{--ttk-av:28px;--ttk-av-radius:50%;--ttk-av-gap:11px;--ttk-av-ring:0 0 0 1px var(--ttk-border)}
+html[data-ttk-theme=nocturne]{--ttk-av:42px;--ttk-av-radius:50%;--ttk-av-gap:13px;--ttk-av-ring:0 0 0 2px var(--ttk-surface),0 0 0 3.5px var(--ttk-accent)}
+html[data-ttk-theme=porcelain]{--ttk-av:42px;--ttk-av-radius:10px;--ttk-av-gap:14px;--ttk-av-ring:0 0 0 2px #fff,0 0 0 3.5px var(--ttk-accent)}
+html[data-ttk-theme=studio]{--ttk-av:44px;--ttk-av-radius:16px;--ttk-av-gap:13px;--ttk-av-ring:0 0 0 2px var(--ttk-surface),0 4px 12px var(--ttk-shadow)}
+html[data-ttk-theme=paper] #chat .mes .mesAvatarWrapper{padding-top:3px}
+@media(max-width:600px){
+ html[data-ttk-theme=paper]{--ttk-av:24px;--ttk-av-gap:9px}
+ html[data-ttk-theme=nocturne]{--ttk-av:34px;--ttk-av-gap:10px}
+ html[data-ttk-theme=porcelain]{--ttk-av:34px;--ttk-av-gap:11px}
+ html[data-ttk-theme=studio]{--ttk-av:36px;--ttk-av-gap:10px}
+}
+
+
+/* ===== v0.13.0 · 컨셉별 메시지 레이아웃 (v11 시안 기준) =====
+   한 메시지 = 한 블록: 큰 이미지 칸 + 이름·본문 + 하단 줄(‹ 1/3 ›·토큰·버튼).
+   CHAR/USER 같은 구조, PC/모바일 같은 배치(크기만 다름), 본문 양쪽 정렬.
+   장식 문구는 없고, 이름·번호·시간 같은 실제 정보만 타이포로 씁니다(message-footer.js 가 캡션을 만듭니다). */
+html[data-ttk-theme]{--ttk-img:clamp(120px,30%,240px);--ttk-gap:24px;--ttk-pad:22px;--ttk-stub:84px}
+@media(max-width:600px){html[data-ttk-theme]{--ttk-img:clamp(84px,30%,124px);--ttk-gap:12px;--ttk-pad:12px;--ttk-stub:44px}}
+
+/* 공통 골격 */
+html[data-ttk-theme] body #chat#chat > .mes{flex-shrink:0!important}
+html[data-ttk-theme] body #chat#chat .mes{display:grid!important;grid-template-columns:var(--ttk-img) minmax(0,1fr);grid-template-rows:auto;column-gap:var(--ttk-gap);align-items:start;position:relative;width:100%!important;max-width:100%!important;box-sizing:border-box;margin:16px 0!important;padding:var(--ttk-pad)!important;overflow:visible!important}
+html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper{grid-column:1;grid-row:1;position:relative;display:flex!important;flex-direction:column;align-items:stretch!important;gap:6px;width:auto!important;min-width:0!important;padding:0!important;margin:0!important}
+html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper .avatar{position:relative;width:100%!important;height:auto!important;min-width:0!important;border:0!important;overflow:hidden}
+html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper .avatar img{width:100%!important;height:100%!important;object-fit:cover;object-position:center 20%;display:block;border-radius:inherit!important;filter:none!important}
+html[data-ttk-theme] body #chat#chat .mes .mes_block{grid-column:2;grid-row:1;min-width:0;width:auto!important;margin:0!important;padding:0!important}
+html[data-ttk-theme] body #chat#chat .mes .mesAvatarWrapper :is(.mesIDDisplay,.mes_timer){display:none!important}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote){text-align:justify;word-break:normal;overflow-wrap:break-word!important;hyphens:manual}
+html[data-ttk-theme] body #chat#chat .mes .ch_name{margin:0 0 10px!important;padding:0!important;border:0!important}
+html[data-ttk-theme] body #chat#chat .mes .ch_name .name_text{font-size:14px!important}
+html[data-ttk-theme] body #chat#chat .mes .ch_name .timestamp{font-size:11px;color:var(--ttk-muted)!important;opacity:1}
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-dialogue{background:var(--ttk-dialogueBg);border-radius:3px;padding:.04em .28em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+/* 하단 줄 */
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot{display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:9px;border-top:1px solid var(--ttk-border);min-height:28px}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot-nav{display:flex;align-items:center;gap:2px;flex:0 0 auto}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot :is(.swipe_left,.swipe_right){position:static!important;inset:auto!important;align-self:center;display:inline-flex;line-height:1;width:24px;height:24px;margin:0!important;font-size:13px;opacity:.75;z-index:auto;color:var(--ttk-muted)}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot .swipeRightBlock{position:static!important;flex-direction:row-reverse!important;align-items:center;margin:0!important;pointer-events:auto}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot .swipes-counter{margin:0!important;min-width:0;padding:0 3px;opacity:.85;font-size:12px;color:var(--ttk-muted)}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot-tok{flex:0 0 auto;min-width:0;display:flex}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot .tokenCounterDisplay{display:block;margin:0;padding:2px 9px;border:1px solid var(--ttk-border);border-radius:99px;background:transparent;font-size:11px;line-height:1.3;color:var(--ttk-muted)!important;opacity:1;font-variant-numeric:tabular-nums}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot .tokenCounterDisplay:empty{display:none!important}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot-btn{flex:0 1 auto;margin-left:auto;min-width:0}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot .mes_buttons{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:2px}
+
+/* ── Paper · Nocturne 공통: 이북 리더 골격 — 왼쪽 전체 사진 | 오른쪽 본문(PC 2단), 긴 글은 가로 페이지 넘김 ── */
+html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(150px,32%,320px);--rd-h:min(88vh,980px);--rd-gap:48px}
+@media(max-width:600px){html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(92px,32%,140px);--rd-h:min(90dvh,860px);--rd-gap:28px}}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes{grid-template-columns:var(--rd-img) minmax(0,1fr)!important;column-gap:0;padding:0!important;align-items:stretch;min-height:calc(var(--rd-img) * 1.3);border-radius:20px!important;overflow:hidden!important;background:var(--ttk-ai)!important;border:1px solid var(--ttk-border)!important;box-shadow:0 14px 34px var(--ttk-shadow)!important;margin:22px 0!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes[is_user=true]{background:var(--ttk-user)!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{align-self:stretch;gap:0}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{display:flex!important;flex-direction:column;min-height:0;position:relative;padding:26px 34px 14px 32px!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name{flex:0 0 auto;margin-bottom:14px!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_reasoning_details,.mes_media_wrapper,.mes_file_wrapper){flex:0 0 auto}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_text{flex:1 1 auto;min-height:0;padding:0!important;max-height:none!important;-webkit-mask:none!important;mask:none!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) p{text-indent:1em}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote){word-break:normal;text-justify:auto}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{overflow:hidden;isolation:isolate}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote){break-inside:auto}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ttk-foot{flex:0 0 auto;margin-top:10px}
+@media(max-width:600px){
+ :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{padding:14px 14px 8px 14px!important}
+}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes:has(.mes_text textarea){height:auto}
+
+/* ── Porcelain · 청화백자 지면: 위 이름 제호(이중 괘선) / 왼쪽 사진 + 캡션 띠 | 세로 괘선 | 오른쪽 본문 ── */
+html[data-ttk-theme=porcelain]{--pc-img:clamp(140px,32%,300px)}
+@media(max-width:600px){html[data-ttk-theme=porcelain]{--pc-img:clamp(96px,34%,140px)}}
+html[data-ttk-theme=porcelain] body #chat#chat .mes{grid-template-columns:var(--pc-img) minmax(0,1fr)!important;grid-template-rows:auto auto 1fr;column-gap:0;background:var(--ttk-ai)!important;border:1px solid var(--ttk-border)!important;border-radius:6px!important;box-shadow:inset 0 0 0 3px var(--ttk-ai),0 4px 18px var(--ttk-shadow)!important;padding:calc(var(--ttk-pad) + 22px) calc(var(--ttk-pad) + 6px) var(--ttk-pad)!important;margin:22px 0!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes[is_user=true]{background:var(--ttk-user)!important;box-shadow:inset 0 0 0 3px var(--ttk-user),0 4px 18px var(--ttk-shadow)!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes::before{content:'';position:absolute;left:1px;right:1px;top:1px;width:auto;height:14px;border:0;opacity:1;border-radius:5px 5px 0 0;background:var(--ttk-accent);-webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2722%27%20height=%2714%27%20viewBox=%270%200%2022%2014%27%3E%3Cpath%20d=%27M0%2014%20Q5.5%201%2011%2014%20Q16.5%201%2022%2014%27%20fill=%27%23000%27%20fill-opacity=%27.38%27%20stroke=%27%23000%27%20stroke-width=%271.2%27/%3E%3C/svg%3E") repeat-x left top/22px 14px;mask:url("data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%2722%27%20height=%2714%27%20viewBox=%270%200%2022%2014%27%3E%3Cpath%20d=%27M0%2014%20Q5.5%201%2011%2014%20Q16.5%201%2022%2014%27%20fill=%27%23000%27%20fill-opacity=%27.38%27%20stroke=%27%23000%27%20stroke-width=%271.2%27/%3E%3C/svg%3E") repeat-x left top/22px 14px}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper{display:contents!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper .avatar{grid-column:1;grid-row:2;aspect-ratio:3/4;width:100%!important;margin:0!important;border-radius:0!important;box-shadow:0 0 0 1px var(--ttk-accent)!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .mesAvatarWrapper .avatar img{border-radius:0!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{grid-column:2;grid-row:2/4;margin-left:22px!important;padding-left:22px!important;border-left:1px solid var(--ttk-border)}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .ch_name > .flex-container:first-child{display:none!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .ch_name{margin:0!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) p{text-indent:1em}
+html[data-ttk-theme=porcelain] body #chat#chat .mes .ttk-foot{border-top:3px double var(--ttk-border)}
+@media(max-width:600px){html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{margin-left:12px!important;padding-left:12px!important}}
+
+/* ── Studio · 잡지 화보: 위 화보 펼침면(사진 + 큰 번호·이름) / 아래 분리된 메시지 카드 ── */
+html[data-ttk-theme=studio] body #chat#chat .mes{grid-template-columns:minmax(0,1fr)!important;row-gap:12px;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:30px 0!important}
+html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{grid-column:1;grid-row:1;display:grid!important;grid-template-columns:minmax(0,46%) minmax(0,1fr);column-gap:clamp(16px,4%,34px);align-items:end!important;padding:clamp(18px,4%,34px)!important;box-sizing:border-box;background:color-mix(in srgb,var(--ttk-accent) 14%,var(--ttk-surface));border-radius:16px;overflow:hidden;box-shadow:0 4px 14px var(--ttk-shadow)}
+html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper .avatar{grid-column:1;grid-row:1;aspect-ratio:4/5.5;border-radius:4px!important;box-shadow:12px 12px 0 color-mix(in srgb,var(--ttk-accent) 34%,var(--ttk-surface))!important;overflow:hidden}
+html[data-ttk-theme=studio] body #chat#chat .mes .mes_block{grid-column:1;grid-row:2;background:var(--ttk-ai);border:1px solid var(--ttk-border);border-radius:16px;box-shadow:0 4px 14px var(--ttk-shadow);padding:var(--ttk-pad) calc(var(--ttk-pad) + 4px)!important}
+html[data-ttk-theme=studio] body #chat#chat .mes[is_user=true] .mes_block{background:var(--ttk-user)}
+html[data-ttk-theme=studio] body #chat#chat .mes .ch_name{padding-bottom:8px!important;border-bottom:1px solid var(--ttk-border)!important;margin-bottom:14px!important}
+html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes .mes_text:not([data-ttk-nodrop]) > p:first-of-type::first-letter{float:left;font:700 3.2em/.86 var(--ttk-font);color:var(--ttk-accent);margin:.08em .12em 0 0}
+
+/* 설정창 컬러칩: 테마 컨셉 모양 */
+#ttk-panel .ttk-palette-chips{grid-template-columns:repeat(4,minmax(0,1fr))}
+#ttk-panel .ttk-palette-chips[data-theme] .ttk-palette-chip-swatch{width:36px!important;height:26px!important;border-radius:4px!important;background-image:none!important;border:1px solid var(--c-bd)!important;outline:0!important;background-color:var(--c-surf)!important}
+#ttk-panel .ttk-palette-chips[data-theme=paper] .ttk-palette-chip-swatch{background:linear-gradient(var(--c-acc) 0 4px,var(--c-surf) 4px)!important}
+#ttk-panel .ttk-palette-chips[data-theme=nocturne] .ttk-palette-chip-swatch{background:linear-gradient(90deg,var(--c-surf) 0 66%,var(--c-bd) 66% 70%,var(--c-acc) 70%)!important;border-color:var(--c-acc)!important}
+#ttk-panel .ttk-palette-chips[data-theme=porcelain] .ttk-palette-chip-swatch{width:26px!important;border-radius:50%!important;background:radial-gradient(circle,var(--c-surf) 0 34%,var(--c-acc) 36% 58%,var(--c-surf) 60%)!important;border-color:var(--c-acc)!important}
+#ttk-panel .ttk-palette-chips[data-theme=studio] .ttk-palette-chip-swatch{background:linear-gradient(var(--c-acc) 0 55%,var(--c-surf) 55%)!important;border-radius:7px!important}
+
+/* 하단 줄: 버튼이 많으면 버튼 묶음만 다음 줄로 */
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot{flex-wrap:wrap;row-gap:6px}
+html[data-ttk-theme] body #chat#chat .mes .ttk-foot .mes_buttons{flex-wrap:nowrap}
+/* 캡션·스텁·페이지 버튼 글꼴: 다른 확장이 글꼴을 강제해도 테마 글꼴 유지 */
+html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes .mes_text:not([data-ttk-nodrop]) > p:first-of-type::first-letter{font-family:var(--ttk-font)!important}
+html[data-ttk-theme=studio]:not([data-ttk-dropcap=off]) body #chat#chat .mes.ttk-tr-replace:not(.ttk-tr-original) .ttk-tr-text:not([data-ttk-nodrop]) > p:first-of-type::first-letter{float:left;font:700 3.2em/.86 var(--ttk-font)!important;color:var(--ttk-accent);margin:.08em .12em 0 0}
+
+/* ── v0.15 · Porcelain: 꽃잎 띠를 안쪽 테두리선 안에 가운데 정렬, 제호 정렬 ── */
+html[data-ttk-theme=porcelain] body #chat#chat .mes{padding-top:calc(var(--ttk-pad) + 30px)!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes::before{top:9px!important;left:12px!important;right:12px!important;height:14px;border-radius:0!important;-webkit-mask-position:center top!important;mask-position:center top!important}
+html[data-ttk-theme=porcelain] body #chat#chat .mes::after{content:'';position:absolute;top:27px;left:12px;right:12px;height:1px;background:color-mix(in srgb,var(--ttk-accent) 45%,transparent);pointer-events:none}
+
+/* ── v0.15 · Studio: 잡지 화보 — 흰 지면·잉크색 큰 타이포·단일 강조색 블록 ── */
+html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{background:var(--ttk-surface)!important;border:1px solid color-mix(in srgb,var(--ttk-text) 14%,transparent);border-top:4px solid var(--ttk-text);border-radius:4px!important;grid-template-columns:minmax(0,54%) minmax(0,1fr)!important;padding:clamp(18px,4%,36px) clamp(18px,4%,36px) clamp(26px,5%,44px)!important;box-shadow:0 10px 30px var(--ttk-shadow)!important}
+html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper .avatar{aspect-ratio:4/5.2;border-radius:0!important;box-shadow:16px 16px 0 var(--ttk-accent)!important}
+html[data-ttk-theme=studio] body #chat#chat .mes .mes_block{border-radius:4px!important;border-top:4px solid var(--ttk-text)!important}
+html[data-ttk-theme=studio] body #chat#chat .mes .ch_name .name_text{letter-spacing:.12em;text-transform:uppercase;color:var(--ttk-text)!important}
+
+/* ===== v0.16 · Paper·Nocturne 확정안(v14 시안): 이름은 헤더에만, 왼쪽은 사진 + 번호·시간·토큰 =====
+   Paper = 인화지 사진 + 좌상단·우하단 사선 마스킹 테이프 / Nocturne = 극장 포스터 + 카드 하단 가로 티켓 스텁 */
+html[data-ttk-theme] body #chat#chat .mes .ttk-poster{display:none}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{background:var(--ttk-raised);border-right:1px solid var(--ttk-border);align-items:center!important;justify-content:flex-start!important;padding:34px 0 22px!important;gap:16px!important;box-sizing:border-box;overflow:visible!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper::before,:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper::after{content:none!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper .avatar{position:relative;flex:0 0 auto;width:74%!important;height:auto!important;aspect-ratio:auto!important;border-radius:0!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name .timestamp{display:none!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .ch_name .name_text{font-size:16px!important;color:var(--ttk-text)!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-dialogue{font-weight:700}
+/* v1.6.0: 토큰 수는 네 테마 모두 꼬리 줄에 표시(예전에는 Paper·Nocturne PC에서 숨김) */
+@media(max-width:600px){:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mesAvatarWrapper{padding:22px 0 14px!important;gap:12px!important}}
+
+/* Paper: 인화지 사진 + 사선 마스킹 테이프 2개(같은 방향, 대각 대칭) */
+html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar{padding:5%;box-sizing:border-box;background:#FFFDF8!important;box-shadow:0 0 0 1px rgba(0,0,0,.04),0 8px 18px var(--ttk-shadow)!important;overflow:visible!important}
+html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar img{position:static!important;display:block;width:100%!important;height:auto!important;max-height:min(52vh,460px);object-fit:contain!important;border-radius:0!important;box-shadow:none!important}
+html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar::before,html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar::after{content:'';position:absolute;z-index:2;width:36%;aspect-ratio:4.2/1;pointer-events:none;transform:rotate(-45deg);background-color:color-mix(in srgb,var(--ttk-accent) 24%,#EFE3C6);background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.24) 0 3px,transparent 3px 7px);opacity:.82;clip-path:polygon(0 0,100% 0,96% 25%,100% 50%,96% 75%,100% 100%,0 100%,4% 75%,0 50%,4% 25%)}
+html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar::before{left:-10%;top:4%}
+html[data-ttk-theme=paper] body #chat#chat .mes .mesAvatarWrapper .avatar::after{right:-10%;bottom:4%}
+
+/* Nocturne: 극장 포스터(위 시각 → 키 아트 → 장면 번호 타이틀 → 빌링 블록) + 하단 가로 스텁 */
+html[data-ttk-theme=nocturne] body #chat#chat .mes{padding-bottom:48px!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .mesAvatarWrapper{background:linear-gradient(180deg,var(--ttk-raised),var(--ttk-bg))}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .mesAvatarWrapper .avatar{aspect-ratio:2/3!important;overflow:hidden!important;background:#0A0907!important;box-shadow:0 0 0 1px color-mix(in srgb,var(--ttk-accent) 35%,transparent),0 14px 28px rgba(0,0,0,.55)!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .mesAvatarWrapper .avatar img{position:absolute!important;inset:0;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center 20%!important;border-radius:0!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster{display:block;position:absolute;inset:0;z-index:2;pointer-events:none;container-type:inline-size;background:linear-gradient(180deg,rgba(0,0,0,.55) 0,transparent 18%,transparent 52%,rgba(6,5,3,.95) 86%)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster > span{position:absolute;left:0;right:0;text-align:center;white-space:nowrap;overflow:hidden}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-top{top:5cqw;font-size:max(8px,5.4cqw);letter-spacing:.32em;color:var(--ttk-text)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-title{bottom:15.5cqw;font-size:17cqw;line-height:1;font-weight:500;letter-spacing:.08em;color:var(--ttk-accent)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-bill{left:10%!important;right:10%!important;bottom:5cqw;padding-top:1.5cqw;border-top:1px solid color-mix(in srgb,var(--ttk-accent) 40%,transparent);font-size:max(7px,4.5cqw);line-height:1.3;letter-spacing:.06em;color:var(--ttk-muted);transform:scaleY(1.2);transform-origin:bottom}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster :is(.ttk-poster-top,.ttk-poster-title,.ttk-poster-bill){font-family:'Oswald',var(--ttk-font),sans-serif!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .mes_block{position:static!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot{position:absolute;left:0;right:0;bottom:0;z-index:3;height:48px;margin:0!important;padding:0 26px!important;box-sizing:border-box;flex-wrap:nowrap!important;gap:14px;border-top:2px dashed var(--ttk-border)!important;background:color-mix(in srgb,var(--ttk-bg) 55%,var(--ttk-ai))}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot-btn{overflow-x:auto;scrollbar-width:none}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot-btn::-webkit-scrollbar{display:none}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot::after{content:'';flex:0 0 72px;height:20px;opacity:.8;background:repeating-linear-gradient(90deg,var(--ttk-muted) 0 1px,transparent 1px 3px,var(--ttk-muted) 3px 5px,transparent 5px 6px)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes::before,html[data-ttk-theme=nocturne] body #chat#chat .mes::after{content:'';position:absolute;bottom:38px;width:20px;height:20px;border-radius:50%;background:var(--ttk-bg);z-index:4;pointer-events:none}
+html[data-ttk-theme=nocturne] body #chat#chat .mes::before{left:-10px}
+html[data-ttk-theme=nocturne] body #chat#chat .mes::after{right:-10px}
+@media(max-width:600px){
+ html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot{padding:0 14px!important;gap:10px}
+ html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-foot::after{flex-basis:44px}
+}
+/* 확정안: 페이지 넘김은 헤더 줄 안의 글자 버튼(알약 배경 없음), 티켓 홈은 조금 크게 */
+html[data-ttk-theme=nocturne] body #chat#chat .mes::before,html[data-ttk-theme=nocturne] body #chat#chat .mes::after{width:24px;height:24px;bottom:36px}
+html[data-ttk-theme=nocturne] body #chat#chat .mes::before{left:-12px}
+html[data-ttk-theme=nocturne] body #chat#chat .mes::after{right:-12px}
+
+/* ===== v0.16.1 · 모바일 점검 ===== */
+/* iOS Safari가 좁은 칸의 글자를 임의로 키우는 현상(text autosizing) 차단 — 캡션·본문 크기가 들쭉날쭉하던 원인 */
+html[data-ttk-theme],html[data-ttk-theme] body{-webkit-text-size-adjust:100%!important;text-size-adjust:100%!important}
+/* 드롭캡 설정: 체크박스와 글자를 한 줄로 */
+#ttk-panel :is(.ttk-dropcap-row,.ttk-typing-row){display:flex!important;flex-direction:row!important;align-items:center;gap:10px}
+#ttk-panel :is(.ttk-dropcap-row,.ttk-typing-row) input{flex:0 0 auto;margin:0}
+/* Porcelain: 캡션 띠에는 이름 대신 번호(이름은 제호에만) */
+/* Studio: 큰 번호가 위에서 잘리지 않게 */
+html[data-ttk-theme=studio] body #chat#chat .mes .mesAvatarWrapper{overflow:visible!important}
+@media(max-width:600px){
+ html[data-ttk-theme=porcelain]{--pc-img:clamp(96px,30%,130px)}
+ /* Paper·Nocturne: 페이지 넘김을 이름 아래 줄로 내려 겹침 방지 */
+ }
+/* 컬러 선택 칸: iOS Safari 기본 무지개 테두리·타원 견본 제거 → 둥근 사각 견본 하나 */
+#ttk-panel input[type=color]{-webkit-appearance:none!important;appearance:none!important;width:44px!important;height:30px!important;padding:0!important;border:1px solid var(--ttk-border,#bbb)!important;border-radius:8px!important;background:none!important;overflow:hidden;box-shadow:none!important;cursor:pointer;flex:0 0 auto}
+#ttk-panel input[type=color]::-webkit-color-swatch-wrapper{padding:0!important}
+#ttk-panel input[type=color]::-webkit-color-swatch{border:0!important;border-radius:7px!important}
+#ttk-panel input[type=color]::-moz-color-swatch{border:0;border-radius:7px}
+/* 설정창 슬라이더: 두꺼운 회색 막대 → 가는 트랙 + 강조색 손잡이 */
+#ttk-panel input[type=range]{-webkit-appearance:none!important;appearance:none!important;width:100%;height:22px!important;background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;margin:4px 0!important}
+#ttk-panel input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:99px;background:var(--ttk-border,#ccc);border:0}
+#ttk-panel input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;margin-top:-7px;border-radius:50%;background:var(--ttk-accent,#4f6f8f);border:2px solid var(--ttk-surface,#fff);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+#ttk-panel input[type=range]::-moz-range-track{height:4px;border-radius:99px;background:var(--ttk-border,#ccc)}
+#ttk-panel input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ttk-accent,#4f6f8f);border:2px solid var(--ttk-surface,#fff)}
+
+/* v0.17.1 Studio: 긴 이름이 ‘…’로 잘리지 않게 (모바일은 글자를 조금 줄이고 필요하면 줄바꿈) */
+@media (max-width:600px){
+ }
+
+/* v0.17.2 잘림 수정: 포스터엔 번호만 · 상태창 같은 자체 레이아웃 메시지는 쪽으로 자르지 않고 전체 너비로 · 모바일 본문 폭 확보 */
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster{background:linear-gradient(180deg,transparent 60%,rgba(6,5,3,.9) 100%)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster :is(.ttk-poster-top,.ttk-poster-bill){display:none!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ttk-poster-title{bottom:5cqw;font-size:max(13px,17cqw)}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ch_name .timestamp{display:inline!important}
+html[data-ttk-theme=nocturne] body #chat#chat .mes .ch_name .flex-container{flex-wrap:wrap}
+@media(max-width:600px){
+ html:is([data-ttk-theme=paper],[data-ttk-theme=nocturne]){--rd-img:clamp(72px,24%,104px)}
+ :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{padding:12px 12px 8px 12px!important}
+ html[data-ttk-theme=porcelain]{--pc-img:clamp(84px,27%,120px)}
+ html[data-ttk-theme=porcelain] body #chat#chat .mes .mes_block{margin-left:12px!important;padding-left:12px!important}
+}
+@media(max-width:600px){
+ html[data-ttk-theme=nocturne] body #chat#chat .mes .ch_name .timestamp{font-size:10.5px}
+}
+
+/* v0.17.3 읽는 공간 확대: 쪽 높이 키움 + 모바일에서 쪽 넘김 줄이 차지하던 위쪽 여백 축소 */
+@media(max-width:600px){
+ :is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne]) body #chat#chat .mes .mes_block{padding-top:10px!important}
+}
+
+
+/* v0.17.5 상태창 같은 자체 레이아웃 메시지: 배치는 다른 메시지와 똑같이 두고, 쪽으로만 자르지 않고 끝까지 펼친다 */
+
+/* ── v0.18 Paper · 서재: 표지(사진) + NOW READING + 책장 — CHAR·USER 모두 같은 형식 ── */
+html[data-ttk-theme] body #chat#chat .mes :is(.ttk-now,.ttk-shelf){display:none}
+/* 서재가 있는 테마(Paper·Nocturne·Porcelain)는 아래 v0.20 블록에서 켠다 */
+
+/* ── v0.19 입력 중 표시: 채팅 맨 아래 메시지 모양 카드 — 테마마다 다른 소재 ── */
+.ttk-typing{display:none}
+html[data-ttk-theme] #chat .ttk-typing{display:flex;align-items:center;gap:14px;box-sizing:border-box;width:100%;margin:22px 0;padding:14px 18px;border:1px solid var(--ttk-border);border-radius:16px;background:var(--ttk-ai);box-shadow:0 10px 26px var(--ttk-shadow);color:var(--ttk-text);font-family:var(--ttk-font);animation:ttk-typing-in .35s ease both}
+html[data-ttk-theme] #chat .ttk-typing-cover{flex:0 0 auto;width:48px;aspect-ratio:3/4;border-radius:4px;background:var(--ttk-raised) center/cover no-repeat;box-shadow:0 0 0 1px var(--ttk-border),0 4px 10px var(--ttk-shadow)}
+html[data-ttk-theme] #chat .ttk-typing-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+html[data-ttk-theme] #chat .ttk-typing-eyebrow{font-size:11px;line-height:1.3;letter-spacing:.22em;text-transform:uppercase;color:var(--ttk-accent)}
+html[data-ttk-theme] #chat .ttk-typing-name{font-size:16px;line-height:1.3;font-weight:700;color:var(--ttk-text);overflow-wrap:anywhere}
+html[data-ttk-theme] #chat .ttk-typing-name:empty{display:none}
+html[data-ttk-theme] #chat .ttk-typing-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html[data-ttk-theme] #chat .ttk-typing-motif{margin-top:8px;display:flex;gap:6px;align-items:center}
+html[data-ttk-theme] #chat .ttk-typing-motif i{display:block}
+/* Paper: 줄이 한 줄씩 채워지는 원고 */
+html[data-ttk-theme=paper] #chat .ttk-typing{border-radius:20px}
+html[data-ttk-theme=paper] #chat .ttk-typing-motif{flex-direction:column;align-items:stretch;gap:7px;max-width:260px}
+html[data-ttk-theme=paper] #chat .ttk-typing-motif i{height:2px;border-radius:2px;background:color-mix(in srgb,var(--ttk-text) 55%,transparent);transform-origin:left;animation:ttk-typing-line 3.6s ease-in-out infinite}
+html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(1){width:96%}html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(2){width:100%;animation-delay:.35s}html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(3){width:82%;animation-delay:.7s}html[data-ttk-theme=paper] #chat .ttk-typing-motif i:nth-child(n+4){display:none}
+/* Nocturne: 필름 프레임이 차례로 켜지는 카운트다운 */
+html[data-ttk-theme=nocturne] #chat .ttk-typing{border-radius:20px;border-bottom:1px dashed var(--ttk-border)}
+html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i{width:22px;height:16px;border:1.5px solid var(--ttk-accent);border-radius:2px;opacity:.25;animation:ttk-typing-frame 1.8s steps(1,end) infinite}
+html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(2){animation-delay:.3s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(3){animation-delay:.6s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(4){animation-delay:.9s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(5){animation-delay:1.2s}html[data-ttk-theme=nocturne] #chat .ttk-typing-motif i:nth-child(6){animation-delay:1.5s}
+/* Porcelain: 활자가 하나씩 찍히는 조판 */
+html[data-ttk-theme=porcelain] #chat .ttk-typing{border-radius:6px;box-shadow:inset 0 0 0 3px var(--ttk-ai),0 4px 18px var(--ttk-shadow);border-top:4px double var(--ttk-accent)}
+html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i{width:16px;height:16px;border:1.5px solid var(--ttk-accent);background:transparent;transform-origin:bottom;animation:ttk-typing-stamp 2.4s ease-in-out infinite}
+html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(2){animation-delay:.25s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(3){animation-delay:.5s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(4){animation-delay:.75s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(5){animation-delay:1s}html[data-ttk-theme=porcelain] #chat .ttk-typing-motif i:nth-child(6){display:none}
+/* Studio: 지면 블록이 반짝이며 채워지는 화보 */
+html[data-ttk-theme=studio] #chat .ttk-typing{border-radius:4px;border-top:4px solid var(--ttk-text)}
+html[data-ttk-theme=studio] #chat .ttk-typing-motif{gap:8px}
+html[data-ttk-theme=studio] #chat .ttk-typing-motif i{height:10px;border-radius:1px;background:linear-gradient(90deg,color-mix(in srgb,var(--ttk-accent) 30%,transparent) 0,var(--ttk-accent) 50%,color-mix(in srgb,var(--ttk-accent) 30%,transparent) 100%) 0 0/200% 100%;animation:ttk-typing-shimmer 1.6s linear infinite}
+html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(1){width:44px}html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(2){width:26px;animation-delay:.2s}html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(3){width:60px;animation-delay:.4s}html[data-ttk-theme=studio] #chat .ttk-typing-motif i:nth-child(n+4){display:none}
+@keyframes ttk-typing-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes ttk-typing-line{0%{transform:scaleX(0);opacity:.2}35%,80%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@keyframes ttk-typing-frame{0%{opacity:.9;background:color-mix(in srgb,var(--ttk-accent) 40%,transparent)}16.6%,100%{opacity:.25;background:transparent}}
+@keyframes ttk-typing-stamp{0%,100%{transform:scaleY(1);background:transparent}20%{transform:scaleY(.55);background:var(--ttk-accent)}40%{transform:scaleY(1);background:transparent}}
+@keyframes ttk-typing-shimmer{from{background-position:200% 0}to{background-position:0 0}}
+@media(prefers-reduced-motion:reduce){html[data-ttk-theme] #chat :is(.ttk-typing,.ttk-typing-motif i){animation:none!important}html[data-ttk-theme] #chat .ttk-typing-motif i{opacity:.7}}
+
+/* v0.19.1 한글은 단어(띄어쓰기) 단위로 줄바꿈: 음절 중간에서 끊기지 않게. 한 단어가 한 줄보다 길 때만 예외로 끊는다 */
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text),
+html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote,div,span,q,em,strong,td,th,summary){word-break:keep-all!important;overflow-wrap:break-word!important;line-break:strict}
+/* v1.6.0: 휴대폰(600px 이하)은 양쪽 정렬에서 낱말 사이 구멍이 크게 벌어져 음절 단위로 줄을 나눈다. PC는 위의 단어 단위 그대로 */
+@media(max-width:600px){html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text),html[data-ttk-theme] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(p,li,blockquote,div,span,q,em,strong,td,th,summary){word-break:normal!important}}
+
+
+/* ── v0.20 서재 — Paper·Nocturne·Porcelain 공통 골격 + 테마별 책장·책등·소품 (Studio 제외) ── */
+:is(html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) body #chat#chat .mes .ttk-shelf-toggle{all:unset;box-sizing:border-box;padding:2px 9px;border:1px solid var(--ttk-border);border-radius:99px;font-size:11px;line-height:1.5;color:var(--ttk-muted);cursor:pointer;z-index:5}
+html[data-ttk-theme=paper]{--sf-board:color-mix(in srgb,var(--ttk-text) 38%,var(--ttk-ai));--sf-bh:6px;--sf-ink:#F6E7C3;--sf-foil:#D8B66A;--sf-c0:#8B6B4A;--sf-c1:#A98862;--sf-c2:#6F5A45;--sf-c3:#B79A74;--sf-c4:#7C6850;--sf-face:"Cormorant Garamond","Noto Serif KR","Nanum Myeongjo",serif}
+html[data-ttk-theme=nocturne]{--sf-board:color-mix(in srgb,var(--ttk-accent) 60%,#000);--sf-bh:4px;--sf-ink:var(--ttk-accent);--sf-foil:var(--ttk-accent);--sf-c0:#2B3345;--sf-c1:#40302A;--sf-c2:#22303F;--sf-c3:#4A2E2E;--sf-c4:#30353A;--sf-face:"Oswald","Noto Sans KR",sans-serif}
+html[data-ttk-theme=porcelain]{--sf-board:var(--ttk-accent);--sf-bh:5px;--sf-ink:#1F3F85;--sf-foil:var(--ttk-accent);--sf-c0:#F4F8FF;--sf-c1:#E3ECFA;--sf-c2:#D2E0F6;--sf-c3:#F9FBFF;--sf-c4:#C8D9F2;--sf-face:"Noto Serif KR","Nanum Myeongjo","Batang",serif}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) body #chat#chat .mes .ttk-shelf{display:block;min-width:0}
+html[data-ttk-shelf=off] body #chat#chat .mes .ttk-shelf{display:none!important}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-shelf-row{display:flex;align-items:flex-end;gap:3px;height:88px;padding:0 6px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;border-bottom:var(--sf-bh) solid var(--sf-board);box-shadow:0 5px 6px -3px var(--ttk-shadow)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-shelf-row::-webkit-scrollbar{display:none}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine{all:unset;box-sizing:border-box;flex:0 0 auto;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;width:clamp(18px,5vw,24px);height:var(--h);padding:9px 0;border-radius:3px 3px 0 0;background-color:var(--sf-c0);background-size:cover;background-position:center;box-shadow:inset 0 3px 0 rgba(255,255,255,.28),inset -2px 0 3px rgba(0,0,0,.22)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine::before,:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine::after{content:'';position:absolute;left:2px;right:2px;height:2px;border-top:1px solid var(--sf-foil);border-bottom:1px solid var(--sf-foil);opacity:.85;pointer-events:none}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine::before{top:3px}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine::after{bottom:3px}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) button.ttk-spine{cursor:pointer}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine[data-c="1"]{background-color:var(--sf-c1)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine[data-c="2"]{background-color:var(--sf-c2)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine[data-c="3"]{background-color:var(--sf-c3)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine[data-c="4"]{background-color:var(--sf-c4)}
+/* 책등 글꼴: 장식용(제호체) — 얇은 세리프·자간 넓게·박(箔) 색 */
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine i{font:italic 600 11px/1 var(--sf-face);writing-mode:vertical-rl;max-height:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;letter-spacing:.14em;color:var(--sf-ink);text-shadow:0 1px 2px rgba(0,0,0,.5)}
+html[data-ttk-theme=nocturne] .ttk-spine i{font-style:normal;font-weight:500;text-transform:uppercase;letter-spacing:.2em}
+html[data-ttk-theme=porcelain] .ttk-spine i{font-style:normal;font-weight:700;text-shadow:none}
+html[data-ttk-theme=porcelain] .ttk-spine{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ttk-accent) 40%,transparent),inset -2px 0 3px rgba(40,70,140,.14)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine:is([style*="url("]) i{color:#FFF9EC;text-shadow:0 1px 2px rgba(0,0,0,.7)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine.on{height:calc(var(--h) + 12px);box-shadow:inset 0 4px 0 var(--ttk-accent),inset -2px 0 3px rgba(0,0,0,.22),0 0 0 1px var(--ttk-accent)}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine.empty{background:none!important;box-shadow:none;border:1px dashed color-mix(in srgb,var(--ttk-muted) 55%,transparent);border-bottom:0;opacity:.7}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine.empty::before,:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-spine.empty::after{content:none}
+/* 소품 */
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-shelf-deco{flex:0 0 auto;display:flex;align-items:flex-end;gap:12px;margin-left:auto;padding:0 4px 0 12px}
+:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-shelf-deco i{display:block;flex:0 0 auto;background:center bottom/contain no-repeat}
+@media(max-width:520px){:is(html[data-ttk-theme=paper],html[data-ttk-theme=nocturne],html[data-ttk-theme=porcelain],html[data-ttk-theme=studio]) .ttk-shelf-deco i:nth-child(3){display:none}}
+html[data-ttk-theme=paper] .ttk-shelf-deco i:nth-child(1){width:44px;height:30px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NCAzMCI+PHJlY3QgeD0iMiIgeT0iMjAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI5IiByeD0iMS40IiBmaWxsPSIjN0M2ODUwIi8+PHJlY3QgeD0iNiIgeT0iMjAiIHdpZHRoPSIxLjYiIGhlaWdodD0iOSIgZmlsbD0iI0Q4QjY2QSIvPjxyZWN0IHg9IjM2IiB5PSIyMCIgd2lkdGg9IjEuNiIgaGVpZ2h0PSI5IiBmaWxsPSIjRDhCNjZBIi8+CjxyZWN0IHg9IjUiIHk9IjExIiB3aWR0aD0iMzQiIGhlaWdodD0iOSIgcng9IjEuNCIgZmlsbD0iI0E5ODg2MiIvPjxyZWN0IHg9IjkiIHk9IjExIiB3aWR0aD0iMS42IiBoZWlnaHQ9IjkiIGZpbGw9IiNGM0U0QjgiLz48cmVjdCB4PSIzMiIgeT0iMTEiIHdpZHRoPSIxLjYiIGhlaWdodD0iOSIgZmlsbD0iI0YzRTRCOCIvPgo8cmVjdCB4PSI4IiB5PSIzIiB3aWR0aD0iMjgiIGhlaWdodD0iOCIgcng9IjEuNCIgZmlsbD0iIzdGOTA3MCIvPjxyZWN0IHg9IjEyIiB5PSIzIiB3aWR0aD0iMS40IiBoZWlnaHQ9IjgiIGZpbGw9IiNFOEQzQTIiLz48cmVjdCB4PSIyOSIgeT0iMyIgd2lkdGg9IjEuNCIgaGVpZ2h0PSI4IiBmaWxsPSIjRThEM0EyIi8+CjxwYXRoIGQ9Ik0zMyAxMXY3bDEuNi0xLjZMMzYuMiAxOHYtN3oiIGZpbGw9IiNCNDUzM0MiLz48cGF0aCBkPSJNMiAyOWg0MCIgc3Ryb2tlPSIjNUI0NjMyIiBzdHJva2Utd2lkdGg9Ii44IiBvcGFjaXR5PSIuNSIvPjwvc3ZnPg==')}
+html[data-ttk-theme=paper] .ttk-shelf-deco i:nth-child(2){width:36px;height:34px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzNiAzNCI+PGVsbGlwc2UgY3g9IjE4IiBjeT0iMzAuNSIgcng9IjE1IiByeT0iMyIgZmlsbD0iI0VBREZDNiIgc3Ryb2tlPSIjQjc5QTc0IiBzdHJva2Utd2lkdGg9IjEiLz4KPHBhdGggZD0iTTI3IDE2LjVoMi40YTQuMiA0LjIgMCAwIDEgMCA4LjRIMjYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0E5ODg2MiIgc3Ryb2tlLXdpZHRoPSIxLjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8cGF0aCBkPSJNOCAxNGgyMHY0LjVjMCA1LjgtNCA5LjUtMTAgOS41UzggMjQuMzAwIDggMTguNTAweiIgZmlsbD0iI0ZCRjRFNCIgc3Ryb2tlPSIjQTk4ODYyIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8ZWxsaXBzZSBjeD0iMTgiIGN5PSIxNCIgcng9IjEwIiByeT0iMi4yIiBmaWxsPSIjQjk4MjRBIiBzdHJva2U9IiNBOTg4NjIiIHN0cm9rZS13aWR0aD0iMSIvPjxwYXRoIGQ9Ik0xMCAyMGgxNiIgc3Ryb2tlPSIjRDhCNjZBIiBzdHJva2Utd2lkdGg9IjEuMiIgb3BhY2l0eT0iLjgiLz4KPHBhdGggZD0iTTE0IDEwYy0yLTIuNDAwIDItMy42MDAgMC02LjYwME0yMSAxMGMtMi0yLjQwMCAyLTMuNjAwIDAtNi42MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0I3OUE3NCIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgb3BhY2l0eT0iLjc1Ii8+PC9zdmc+')}
+html[data-ttk-theme=paper] .ttk-shelf-deco i:nth-child(3){width:30px;height:52px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCA1MiI+PHBhdGggZD0iTTE1IDMzQzE0IDI0IDkgMTYgNyA4TTE1IDMzYzEtMTAgMC0yMCAxLTI5TTE1IDMzYzItOSA3LTE2IDktMjMiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzhCNkI0QSIgc3Ryb2tlLXdpZHRoPSIxLjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8ZWxsaXBzZSBjeD0iNyIgY3k9IjkiIHJ4PSIyLjIwMCIgcnk9IjMuODAwIiBmaWxsPSIjN0Y5MDcwIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTggNyA5KSIvPjxlbGxpcHNlIGN4PSIxNiIgY3k9IjUiIHJ4PSIyLjMwMCIgcnk9IjQiIGZpbGw9IiNDNzlBNTIiLz48ZWxsaXBzZSBjeD0iMjQiIGN5PSIxMSIgcng9IjIuMjAwIiByeT0iMy44MDAiIGZpbGw9IiM3RjkwNzAiIHRyYW5zZm9ybT0icm90YXRlKDIwIDI0IDExKSIvPgo8ZWxsaXBzZSBjeD0iMTAuNTAwIiBjeT0iMTkiIHJ4PSIxLjgwMCIgcnk9IjMiIGZpbGw9IiNDNzlBNTIiIHRyYW5zZm9ybT0icm90YXRlKC0yOCAxMC41MDAgMTkpIi8+PGVsbGlwc2UgY3g9IjIwLjUwMCIgY3k9IjIxIiByeD0iMS44MDAiIHJ5PSIzIiBmaWxsPSIjN0Y5MDcwIiB0cmFuc2Zvcm09InJvdGF0ZSgyOCAyMC41MDAgMjEpIi8+CjxwYXRoIGQ9Ik05LjUwMCA1MS41MDB2LTEyYzAtMi42MDAgMi4yMDAtMy42MDAgMi4yMDAtNmg2LjYwMGMwIDIuNDAwIDIuMjAwIDMuNDAwIDIuMjAwIDZ2MTJ6IiBmaWxsPSIjQzlBRTg2IiBzdHJva2U9IiM4QjZCNEEiIHN0cm9rZS13aWR0aD0iMS4yIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PHBhdGggZD0iTTEwIDQxaDEwIiBzdHJva2U9IiM4QjZCNEEiIHN0cm9rZS13aWR0aD0iMSIgb3BhY2l0eT0iLjYiLz48L3N2Zz4=')}
+html[data-ttk-theme=nocturne] .ttk-shelf-deco i:nth-child(1){width:40px;height:40px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTguNDAwIiBmaWxsPSIjMUQyMTJDIiBzdHJva2U9IiNEMkFFNjIiIHN0cm9rZS13aWR0aD0iMS42MDAiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIxNC41MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0QyQUU2MiIgc3Ryb2tlLXdpZHRoPSIuNyIgb3BhY2l0eT0iLjU1Ii8+CjxnIGZpbGw9IiMwRTExMTgiIHN0cm9rZT0iI0QyQUU2MiIgc3Ryb2tlLXdpZHRoPSIxIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjEwLjUwMCIgcj0iMy42MDAiLz48Y2lyY2xlIGN4PSIyOSIgY3k9IjE3IiByPSIzLjYwMCIvPjxjaXJjbGUgY3g9IjI1LjYwMCIgY3k9IjI3LjgwMCIgcj0iMy42MDAiLz48Y2lyY2xlIGN4PSIxNC40MDAiIGN5PSIyNy44MDAiIHI9IjMuNjAwIi8+PGNpcmNsZSBjeD0iMTEiIGN5PSIxNyIgcj0iMy42MDAiLz48L2c+CjxjaXJjbGUgY3g9IjIwIiBjeT0iMjAiIHI9IjMuMzAwIiBmaWxsPSIjRDJBRTYyIi8+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMS4xMDAiIGZpbGw9IiMwRTExMTgiLz48L3N2Zz4=')}
+html[data-ttk-theme=nocturne] .ttk-shelf-deco i:nth-child(2){width:22px;height:50px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiA1MCI+PHBhdGggZD0iTTMgNDkuNTAwaDE2bC0yLjQwMC01LjUwMEg1LjQwMHoiIGZpbGw9IiNBODg0M0YiIHN0cm9rZT0iI0QyQUU2MiIgc3Ryb2tlLXdpZHRoPSIuOCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxyZWN0IHg9IjkuNTAwIiB5PSIzNSIgd2lkdGg9IjMiIGhlaWdodD0iOSIgZmlsbD0iI0M5QTQ1QyIvPjxlbGxpcHNlIGN4PSIxMSIgY3k9IjM0LjUwMCIgcng9IjYiIHJ5PSIxLjYwMCIgZmlsbD0iI0QyQUU2MiIvPgo8cmVjdCB4PSI3IiB5PSIxNCIgd2lkdGg9IjgiIGhlaWdodD0iMjAuNTAwIiByeD0iMSIgZmlsbD0iI0U5REZDOCIvPjxwYXRoIGQ9Ik03IDE0aDgiIHN0cm9rZT0iI0JGQjE5NyIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTTEzLjUwMCAxNS41MDB2NyIgc3Ryb2tlPSIjRjRFREREIiBzdHJva2Utd2lkdGg9IjEuMjAwIiBvcGFjaXR5PSIuOCIvPjxwYXRoIGQ9Ik04LjUwMCAyMmMwIDIuNTAwLTEgMy41MDAgMCA1IiBmaWxsPSJub25lIiBzdHJva2U9IiNEN0NCQjAiIHN0cm9rZS13aWR0aD0iMSIvPgo8cGF0aCBkPSJNMTEgMTN2LTIiIHN0cm9rZT0iIzNBMzMyQSIgc3Ryb2tlLXdpZHRoPSIxIi8+PHBhdGggZD0iTTExIDEuNTAwYzMuMjAwIDQgNC4yMDAgNiA0LjIwMCA4YTQuMjAwIDQuMjAwIDAgMCAxLTguNDAwIDBjMC0yIDEtNCA0LjIwMC04eiIgZmlsbD0iI0YyQzA2MyIvPjxwYXRoIGQ9Ik0xMSA2LjUwMGMxLjUwMCAyIDIgMyAyIDRhMiAyIDAgMCAxLTQgMGMwLTEgLjUtMiAyLTR6IiBmaWxsPSIjRkZGMUM5Ii8+PC9zdmc+')}
+html[data-ttk-theme=nocturne] .ttk-shelf-deco i:nth-child(3){width:44px;height:44px;margin-bottom:26px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0NCA0NCI+PHBhdGggZD0iTTI3IDUuNTAwYTE3IDE3IDAgMSAwIDExLjUwMCAyNC41MDBBMTQgMTQgMCAwIDEgMjcgNS41MDB6IiBmaWxsPSIjRDJBRTYyIi8+PHBhdGggZD0iTTI3IDUuNTAwYTE3IDE3IDAgMSAwIDExLjUwMCAyNC41MDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0YyRTNCOCIgc3Ryb2tlLXdpZHRoPSIuOCIgb3BhY2l0eT0iLjciLz4KPGcgZmlsbD0iI0YyRTNCOCI+PHBhdGggZD0iTTM0IDZsMSAzIDMgMS0zIDEtMSAzLTEtMy0zLTEgMy0xeiIvPjxwYXRoIGQ9Ik00MC41MDAgMjBsLjcgMiAyIC43LTIgLjctLjcgMi0uNy0yLTItLjcgMi0uN3oiLz48cGF0aCBkPSJNOCA1bC42IDEuODAwIDEuODAwLjYtMS44MDAuNkw4IDkuODAwbC0uNi0xLjgwMEw1LjYwMCA3LjQwMGwxLjgwMC0uNnoiLz48L2c+PC9zdmc+')}
+html[data-ttk-theme=porcelain] .ttk-shelf-deco i:nth-child(1){width:30px;height:58px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMCA1OCI+PHBhdGggZD0iTTEyLjUwMCAyaDV2NWMwIDIuMjAwLTEuMjAwIDMtMS4yMDAgNS4yMDAgNSAyLjgwMCA5LjIwMCA5LjgwMCA5LjIwMCAxOC4zMDAgMCAxMC0zLjIwMCAxNy00LjIwMCAyNmgtMTMuNjAwYy0xLTktNC4yMDAtMTYtNC4yMDAtMjYgMC04LjUwMCA0LjIwMC0xNS41MDAgOS4yMDAtMTguMzAwIDAtMi4yMDAtMS4yMDAtMy0xLjIwMC01LjIwMHoiIGZpbGw9IiNGN0ZBRkYiIHN0cm9rZT0iIzJGNUFBOCIgc3Ryb2tlLXdpZHRoPSIxLjMwMCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8cGF0aCBkPSJNNS4yMDAgMjIuNTAwcTQuOTAwIDMuMjAwIDkuODAwIDB0OS44MDAgME01IDQ2cTUgMy4yMDAgMTAgMHQxMCAwIiBmaWxsPSJub25lIiBzdHJva2U9IiMyRjVBQTgiIHN0cm9rZS13aWR0aD0iMS41MDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8ZyBmaWxsPSIjMkY1QUE4IiBvcGFjaXR5PSIuODgiPjxjaXJjbGUgY3g9IjE1IiBjeT0iMzQiIHI9IjMuMzAwIi8+PGNpcmNsZSBjeD0iMTUiIGN5PSIyOC44MDAiIHI9IjIiLz48Y2lyY2xlIGN4PSIyMC4yMDAiIGN5PSIzNCIgcj0iMiIvPjxjaXJjbGUgY3g9IjkuODAwIiBjeT0iMzQiIHI9IjIiLz48Y2lyY2xlIGN4PSIxNSIgY3k9IjM5LjIwMCIgcj0iMiIvPjwvZz48Y2lyY2xlIGN4PSIxNSIgY3k9IjM0IiByPSIxLjEwMCIgZmlsbD0iI0Y3RkFGRiIvPjxwYXRoIGQ9Ik0xMi41MDAgNS41MDBoNSIgc3Ryb2tlPSIjMkY1QUE4IiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')}
+html[data-ttk-theme=porcelain] .ttk-shelf-deco i:nth-child(2){width:40px;height:24px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCAyNCI+PHBhdGggZD0iTTIgNC41MDBoMzZjMCA5LTYuMjAwIDE2LTEyLjIwMCAxNkgxNC4yMDBDOC4yMDAgMjAuNTAwIDIgMTMuNTAwIDIgNC41MDB6IiBmaWxsPSIjRjdGQUZGIiBzdHJva2U9IiMyRjVBQTgiIHN0cm9rZS13aWR0aD0iMS4zMDAiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48cmVjdCB4PSIxMyIgeT0iMjAiIHdpZHRoPSIxNCIgaGVpZ2h0PSIzLjIwMCIgcng9Ii44IiBmaWxsPSIjRjdGQUZGIiBzdHJva2U9IiMyRjVBQTgiIHN0cm9rZS13aWR0aD0iMS4xMDAiLz4KPHBhdGggZD0iTTMgOC41MDBoMzQiIHN0cm9rZT0iIzJGNUFBOCIgc3Ryb2tlLXdpZHRoPSIxLjEwMCIvPjxnIGZpbGw9IiMyRjVBQTgiIG9wYWNpdHk9Ii44NSI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMyIgcj0iMS41MDAiLz48Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSIxLjgwMCIvPjxjaXJjbGUgY3g9IjI4IiBjeT0iMTMiIHI9IjEuNTAwIi8+PC9nPjxwYXRoIGQ9Ik03IDQuNTAwYzMtMS44MDAgNi0xLjgwMCA5IDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzJGNUFBOCIgc3Ryb2tlLXdpZHRoPSIuNyIgb3BhY2l0eT0iLjUiLz48L3N2Zz4=')}
+html[data-ttk-theme=porcelain] .ttk-shelf-deco i:nth-child(3){width:40px;height:40px;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MCA0MCI+PHBhdGggZD0iTTEwLjUwMCAzOSAyMCAzMGw5LjUwMCA5IiBmaWxsPSJub25lIiBzdHJva2U9IiMyRjVBQTgiIHN0cm9rZS13aWR0aD0iMS41MDAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE3IiByPSIxNS4yMDAiIGZpbGw9IiNGN0ZBRkYiIHN0cm9rZT0iIzJGNUFBOCIgc3Ryb2tlLXdpZHRoPSIxLjMwMCIvPjxjaXJjbGUgY3g9IjIwIiBjeT0iMTciIHI9IjExLjgwMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMkY1QUE4IiBzdHJva2Utd2lkdGg9Ii44Ii8+CjxnIGZpbGw9IiMyRjVBQTgiIG9wYWNpdHk9Ii44OCI+PGNpcmNsZSBjeD0iMjAiIGN5PSIxMS41MDAiIHI9IjMiLz48Y2lyY2xlIGN4PSIyNS4zMDAiIGN5PSIxNS4zMDAiIHI9IjMiLz48Y2lyY2xlIGN4PSIyMy4zMDAiIGN5PSIyMS41MDAiIHI9IjMiLz48Y2lyY2xlIGN4PSIxNi43MDAiIGN5PSIyMS41MDAiIHI9IjMiLz48Y2lyY2xlIGN4PSIxNC43MDAiIGN5PSIxNS4zMDAiIHI9IjMiLz48L2c+PGNpcmNsZSBjeD0iMjAiIGN5PSIxNy41MDAiIHI9IjEuODAwIiBmaWxsPSIjRjdGQUZGIi8+PC9zdmc+')}
+html[data-ttk-shelf=off] .ttk-shelf-toggle{opacity:.55}
+
+
+/* v0.20.1 서재 버튼: 글자 대신 도형(◆ 펼침 / ◇ 접힘) */
+html[data-ttk-theme] body #chat#chat .mes .ttk-shelf-toggle{border:0!important;background:none!important;padding:4px 7px!important;min-width:0;font-size:14px;line-height:1;color:var(--ttk-accent)!important;opacity:1}
+html[data-ttk-theme] body #chat#chat .mes .ttk-shelf-toggle::before{content:'\25C6'}
+html[data-ttk-shelf=off] body #chat#chat .mes .ttk-shelf-toggle::before{content:'\25C7'}
+html[data-ttk-theme] body #chat#chat .mes .ttk-shelf-toggle:hover{filter:brightness(1.15)}
+
+/* v0.20.1 추론(사유) 블록: 색 면·테두리로 구분하지 않는다 — 모든 테마 공통, 본문과 같은 바탕에 글자만 */
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_details,.mes_reasoning_header,.mes_reasoning_header_block,.mes_reasoning_summary,summary.mes_reasoning_summary,.mes_reasoning),
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary):is(:hover,:focus-visible,:active){background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;border-radius:0!important}
+html[data-ttk-theme] body #chat#chat .mes_reasoning_details{margin:0 0 .6em}
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary){padding-left:0!important;padding-right:0!important;color:var(--ttk-muted)!important}
+html[data-ttk-theme] body #chat#chat :is(.mes_reasoning_header,.mes_reasoning_summary) :is(h4,span,.mes_reasoning_header_title,.mes_reasoning_arrow,svg,i,.fa-solid,.fa-regular){color:var(--ttk-muted)!important}
+html[data-ttk-theme] body #chat#chat .mes_reasoning{padding-left:0!important;padding-right:0!important}
+
+/* v0.20.2 Studio: 본문 안 블록형 위젯(상태창 등)이 자체 폭 제한 때문에 카드보다 좁아 오른쪽이 비는 문제 — 카드 폭에 맞춰 채운다 */
+html[data-ttk-theme=studio] body #chat#chat .mes .mes_text > :is(div,section,table,details,figure){width:100%!important;max-width:100%!important;margin-left:0!important;margin-right:0!important;box-sizing:border-box!important}

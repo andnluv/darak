@@ -1,0 +1,60 @@
+/* DARAK — full theme layer.
+   Every theme selector is gated by html[data-ttk-theme]; turning the design module OFF restores the native CSS.
+   v0.3.14: no font is bundled or imported here. design.js requests only the web fonts that are selected. */
+/* Extension settings — isolated from the native UI styles. */
+#ttk-panel{margin:0;background:transparent;color:inherit;font-size:13px}
+#ttk-panel *{box-sizing:border-box}
+#ttk-panel summary{cursor:pointer;list-style:none}
+#ttk-panel summary::-webkit-details-marker{display:none}
+#ttk-panel details > summary:after{content:'▸';margin-left:auto;opacity:.75}
+#ttk-panel details[open] > summary:after{content:'▾'}
+#ttk-panel > .inline-drawer-header b{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+#ttk-panel .ttk-panel-version{font-size:11px;font-weight:400;opacity:.65}
+#ttk-panel .ttk-settings-body,#ttk-panel .ttk-controls{display:grid;gap:13px;padding:12px}
+#ttk-panel .ttk-groups{display:grid;gap:16px}
+#ttk-panel .ttk-group{display:grid;gap:8px;align-content:start}
+#ttk-panel .ttk-group-head{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:4px 2px 6px;border-bottom:2px solid rgba(128,128,128,.3)}
+#ttk-panel .ttk-group-head strong{font-size:14px}
+#ttk-panel .ttk-group-head small{font-size:11px;opacity:.6}
+#ttk-panel .ttk-note{font-size:11px;line-height:1.6;margin:0;opacity:.78}
+#ttk-panel .ttk-module-row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(128,128,128,.17)}
+#ttk-panel .ttk-option-label{display:grid;gap:3px}
+#ttk-panel .ttk-option-label small{opacity:.64;font-size:11px}
+#ttk-panel .ttk-module-row:has(input:disabled){opacity:.53}
+#ttk-panel .ttk-section{border:1px solid rgba(128,128,128,.3);border-radius:8px;overflow:hidden}
+#ttk-panel .ttk-section[hidden]{display:none}
+#ttk-panel .ttk-section-summary{display:flex;padding:12px;font-weight:650;background:rgba(128,128,128,.06)}
+#ttk-panel .ttk-theme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#ttk-panel .ttk-button{background:rgba(128,128,128,.12);border:1px solid rgba(128,128,128,.3);border-radius:7px;padding:8px;color:inherit;font:inherit;cursor:pointer}
+#ttk-panel .ttk-theme-card{display:flex;flex-direction:column;align-items:stretch;gap:5px;text-align:left;min-width:0;padding:6px}
+#ttk-panel .ttk-theme-card strong{font-size:11px;line-height:1.25}
+#ttk-panel .ttk-theme-card small{font-size:10px;opacity:.7;line-height:1.4}
+#ttk-panel .ttk-theme-card[aria-pressed=true]{outline:2px solid currentColor;outline-offset:1px}
+#ttk-panel .ttk-theme-swatch{height:55px;background:var(--ttk-sample-bg);border:1px solid rgba(128,128,128,.25);border-radius:5px;display:flex;flex-direction:column;gap:5px;padding:10px}
+#ttk-panel .ttk-theme-swatch-line{display:block;width:75%;height:5px;border-radius:5px;background:var(--ttk-sample-text)}
+#ttk-panel .ttk-theme-swatch-line.short{width:49%;opacity:.6}
+#ttk-panel .ttk-theme-swatch-chip{width:28px;height:5px;border-radius:5px;background:var(--ttk-sample-accent)}
+#ttk-panel .ttk-field{display:grid;gap:6px}
+#ttk-panel .ttk-field select{width:100%;padding:7px;border-radius:6px;background:transparent;color:inherit;border:1px solid rgba(128,128,128,.35)}
+#ttk-panel .ttk-field select option{color:var(--ttk-text,#222);background:var(--ttk-surface,#fafafa)}
+#ttk-panel .ttk-slider-grid{display:grid;gap:11px}
+#ttk-panel .ttk-slider{display:grid;gap:5px}
+#ttk-panel .ttk-slider-label{display:flex;justify-content:space-between;gap:6px}
+#ttk-panel .ttk-slider-label output{opacity:.7;font-variant-numeric:tabular-nums}
+#ttk-panel input[type=range]{width:100%}
+#ttk-panel .ttk-subsection{border-top:1px solid rgba(128,128,128,.22);padding-top:8px}
+#ttk-panel .ttk-subsection summary{display:flex;padding:8px 0;font-weight:600}
+#ttk-panel .ttk-color-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding:10px 0}
+#ttk-panel .ttk-color-field{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:11px}
+#ttk-panel input[type=color]{width:42px;height:29px;padding:2px;cursor:pointer}
+#ttk-panel .ttk-mini-preview{background:var(--pv-bg,#fff);color:var(--pv-text,#333);border:1px solid var(--pv-border,#ccc);border-radius:10px;padding:12px;display:grid;gap:10px;min-width:0;isolation:isolate;}
+#ttk-panel .ttk-preview-header{font-size:11px;font-weight:600;color:var(--pv-muted,#777)!important}
+#ttk-panel .ttk-preview-message{background:var(--pv-ai,#fff);border:1px solid var(--pv-border,#ccc);border-radius:10px;padding:13px;min-width:0;box-shadow:0 2px 8px #00000012;color:var(--pv-text,#333)!important;font-family:var(--pv-font,serif)!important;font-size:var(--pv-size,17px)!important;line-height:var(--pv-line,1.8)!important;letter-spacing:var(--pv-tracking,0px)!important}
+#ttk-panel .ttk-preview-message .ttk-preview-name{display:block;color:var(--pv-accent,#765)!important;font-size:12px!important;line-height:1.5!important;margin-bottom:8px}
+#ttk-panel .ttk-preview-message p{padding:0!important;margin:0 0 var(--pv-para,14px)!important;background:transparent!important;color:var(--pv-text,#333)!important;line-height:inherit!important;letter-spacing:inherit!important;font-size:inherit!important;box-shadow:none!important;border:0!important}
+#ttk-panel .ttk-preview-message p:last-child{margin-bottom:0!important}
+#ttk-panel .ttk-preview-dialogue{font-family:var(--pv-dialogue-font,serif)!important}
+#ttk-panel .ttk-mini-preview[data-theme=paper] .ttk-preview-message{border:0;border-bottom:1px solid var(--pv-border);border-radius:0;box-shadow:none;background:transparent}
+#ttk-panel .ttk-mini-preview[data-theme=nocturne] .ttk-preview-message{border-left:3px solid var(--pv-accent);border-radius:4px 12px 12px 4px}
+#ttk-panel .ttk-mini-preview[data-theme=studio] .ttk-preview-message{border-radius:15px}
+#ttk-panel .ttk-actions{display:flex;flex-wrap:wrap;gap:6px}

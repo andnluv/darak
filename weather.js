@@ -67,7 +67,9 @@ export class Weather {
         if (this.enabled) return; this.enabled = true;
         this.layer = el('div'); this.layer.id = 'ttk-wx'; this.layer.setAttribute('aria-hidden', 'true');
         this.canvas = el('canvas'); this.cx = this.canvas.getContext('2d'); this.tint = el('div', 'ttk-wx-tint');
-        this.layer.append(this.tint);
+        // v1.6.0: 안개는 글씨를 가리지 않게 채팅 칸 뒤 층(어둡힘과 같은 층)의 따로 된 캔버스에 그린다.
+        this.fogCanvas = el('canvas'); this.fx = this.fogCanvas.getContext('2d');
+        this.layer.append(this.tint, this.fogCanvas);
         // v1.3.3: 입자는 채팅 칸(#sheld, z-index 30) 위로 지나가고, 어둡힘(tint)만 채팅 칸 뒤에 둔다(글씨가 흐려지지 않게).
         this.top = el('div'); this.top.id = 'ttk-wx-top'; this.top.setAttribute('aria-hidden', 'true'); this.top.append(this.canvas);
         this.flashEl = el('div'); this.flashEl.id = 'ttk-wx-flash'; this.flashEl.setAttribute('aria-hidden', 'true');
@@ -96,7 +98,7 @@ export class Weather {
         this.mqMobile.removeEventListener('change', this.onMedia); this.mqMotion.removeEventListener('change', this.onMedia);
         document.removeEventListener('visibilitychange', this.onVisible); window.removeEventListener('resize', this.onResize);
         this.optObs?.disconnect(); this.optObs = null;
-        this.layer?.remove(); this.top?.remove(); this.flashEl?.remove(); this.layer = this.top = this.flashEl = this.canvas = this.cx = this.tint = null;
+        this.layer?.remove(); this.top?.remove(); this.flashEl?.remove(); this.layer = this.top = this.flashEl = this.canvas = this.cx = this.tint = this.fogCanvas = this.fx = null;
         this.P = []; this.fog = []; this.onChange?.(this.sel);
     }
     refresh() { if (this.enabled) this.rebuild(); }
@@ -150,6 +152,7 @@ export class Weather {
         this.W = window.innerWidth; this.H = window.innerHeight;
         this.canvas.width = Math.round(this.W * this.DPR); this.canvas.height = Math.round(this.H * this.DPR);
         this.cx.setTransform(this.DPR, 0, 0, this.DPR, 0, 0);
+        if (this.fogCanvas) { this.fogCanvas.width = this.canvas.width; this.fogCanvas.height = this.canvas.height; this.fx.setTransform(this.DPR, 0, 0, this.DPR, 0, 0); }
     }
     detectDark() {
         // 자동: 글자색이 밝으면 어두운 화면으로 본다(SillyTavern 테마의 본문 글자색 기준).
@@ -191,7 +194,7 @@ export class Weather {
         this.accent = parseColor(aRaw) || [90, 106, 160];
         this.applyTint();
         this.nextBolt = performance.now() + R(FIXED.boltMin, FIXED.boltMax);
-        this.cx.clearRect(0, 0, this.W, this.H);
+        this.cx.clearRect(0, 0, this.W, this.H); this.fx?.clearRect(0, 0, this.W, this.H);
         if (this.reduced()) { this.draw(0); cancelAnimationFrame(this.raf); this.raf = 0; return; } // 멈춘 한 장면
         this.ensureLoop();
     }
@@ -232,17 +235,21 @@ export class Weather {
         const cx = this.cx; if (!cx) return;
         const { W, H, T } = this, dark = this.dark, O = FIXED.opacity, sp = FIXED.speed, lvl = LV[this.sel.level], weather = this.sel.weather;
         cx.clearRect(0, 0, W, H);
-        // 안개: 아래로 갈수록 짙은 옅은 막 + 천천히 흐르는 덩어리
+        if (this.fx) this.fx.clearRect(0, 0, W, H);
+        // 안개 (v1.6.0): 화면 전체의 옅은 막은 채팅 칸 뒤 캔버스(fx)에, 천천히 흐르는 덩어리만 위 층에 아주 옅게 그린다.
+        // 예전처럼 덩어리를 진하게 위에 그리면 마지막 메시지 글씨 대비가 크게 떨어졌다(점검: 15.6 → 5.8:1).
         if (this.fog.length) {
             const c = dark ? '170,180,196' : '232,234,238', k = O * lvl;
-            const hz = cx.createLinearGradient(0, 0, 0, H);
-            hz.addColorStop(0, `rgba(${c},${Math.min(0.5, k * (dark ? 0.5 : 0.8))})`); hz.addColorStop(1, `rgba(${c},${Math.min(0.75, k * (dark ? 1.2 : 1.8))})`);
-            cx.fillStyle = hz; cx.fillRect(0, 0, W, H);
-            const a = O * (dark ? 1.3 : 1.9) * lvl;
+            if (this.fx) {
+                const hz = this.fx.createLinearGradient(0, 0, 0, H);
+                hz.addColorStop(0, `rgba(${c},${Math.min(0.5, k * (dark ? 0.5 : 0.8))})`); hz.addColorStop(1, `rgba(${c},${Math.min(0.75, k * (dark ? 1.2 : 1.8))})`);
+                this.fx.fillStyle = hz; this.fx.fillRect(0, 0, W, H);
+            }
+            const a = Math.min(0.22, O * (dark ? 1.3 : 1.9) * lvl * 0.4);
             for (const f of this.fog) {
                 f.x += f.v * dt * sp; if (f.x > W * 1.1) f.x = -f.w; if (f.x < -f.w) f.x = W * 1.1;
                 const mx = f.x + f.w / 2, g = cx.createRadialGradient(mx, f.y, 0, mx, f.y, f.w / 2);
-                g.addColorStop(0, `rgba(${c},${Math.min(0.85, a)})`); g.addColorStop(1, `rgba(${c},0)`);
+                g.addColorStop(0, `rgba(${c},${a})`); g.addColorStop(1, `rgba(${c},0)`);
                 cx.fillStyle = g; cx.save(); cx.translate(mx, f.y); cx.scale(1, f.h / (f.w / 2)); cx.translate(-mx, -f.y); cx.beginPath(); cx.arc(mx, f.y, f.w / 2, 0, 6.29); cx.fill(); cx.restore();
             }
         }
@@ -254,12 +261,15 @@ export class Weather {
                 case 'rain': {
                     p.y += p.v * dt * sp; p.x += p.v * dt * sp * tan;
                     if (p.y - p.len > H || p.x > W + 40) { Object.assign(p, this.spawn('rain')); p.x = R(-H * tan, W); }
-                    cx.strokeStyle = `rgba(${ink},${O * p.a * (dark ? 1 : 0.85)})`; cx.lineWidth = dark ? 1 : 1.1; cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(p.x - p.len * tan, p.y - p.len); cx.stroke(); break;
+                    cx.strokeStyle = `rgba(${ink},${O * p.a * (dark ? 1 : 1.2)})`; cx.lineWidth = dark ? 1 : 1.1; cx.beginPath(); cx.moveTo(p.x, p.y); cx.lineTo(p.x - p.len * tan, p.y - p.len); cx.stroke(); break;
                 }
                 case 'snow': {
                     p.y += p.v * dt * sp; const x = p.x + Math.sin(T * p.f * sp + p.ph) * p.sw; if (p.y > H + 5) Object.assign(p, this.spawn('snow'));
-                    if (!dark) { cx.shadowColor = `rgba(30,40,60,${Math.min(0.7, O * 1.8)})`; cx.shadowBlur = 4; }
-                    cx.beginPath(); cx.arc(x, p.y, p.r * (dark ? 1 : 1.25), 0, 6.29); cx.fillStyle = `rgba(255,255,255,${Math.min(1, O * 2.8)})`; cx.fill(); cx.shadowBlur = 0; cx.shadowColor = 'transparent'; break;
+                    if (!dark) { cx.shadowColor = `rgba(30,40,60,${Math.min(0.9, O * 3)})`; cx.shadowBlur = 3; }
+                    cx.beginPath(); cx.arc(x, p.y, p.r * (dark ? 1 : 1.35), 0, 6.29); cx.fillStyle = `rgba(255,255,255,${Math.min(1, O * 2.8)})`; cx.fill(); cx.shadowBlur = 0; cx.shadowColor = 'transparent';
+                    // v1.6.0: 밝은 테마에서는 흰 눈이 바탕에 묻혀 옅은 테두리를 두른다.
+                    if (!dark) { cx.strokeStyle = `rgba(70,84,106,${Math.min(0.55, O * 1.6)})`; cx.lineWidth = 0.8; cx.stroke(); }
+                    break;
                 }
                 case 'petal': case 'leaf': {
                     p.y += p.v * dt * sp; p.rot += p.vr * dt * sp; const x = p.x + Math.sin(T * p.f * sp + p.ph) * p.sw; if (p.y > H + 12) Object.assign(p, this.spawn(p.k));

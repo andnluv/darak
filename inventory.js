@@ -194,7 +194,7 @@ export class Inventory {
         const title = el('div', 'ttk-inv-title'); title.append(el('strong', '', '통합 조회'), el('small', '', `${d.version ? `SillyTavern ${d.version} · ` : ''}${d.loadedAt.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })} 기준`));
         const actions = el('div', 'ttk-inv-head-actions');
         const again = el('button', 'ttk-inv-btn', '다시 점검'); again.type = 'button'; again.addEventListener('click', () => this.open());
-        const x = el('button', 'ttk-inv-x'); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.title = '닫기'; x.append(el('i', 'ttk-lc ttk-lc-x')); x.addEventListener('click', () => dlg.close());
+        const x = el('button', 'ttk-inv-x'); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.setAttribute('aria-label', '닫기'); x.append(el('i', 'ttk-lc ttk-lc-x')); x.addEventListener('click', () => dlg.close());
         actions.append(again, x); head.append(title, actions);
         const tabs = el('div', 'ttk-inv-tabs'); tabs.setAttribute('role', 'tablist');
         const defs = [['check', '점검', count('error') + count('warn')], ['themes', '테마', d.themes.length], ['presets', '프롬프트', d.presets.length], ['exts', '확장', d.exts.length]];
@@ -237,7 +237,7 @@ export class Inventory {
     }
     rows(q) {
         const d = this.data, out = [];
-        const row = (name, meta, badges = [], dim = false, lead = null) => { const r = el('div', `ttk-inv-row${dim ? ' ttk-inv-dim' : ''}`); if (lead) r.append(lead); const main = el('div', 'ttk-inv-row-main'); main.append(el('strong', '', name)); if (meta) main.append(el('small', '', meta)); const b = el('div', 'ttk-inv-badges'); for (const [text, kind, why] of badges) { const bd = el('span', `ttk-inv-badge${kind ? ` ttk-inv-badge-${kind}` : ''}`, text); if (why) bd.title = why; b.append(bd); } r.append(main, b); return r; };
+        const row = (name, meta, badges = [], dim = false, lead = null) => { const r = el('div', `ttk-inv-row${dim ? ' ttk-inv-dim' : ''}`); if (lead) r.append(lead); const main = el('div', 'ttk-inv-row-main'); main.append(el('strong', '', name)); if (meta) main.append(el('small', '', meta)); const b = el('div', 'ttk-inv-badges'); for (const [text, kind, why] of badges) { const bd = el('span', `ttk-inv-badge${kind ? ` ttk-inv-badge-${kind}` : ''}`, text); if (why) bd.setAttribute('aria-label', why); b.append(bd); } r.append(main, b); return r; };
         if (this.tab === 'themes') for (const t of d.themes) { if (q && !t.name.toLowerCase().includes(q)) continue; out.push(row(t.name, t.css ? `사용자 CSS ${t.css.toLocaleString()}자` : '사용자 CSS 없음', t.current ? [['사용 중', 'on']] : [])); }
         if (this.tab === 'presets') for (const p of [...d.presets].sort((a, b) => b.current - a.current)) {
             if (q && !p.name.toLowerCase().includes(q)) continue;

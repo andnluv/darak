@@ -1,0 +1,85 @@
+/* ==========================================================================
+   v0.9.0 — 프로필 사진 · 테마 이미지 교체 · 이미지 모아보기 · 확장 일괄 업데이트
+   (the two dialogs reuse the 통합 조회 look: their ids are in that rule set above)
+   ========================================================================== */
+/* ---- 확장 일괄 업데이트 (통합 조회) ---- */
+#ttk-inventory .ttk-inv-bulk {display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:8px 10px;border:1px solid var(--i-line);border-radius:10px;background:var(--i-raised)}
+#ttk-inventory .ttk-inv-bulk[hidden] {display:none}
+#ttk-inventory .ttk-inv-bulk-info {font-weight:600}
+#ttk-inventory .ttk-inv-bulk-note {flex-basis:100%;color:var(--i-muted);font-size:12px}
+#ttk-inventory .ttk-inv-btn-primary {border-color:var(--i-accent);color:var(--i-accent)}
+#ttk-inventory .ttk-inv-row:has(.ttk-inv-pick) {grid-template-columns:auto minmax(0,1fr) auto}
+#ttk-inventory .ttk-inv-pick {width:20px;height:20px;margin:0 2px 0 0;accent-color:var(--i-accent);cursor:pointer}
+@media (max-width:1000px) {#ttk-inventory .ttk-inv-row:has(.ttk-inv-pick) {grid-template-columns:auto minmax(0,1fr)} #ttk-inventory .ttk-inv-row:has(.ttk-inv-pick) .ttk-inv-badges {grid-column:2}}
+
+/* ---- 프로필 사진 ---- */
+#ttk-avatar-drawer {
+  --a-surface:var(--ttk-surface,var(--SmartThemeBlurTintColor));--a-raised:var(--ttk-raised,color-mix(in srgb,var(--SmartThemeBodyColor) 8%,transparent));
+  --a-text:var(--ttk-text,var(--SmartThemeBodyColor));--a-muted:var(--ttk-muted,var(--SmartThemeEmColor));
+  --a-line:var(--ttk-border,var(--SmartThemeBorderColor));--a-accent:var(--ttk-accent,var(--SmartThemeQuoteColor));
+  position:absolute;left:0;bottom:calc(100% + 6px);width:min(480px,100%);max-height:min(70vh,560px);overflow-y:auto;z-index:3010;box-sizing:border-box;padding:10px 12px 12px;
+  background:var(--a-surface);color:var(--a-text);border:1px solid var(--a-line);border-radius:12px;box-shadow:0 10px 32px rgba(0,0,0,.22);
+  font:14px/1.45 var(--mainFontFamily,sans-serif);text-shadow:none;white-space:normal;overscroll-behavior:contain;
+}
+#ttk-avatar-drawer button {all:unset;box-sizing:border-box;cursor:pointer;font:inherit;color:inherit}
+#ttk-avatar-drawer button:focus-visible {outline:2px solid var(--a-accent);outline-offset:1px}
+#ttk-avatar-drawer .ttk-av-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+#ttk-avatar-drawer .ttk-av-x {padding:4px 10px;border-radius:8px;color:var(--a-muted)}
+#ttk-avatar-drawer .ttk-av-x:hover {background:var(--a-raised);color:var(--a-text)}
+#ttk-avatar-drawer .ttk-av-group {padding:8px 0;border-top:1px solid color-mix(in srgb,var(--a-line) 70%,transparent)}
+#ttk-avatar-drawer .ttk-av-group h4 {margin:0 0 8px;font-size:13px;font-weight:650;overflow-wrap:anywhere}
+#ttk-avatar-drawer .ttk-av-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+#ttk-avatar-drawer .ttk-av-cell {position:relative;border-radius:10px}
+#ttk-avatar-drawer .ttk-av-pic {display:block;width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--a-raised)}
+#ttk-avatar-drawer .ttk-av-pic img {width:100%;height:100%;object-fit:cover;display:block}
+#ttk-avatar-drawer .ttk-av-on .ttk-av-pic {border-color:var(--a-accent)}
+#ttk-avatar-drawer .ttk-av-del {position:absolute;top:-5px;right:-5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--a-surface);border:1px solid var(--a-line);font-size:14px;line-height:1;color:var(--a-muted)}
+#ttk-avatar-drawer .ttk-av-del:hover {color:#c2413a;border-color:#c2413a}
+#ttk-avatar-drawer .ttk-av-add {display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:10px;border:1px dashed var(--a-line);color:var(--a-muted);font-size:12px;text-align:center;cursor:pointer;padding:4px}
+#ttk-avatar-drawer .ttk-av-add:hover {color:var(--a-accent);border-color:var(--a-accent)}
+#ttk-avatar-drawer .ttk-av-busy {opacity:.5;pointer-events:none}
+#ttk-avatar-drawer .ttk-av-hint,#ttk-avatar-drawer .ttk-av-empty {display:block;margin-top:6px;color:var(--a-muted);font-size:12px}
+#ttk-avatar-drawer .ttk-av-wide {display:block;margin-top:8px;padding:8px 10px;border:1px solid var(--a-line);border-radius:8px;background:var(--a-raised);text-align:center;font-size:13px;font-weight:600}
+#ttk-avatar-drawer .ttk-av-wide:hover {border-color:var(--a-accent)}
+.mes_button.ttk_avatar_btn {cursor:pointer}
+
+/* ---- 테마 이미지 교체 ---- */
+#ttk-themeimg .ttk-ti-adv {flex:1;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--i-muted)}
+#ttk-themeimg .ttk-ti-adv input {accent-color:var(--i-accent);width:16px;height:16px}
+#ttk-themeimg .ttk-ti-list {display:grid;gap:10px}
+#ttk-themeimg .ttk-ti-item {display:grid;grid-template-columns:84px minmax(0,1fr);gap:6px 12px;padding:10px;border:1px solid var(--i-line);border-radius:12px}
+#ttk-themeimg .ttk-ti-on {border-color:var(--i-accent)}
+#ttk-themeimg .ttk-ti-prev {width:84px;height:84px;border-radius:10px;overflow:hidden;background:var(--i-raised);border:1px solid var(--i-line)}
+#ttk-themeimg .ttk-ti-prev img {width:100%;height:100%;object-fit:cover;display:block}
+#ttk-themeimg .ttk-ti-info {display:grid;align-content:start;gap:2px;min-width:0}
+#ttk-themeimg .ttk-ti-info strong {font-weight:650;overflow-wrap:anywhere;font-size:13px}
+#ttk-themeimg .ttk-ti-info small {color:var(--i-muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ttk-themeimg .ttk-ti-btns {grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px}
+#ttk-themeimg .ttk-ti-card {display:grid;gap:6px;padding:12px;border:1px solid var(--i-line);border-radius:12px}
+#ttk-themeimg .ttk-ti-p {margin:0;color:var(--i-muted);font-size:13px}
+#ttk-themeimg .ttk-ti-card .ttk-inv-btn {justify-self:start}
+
+/* ---- 이미지 모아보기 ---- */
+#ttk-gallery .ttk-gal-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+#ttk-gallery .ttk-gal-cell {display:block;aspect-ratio:1;border-radius:10px;overflow:hidden;border:1px solid var(--i-line);background:var(--i-raised)}
+#ttk-gallery .ttk-gal-cell img {width:100%;height:100%;object-fit:cover;display:block}
+#ttk-gallery .ttk-gal-cell:hover {border-color:var(--i-accent)}
+#ttk-gallery .ttk-gal-bad {opacity:.35}
+#ttk-gallery .ttk-gal-more {justify-self:center}
+#ttk-gallery .ttk-gal-select {flex:1;min-width:0;box-sizing:border-box;height:38px;padding:0 10px;border-radius:8px;border:1px solid var(--i-line);background:var(--i-raised);color:var(--i-text);font:inherit;font-size:16px}
+#ttk-gallery .ttk-gal-view {position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;background:color-mix(in srgb,var(--i-surface) 96%,#000)}
+#ttk-gallery .ttk-gal-view img {flex:1;min-height:0;width:100%;object-fit:contain;display:block;padding:8px;box-sizing:border-box}
+#ttk-gallery .ttk-gal-viewbar {display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:10px;border-top:1px solid var(--i-line)}
+#ttk-gallery .ttk-gal-viewbar a.ttk-inv-btn {all:unset;box-sizing:border-box;cursor:pointer;padding:7px 12px;border-radius:8px;border:1px solid var(--i-line);background:var(--i-raised);font-weight:600;font-size:13px}
+#ttk-gallery .ttk-gal-count {color:var(--i-muted);font-size:13px;font-variant-numeric:tabular-nums}
+#chat .mes.ttk-gal-flash {outline:2px solid var(--ttk-accent,var(--SmartThemeQuoteColor));outline-offset:2px;transition:outline-color .6s}
+
+/* 자체 확인/입력 창 (브라우저 기본 창 대체) */
+dialog.ttk-ask{box-sizing:border-box;position:fixed;inset:0;margin:auto;height:fit-content;width:min(92vw,420px);max-width:92vw;padding:18px 18px 14px;border:1px solid var(--SmartThemeBorderColor,#3a3f4b);border-radius:14px;background:var(--SmartThemeBlurTintColor,#1d2129);color:var(--SmartThemeBodyColor,#e6e8ec);box-shadow:0 18px 50px #0009;font-size:14px;line-height:1.55}
+dialog.ttk-ask::backdrop{background:#0008}
+dialog.ttk-ask .ttk-ask-msg{white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;max-height:50vh;overflow:auto}
+dialog.ttk-ask .ttk-ask-input{width:100%;margin-top:12px;box-sizing:border-box;font-size:16px}
+dialog.ttk-ask .ttk-ask-bar{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+dialog.ttk-ask .ttk-ask-btn{min-width:72px;min-height:40px;padding:0 16px;border-radius:9px;border:1px solid var(--SmartThemeBorderColor,#3a3f4b);background:transparent;color:inherit;cursor:pointer;font-size:14px}
+dialog.ttk-ask .ttk-ask-yes{background:var(--SmartThemeQuoteColor,#4f8cff);border-color:transparent;color:#fff;font-weight:600}
+dialog.ttk-ask .ttk-ask-danger{background:#c0392b}

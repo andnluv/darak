@@ -59,7 +59,7 @@ function nowBlock(mes,vals){
  if(!now){
   now=document.createElement('div');now.className='ttk-now';
   for(const [tag,cls] of [['span','ttk-now-eyebrow'],['b','ttk-now-name'],['span','ttk-now-by'],['span','ttk-now-meta']]){const e=document.createElement(tag);e.className=cls;now.append(e);}
-  const t=document.createElement('button');t.type='button';t.className='ttk-shelf-toggle';t.setAttribute('aria-label','책장 접기/펼치기');t.title='책장 접기/펼치기';
+  const t=document.createElement('button');t.type='button';t.className='ttk-shelf-toggle';t.setAttribute('aria-label','책장 접기/펼치기');
   t.addEventListener('click',e=>{e.stopPropagation();try{localStorage.setItem(SHELF_KEY,shelfOff()?'on':'off');}catch{}applyShelfPref();});
   now.append(t);mes.append(now);
  }
@@ -79,7 +79,7 @@ function shelfBlock(mes,list){
   const s=document.createElement('button');s.type='button';s.className='ttk-spine';
   s.style.setProperty('--h',`${76+((n*7+3)%5)*5}px`);s.dataset.c=String(n%5);
   const l=document.createElement('i');l.textContent=String(b.i);s.append(l);
-  s.setAttribute('aria-label',`북마크 ${b.i}번 메시지로 이동`);s.title=b.text?`#${b.i} ${b.text}`:`#${b.i}`;
+  s.setAttribute('aria-label',`북마크 ${b.i}번 메시지로 이동`);
   s.addEventListener('click',e=>{e.stopPropagation();jump(b.i);});
   row.append(s);
  });
@@ -126,13 +126,13 @@ function footer(mes){
  // bookmark button — leftmost of the action buttons
  const btn=foot.querySelector('.ttk-foot-btn');
  if(btn&&!btn.querySelector(':scope > .ttk-bm')){
-  const b=document.createElement('button');b.type='button';b.className='ttk-bm';b.title='이 메시지를 책장에 꽂기';b.setAttribute('aria-label','북마크');
+  const b=document.createElement('button');b.type='button';b.className='ttk-bm';b.setAttribute('aria-label','북마크');
   b.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();toggleBm(Number(mes.getAttribute('mesid')));});
   btn.prepend(b);
  }
  // fold button — everything that is not bookmark/basic stays hidden until it is pressed
  if(btn&&!btn.querySelector(':scope > .ttk-more')){
-  const m=document.createElement('button');m.type='button';m.className='ttk-more';m.title='더 보기';m.setAttribute('aria-label','더 보기');m.setAttribute('aria-expanded','false');
+  const m=document.createElement('button');m.type='button';m.className='ttk-more';m.setAttribute('aria-label','더 보기');m.setAttribute('aria-expanded','false');
   m.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const o=btn.classList.toggle('ttk-open');m.setAttribute('aria-expanded',String(o));});
   btn.append(m);
  }

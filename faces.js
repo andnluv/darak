@@ -10,10 +10,11 @@
  */
 import { shrink, toBase64 } from './avatars.js';
 import { confirmAsk } from './dialogs.js';
+import { markDropcap } from './dropcap.js';
 
 export const MAX_FACES = 150;
 export const MAX_MOODS = 12;
-export const MOOD_LABELS = { angry: '화남', annoyed: '짜증', blush: '홍조', crying: '울음', embarrassed: '당황', expressionless: '무표정', gloomy: '우울', laughing: '웃음', panic: '놀람', smile: '미소', mask: '가면', happy: '기쁨', sad: '슬픔', surprised: '놀람', neutral: '기본', shy: '수줍음' };
+export const MOOD_LABELS = { angry: '화남', annoyed: '짜증', blush: '홍조', crying: '울음', embarrassed: '당황', expressionless: '무표정', gloomy: '우울', laughing: '웃음', panic: '공황', smile: '미소', mask: '가면', happy: '기쁨', sad: '슬픔', surprised: '놀람', neutral: '기본', shy: '수줍음' };
 const NEUTRAL_ORDER = ['expressionless', 'neutral', 'smile', 'default'];
 const moodLabel = k => MOOD_LABELS[k] || k;
 /** 긴 안내문은 「자세히」로 접어 둔다 (hover 없이 눌러서 펼침). */
@@ -172,7 +173,7 @@ export class Faces {
     constructor({ getSettings, save } = {}) { this.getSettings = getSettings; this.save = save; this.enabled = false; this.pop = null; }
     ctx() { return window.SillyTavern?.getContext?.(); }
     S() { return this.getSettings(); }
-    applySize() { const v = (FACE_SIZES.find(x => x[0] === this.S().size) || FACE_SIZES[1])[2]; document.documentElement.style.setProperty('--ttk-face-size', v); }
+    applySize() { const i = Math.max(0, FACE_SIZES.findIndex(x => x[0] === this.S().size)), v = (FACE_SIZES[i] || FACE_SIZES[1])[2]; const r = document.documentElement; r.style.setProperty('--ttk-face-size', v); r.dataset.ttkFaceHang = i >= 2 ? 'on' : 'off'; }
 
     // ---- whose list ----
     key() {
@@ -186,6 +187,8 @@ export class Faces {
     // ---- speaker detection and drawing ----
     /** Remove everything this module put into a host and restore the original text nodes. */
     clean(host) {
+        // v1.6.0: 매달림 묶음(.ttk-fl > 얼굴 · 표기 · .ttk-fl-b > 대사)을 먼저 풀어 원래 순서로 되돌린다.
+        host.querySelectorAll('.ttk-fl').forEach(w => { w.querySelectorAll(':scope > .ttk-fl-b').forEach(b => b.replaceWith(...b.childNodes)); w.replaceWith(...w.childNodes); });
         host.querySelectorAll('.ttk-face').forEach(n => n.remove());
         const tags = host.querySelectorAll('span.ttk-ftag');
         tags.forEach(n => n.replaceWith(document.createTextNode(n.textContent)));
@@ -245,8 +248,12 @@ export class Faces {
             b.setAttribute('aria-label', `${e.name} (눌러서 이름 보기)`);
             facePaint(b, e, pickUrl(e, mood));
             const anchor = span.previousSibling instanceof Element && span.previousSibling.classList?.contains('ttk-ftag') ? span.previousSibling : span;
-            anchor.before(b);
+            // v1.6.0: 얼굴·(숨긴 표기)·대사를 한 묶음으로 감싼다. 크기 '크게' 이상에서는 CSS가 이 묶음을 왼쪽 매달림(얼굴 | 대사 전체)으로,
+            // 그보다 작으면 display:contents로 예전처럼 글줄 안에 둔다.
+            const fl = el('span', 'ttk-fl'), body = el('span', 'ttk-fl-b');
+            anchor.before(fl); fl.append(b); if (anchor !== span) fl.append(anchor); fl.append(body); body.append(span);
         });
+        markDropcap(host);
     }
     /** Re-draw every message (settings or entries changed). */
     refresh() {
@@ -265,13 +272,14 @@ export class Faces {
             const card = el('div', 'ttk-face-pop-card');
             const big = el('span', 'ttk-face-thumb ttk-face-pop-big'); facePaint(big, e, pickUrl(e, faceEl.dataset.mood || ''));
             const acts = el('div', 'ttk-face-pop-acts');
-            const ib = (k, label, fn) => { const x = el('button', 'ttk-face-pop-ib'); x.type = 'button'; x.setAttribute('aria-label', label); x.append(ic(k)); x.addEventListener('click', fn); return x; };
+            // v1.6.0: 아이콘 아래에 항상 보이는 짧은 글(마우스 올림 안내 없음)
+            const ib = (k, label, fn) => { const x = el('button', 'ttk-face-pop-ib'); x.type = 'button'; x.append(ic(k), el('span', 'ttk-face-pop-ib-t', label)); x.addEventListener('click', fn); return x; };
             acts.append(ib('repeat', '화자 바꾸기', () => this.openPop(faceEl, { change: true })));
-            if (e.moods?.length) acts.append(ib('smile', '표정 고르기', () => this.openPop(faceEl, { mood: true })));
+            if (e.moods?.length) acts.append(ib('smile', '표정', () => this.openPop(faceEl, { mood: true })));
             card.append(big, el('strong', 'ttk-face-pop-name', e.name), acts);
             pop.append(card);
         } else if (mood) {
-            pop.append(el('div', 'ttk-face-pop-title', `${e.name}의 표정`));
+            pop.append(this.popHead(faceEl, `${e.name}의 표정`));
             const grid = el('div', 'ttk-face-pop-grid');
             for (const x of [{ k: '', url: e.url }, ...e.moods]) {
                 const b = el('button', 'ttk-face-pop-pick'); b.type = 'button'; b.setAttribute('aria-pressed', String((faceEl.dataset.mood || '') === x.k));
@@ -279,7 +287,7 @@ export class Faces {
             }
             pop.append(grid);
         } else {
-            pop.append(el('div', 'ttk-face-pop-title', '이 대사의 화자'));
+            pop.append(this.popHead(faceEl, '이 대사의 화자'));
             const grid = el('div', 'ttk-face-pop-grid');
             for (const x of entries) {
                 const b = el('button', 'ttk-face-pop-pick'); b.type = 'button'; b.setAttribute('aria-pressed', String(x.id === e.id));
@@ -295,6 +303,13 @@ export class Faces {
         this.onDown = ev => { if (this.pop && !this.pop.contains(ev.target) && !ev.target.closest?.('.ttk-face')) this.closePop(); };
         this.onKey = ev => { if (ev.key === 'Escape') this.closePop(); };
         setTimeout(() => { document.addEventListener('pointerdown', this.onDown, true); document.addEventListener('keydown', this.onKey, true); });
+    }
+    /** v1.6.0: 목록 창 머리 — ← 큰 얼굴로 돌아가기 · 제목 · × 닫기 */
+    popHead(faceEl, title) {
+        const head = el('div', 'ttk-face-pop-head');
+        const back = el('button', 'ttk-face-pop-nav'); back.type = 'button'; back.setAttribute('aria-label', '뒤로'); back.textContent = '‹'; back.addEventListener('click', () => this.openPop(faceEl));
+        const x = el('button', 'ttk-face-pop-nav'); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.textContent = '×'; x.addEventListener('click', () => this.closePop());
+        head.append(back, el('div', 'ttk-face-pop-title', title), x); return head;
     }
     setPick(faceEl, id) {
         const c = this.ctx(), mes = faceEl.closest('.mes'), mesId = Number(mes?.getAttribute('mesid')), msg = c?.chat?.[mesId];
@@ -554,7 +569,7 @@ export class Faces {
         if (!this.enabled) return; this.enabled = false;
         this.chatEl?.removeEventListener('click', this.onClick, true); this.chatEl?.removeEventListener('keydown', this.onKeyFace, true);
         const ev = this.ctx()?.eventSource; for (const [t, f] of this.handlers || []) if (t) ev?.removeListener?.(t, f);
-        document.documentElement.style.removeProperty('--ttk-face-size'); this.cleanup(); this.syncPrompt();
+        document.documentElement.style.removeProperty('--ttk-face-size'); delete document.documentElement.dataset.ttkFaceHang; this.cleanup(); this.syncPrompt();
     }
 
     // ---- settings panel body ----
@@ -604,8 +619,8 @@ export class Faces {
             const al = el('input'); al.type = 'text'; al.value = (e.aliases || []).join(', '); al.placeholder = '다른 이름 (쉼표로 구분)'; al.setAttribute('aria-label', '다른 이름');
             const apply = () => { e.name = name.value.trim().slice(0, 20) || e.name; e.aliases = al.value.split(/[,，、]/).map(s => s.trim().slice(0, 20)).filter(Boolean).slice(0, 6); self.save(); self.refresh(); };
             name.addEventListener('change', apply); al.addEventListener('change', apply);
-            const del = btn('', async () => { if (!(await confirmAsk(`“${e.name}” 얼굴을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger ttk-ib'); del.title = '삭제'; del.setAttribute('aria-label', `${e.name} 삭제`); del.append(ic('trash'));
-            const fields = el('div', 'ttk-face-fields'); fields.append(name, al); const crop = btn('', () => self.openCrop(e, render), 'ttk-ib'); crop.title = '위치 조정'; crop.setAttribute('aria-label', `${e.name} 위치 조정`); crop.append(ic('crop')); r.append(fields, crop, del); return r;
+            const del = btn('', async () => { if (!(await confirmAsk(`“${e.name}” 얼굴을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger ttk-ib'); del.setAttribute('aria-label', `${e.name} 삭제`); del.append(ic('trash'));
+            const fields = el('div', 'ttk-face-fields'); fields.append(name, al); const crop = btn('', () => self.openCrop(e, render), 'ttk-ib'); crop.setAttribute('aria-label', `${e.name} 위치 조정`); crop.append(ic('crop')); r.append(fields, crop, del); return r;
         }
         function render() {
             const key = self.key(), c = self.ctx(); list.replaceChildren();
