@@ -254,7 +254,7 @@ export class Faces {
     buildPanel(btn) {
         const root = el('div', 'ttk-controls'), self = this;
         root.append(el('p', 'ttk-note', '여러 인물이 나오는 봇에서 대사 앞에 말한 인물의 얼굴을 보여 줍니다. 얼굴 목록은 카드마다 따로 저장되고, 채팅에 보이는 모양만 바꿉니다. 디자인 모듈이 켜져 있어야 대사가 인식됩니다.'));
-        root.append(el('p', 'ttk-note', '화자는 대사 바로 앞의 [이름] 표기로 찾고, 없으면 대사 앞뒤 글에 나온 등록된 이름으로 추정합니다(한 글자 이름은 표기로만 인식, 번역문에 얼굴을 보이려면 번역된 이름을 '다른 이름'에 넣으세요). 화면에서는 표기를 숨기며, 채팅 내용에는 그대로 남습니다. 얼굴을 누르면 이름과 [바꾸기]가 나옵니다.'));
+        root.append(el('p', 'ttk-note', '화자는 대사 바로 앞의 [이름] 표기로 찾고, 없으면 대사 앞뒤 글에 나온 등록된 이름으로 추정합니다(한 글자 이름은 표기로만 인식, 번역문에 얼굴을 보이려면 번역된 이름을 “다른 이름”에 넣으세요). 화면에서는 표기를 숨기며, 채팅 내용에는 그대로 남습니다. 얼굴을 누르면 이름과 [바꾸기]가 나옵니다.'));
         const promptRow = el('label', 'ttk-style-check'); const pc = el('input'); pc.type = 'checkbox'; pc.checked = this.S().prompt !== false;
         pc.addEventListener('change', () => { this.S().prompt = pc.checked; this.save(); this.syncPrompt(); });
         promptRow.append(pc, el('span', '', '대사 앞에 [이름]을 붙이도록 AI에게 지시문 보내기')); root.append(promptRow);
