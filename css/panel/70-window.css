@@ -9,7 +9,8 @@
   --w-text:#f3e6cc;--w-muted:#bfa98b;--w-gold:#c9a46c;--w-accent:#c9a46c;--w-sel:#33271e;
   --w-track:#4a3a2c;--w-knob-off:#8e7a63;--w-knob-on:#211913;--w-primary:#c9a46c;--w-primary-text:#211913;
   /* 안쪽 설정 패널이 쓰는 변수도 이 창 팔레트로 맞춥니다(채팅 테마 색이 새어 들어오지 않게). */
-  --ttk-text:var(--w-text);--ttk-surface:var(--w-surface);--ttk-raised:var(--w-sel);--ttk-border:var(--w-line);--ttk-accent:var(--w-accent);
+  --w-font:'IBM Plex Sans KR','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;--w-serif:'Gowun Batang','Nanum Myeongjo','AppleMyungjo',serif;
+  --ttk-text:var(--w-text);--ttk-muted:var(--w-muted);--ttk-surface:var(--w-surface);--ttk-raised:var(--w-sel);--ttk-border:var(--w-line);--ttk-accent:var(--w-accent);
   position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;
   background:var(--w-backdrop);color:var(--w-text);
   font-family:'IBM Plex Sans KR','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;line-height:1.5;
@@ -18,7 +19,7 @@
 .ttk-win[data-mode=light]{
   --w-backdrop:rgba(58,47,39,.62);--w-modal:#f4ede0;--w-rail:#efe6d6;--w-surface:#fbf7ee;--w-line:#d8c9ae;
   --w-text:#2e241d;--w-muted:#7a6653;--w-gold:#8a6a3e;--w-accent:#8a5a3b;--w-sel:#e6dac4;
-  --w-track:#d8c9ae;--w-knob-off:#fbf7ee;--w-knob-on:#fbf7ee;--w-primary:#211913;--w-primary-text:#f3e6cc;
+  --w-track:#cdbb9c;--w-knob-off:#fbf7ee;--w-knob-on:#fbf7ee;--w-primary:#211913;--w-primary-text:#f3e6cc;
 }
 .ttk-win *,.ttk-win *::before,.ttk-win *::after{box-sizing:border-box}
 .ttk-win button,.ttk-win input{font-family:inherit}
@@ -39,8 +40,8 @@ html.ttk-win-open body{overscroll-behavior:none}
 .ttk-win-brand-name{margin-top:8px;font:400 22px/1.2 'Gowun Batang',serif;letter-spacing:6px}
 .ttk-win-ver{margin-top:2px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:2px;color:var(--w-gold)}
 .ttk-win-nav{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:2px}
-.ttk-win-nav-group{padding:16px 10px 6px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:1px;color:var(--w-muted)}
-.ttk-win-nav-btn{display:flex;align-items:center;gap:11px;min-height:36px;padding:0 10px;border:0;border-radius:4px;background:transparent;color:var(--w-text);font-size:14px;text-align:left;cursor:pointer}
+.ttk-win-nav-group{padding:12px 10px 4px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:1px;color:var(--w-muted)}
+.ttk-win-nav-btn{display:flex;align-items:center;gap:11px;min-height:32px;padding:0 10px;border:0;border-radius:4px;background:transparent;color:var(--w-text);font-size:14px;text-align:left;cursor:pointer}
 .ttk-win-nav-btn[aria-current=true]{background:var(--w-sel)}
 .ttk-win-nav-btn.ttk-win-off .ttk-win-nav-label,.ttk-win-nav-btn.ttk-win-off .ttk-lc{opacity:.45}
 .ttk-win-nav-label{flex:1;min-width:0}
@@ -156,4 +157,43 @@ html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
 }
 @media (prefers-reduced-motion:reduce){
   .ttk-win *,.ttk-win *::before,.ttk-win *::after{transition:none!important;animation:none!important}
+}
+
+/* ==== v1.7.1 정비 ==== */
+/* 글꼴: 글꼴 관리 같은 다른 확장이 문서 전체 글꼴을 !important로 바꿔도 창 글꼴을 지킵니다.
+   글꼴 미리보기(테마 미리보기·글꼴 목록)와 아이콘은 제외합니다. */
+html body .ttk-win,html body .ttk-win :not([class*="fa-"],.ttk-lc,.ttk-preview-message,.ttk-preview-message *,.ttk-font-option,.ttk-font-trigger,.ttk-uf-item *){font-family:var(--w-font)!important}
+html body .ttk-win :is(.ttk-win-brand,.ttk-win-brand-m) .ttk-win-brand-name,html body .ttk-win #ttk-panel .ttk-group-head strong{font-family:var(--w-serif)!important}
+/* 왼쪽 목록·본문 스크롤 막대: 얇게, 창 색으로 */
+.ttk-win :is(.ttk-win-nav,.ttk-win-body){scrollbar-width:thin;scrollbar-color:var(--w-line) transparent}
+.ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar{width:8px;height:8px}
+.ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar-track{background:transparent}
+.ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar-thumb{background:var(--w-line);border-radius:4px;border:2px solid transparent;background-clip:padding-box}
+.ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar-button{display:none;height:0;width:0}
+/* 접힘 칸 표시: 기본 삼각형 대신 선 아이콘 */
+html .ttk-win #ttk-panel .ttk-section-summary{list-style:none!important;justify-content:space-between;gap:10px}
+html .ttk-win #ttk-panel .ttk-section-summary::marker{content:""!important}
+html .ttk-win #ttk-panel .ttk-section-summary::-webkit-details-marker{display:none!important}
+html .ttk-win #ttk-panel .ttk-section-summary::before{content:none!important;display:none!important}
+html .ttk-win #ttk-panel .ttk-section-summary::after{content:""!important;display:block!important;flex:none;width:16px;height:16px;background:var(--w-muted)!important;-webkit-mask:var(--ttk-lc-chev) center/contain no-repeat;mask:var(--ttk-lc-chev) center/contain no-repeat;transform:rotate(-90deg);transition:transform .15s}
+html .ttk-win #ttk-panel details[open] > .ttk-section-summary::after{transform:none}
+/* 모듈 카드 아래 세부 칸은 카드에 붙여 한 덩어리로 */
+html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub{margin:-9px 0 0 16px;border-top:0;border-radius:0 0 4px 4px;background:color-mix(in srgb,var(--w-surface) 55%,var(--w-modal))}
+html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub > .ttk-section-summary{min-height:40px;font-size:13px;font-weight:500;color:var(--w-muted)!important}
+html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub[open] > .ttk-section-summary{color:var(--w-text)!important}
+html .ttk-win .ttk-win-solo #ttk-panel .ttk-group > .ttk-section.ttk-win-sub{margin:0;border-top:1px solid var(--w-line);border-radius:4px;background:var(--w-surface)}
+html .ttk-win .ttk-win-solo #ttk-panel .ttk-section-summary.ttk-win-dup{display:none!important}
+/* 설정 창 안의 프로필 사진 */
+html .ttk-win #ttk-panel .ttk-av-inline{display:block;margin-top:4px;color:var(--w-text)}
+html .ttk-win #ttk-panel .ttk-av-inline .ttk-av-group:first-child{border-top:0;padding-top:0}
+html .ttk-win #ttk-panel .ttk-av-inline .ttk-av-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}
+/* 확장 목록의 시작 버튼: SillyTavern 버튼 폭 규칙 때문에 글자가 세로로 꺾이던 문제 */
+#ttk-launcher .ttk-launcher-open.menu_button{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;min-width:0;max-width:100%;white-space:nowrap!important;writing-mode:horizontal-tb;word-break:keep-all}
+/* 요술봉 메뉴: 아이콘 칸을 SillyTavern 기본(20px)에 맞추고, 다락방 항목은 맨 위에 모읍니다 */
+#extensionsMenu .ttk-lc.extensionsMenuExtensionButton{display:block!important;flex:0 0 20px;width:20px!important;height:20px!important;align-self:center;vertical-align:0;-webkit-mask-size:18px 18px;mask-size:18px 18px;font-size:inherit}
+#extensionsMenu > :is(#ttk_window_menu,#ttk_inventory_menu,#ttk_gallery_menu,#ttk_themeimg_menu){order:-1}
+#extensionsMenu > #ttk_window_menu{order:-2}
+@media (max-width:600px){
+  html .ttk-win #ttk-panel .ttk-settings-body > .ttk-note{display:none!important}
+  html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub{margin-left:10px}
 }

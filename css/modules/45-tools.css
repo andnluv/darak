@@ -13,34 +13,36 @@
 @media (max-width:1000px) {#ttk-inventory .ttk-inv-row:has(.ttk-inv-pick) {grid-template-columns:auto minmax(0,1fr)} #ttk-inventory .ttk-inv-row:has(.ttk-inv-pick) .ttk-inv-badges {grid-column:2}}
 
 /* ---- 프로필 사진 ---- */
-#ttk-avatar-drawer {
+#ttk-avatar-drawer,.ttk-av-inline {
   --a-surface:var(--ttk-surface,var(--SmartThemeBlurTintColor));--a-raised:var(--ttk-raised,color-mix(in srgb,var(--SmartThemeBodyColor) 8%,transparent));
   --a-text:var(--ttk-text,var(--SmartThemeBodyColor));--a-muted:var(--ttk-muted,var(--SmartThemeEmColor));
   --a-line:var(--ttk-border,var(--SmartThemeBorderColor));--a-accent:var(--ttk-accent,var(--SmartThemeQuoteColor));
+}
+#ttk-avatar-drawer {
   position:absolute;left:0;bottom:calc(100% + 6px);width:min(480px,100%);max-height:min(70vh,560px);overflow-y:auto;z-index:3010;box-sizing:border-box;padding:10px 12px 12px;
   background:var(--a-surface);color:var(--a-text);border:1px solid var(--a-line);border-radius:12px;box-shadow:0 10px 32px rgba(0,0,0,.22);
   font:14px/1.45 var(--mainFontFamily,sans-serif);text-shadow:none;white-space:normal;overscroll-behavior:contain;
 }
-#ttk-avatar-drawer button {all:unset;box-sizing:border-box;cursor:pointer;font:inherit;color:inherit}
-#ttk-avatar-drawer button:focus-visible {outline:2px solid var(--a-accent);outline-offset:1px}
-#ttk-avatar-drawer .ttk-av-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-#ttk-avatar-drawer .ttk-av-x {padding:4px 10px;border-radius:8px;color:var(--a-muted)}
-#ttk-avatar-drawer .ttk-av-x:hover {background:var(--a-raised);color:var(--a-text)}
-#ttk-avatar-drawer .ttk-av-group {padding:8px 0;border-top:1px solid color-mix(in srgb,var(--a-line) 70%,transparent)}
-#ttk-avatar-drawer .ttk-av-group h4 {margin:0 0 8px;font-size:13px;font-weight:650;overflow-wrap:anywhere}
-#ttk-avatar-drawer .ttk-av-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
-#ttk-avatar-drawer .ttk-av-cell {position:relative;border-radius:10px}
-#ttk-avatar-drawer .ttk-av-pic {display:block;width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--a-raised)}
-#ttk-avatar-drawer .ttk-av-pic img {width:100%;height:100%;object-fit:cover;display:block}
-#ttk-avatar-drawer .ttk-av-on .ttk-av-pic {border-color:var(--a-accent)}
-#ttk-avatar-drawer .ttk-av-del {position:absolute;top:-5px;right:-5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--a-surface);border:1px solid var(--a-line);font-size:14px;line-height:1;color:var(--a-muted)}
-#ttk-avatar-drawer .ttk-av-del:hover {color:#c2413a;border-color:#c2413a}
-#ttk-avatar-drawer .ttk-av-add {display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:10px;border:1px dashed var(--a-line);color:var(--a-muted);font-size:12px;text-align:center;cursor:pointer;padding:4px}
-#ttk-avatar-drawer .ttk-av-add:hover {color:var(--a-accent);border-color:var(--a-accent)}
-#ttk-avatar-drawer .ttk-av-busy {opacity:.5;pointer-events:none}
-#ttk-avatar-drawer .ttk-av-hint,#ttk-avatar-drawer .ttk-av-empty {display:block;margin-top:6px;color:var(--a-muted);font-size:12px}
-#ttk-avatar-drawer .ttk-av-wide {display:block;margin-top:8px;padding:8px 10px;border:1px solid var(--a-line);border-radius:8px;background:var(--a-raised);text-align:center;font-size:13px;font-weight:600}
-#ttk-avatar-drawer .ttk-av-wide:hover {border-color:var(--a-accent)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) button {all:unset;box-sizing:border-box;cursor:pointer;font:inherit;color:inherit}
+:is(#ttk-avatar-drawer,.ttk-av-inline) button:focus-visible {outline:2px solid var(--a-accent);outline-offset:1px}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-head {display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-x {padding:4px 10px;border-radius:8px;color:var(--a-muted)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-x:hover {background:var(--a-raised);color:var(--a-text)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-group {padding:8px 0;border-top:1px solid color-mix(in srgb,var(--a-line) 70%,transparent)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-group h4 {margin:0 0 8px;font-size:13px;font-weight:650;overflow-wrap:anywhere}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-cell {position:relative;border-radius:10px}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-pic {display:block;width:100%;aspect-ratio:1;border-radius:10px;overflow:hidden;border:2px solid transparent;background:var(--a-raised)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-pic img {width:100%;height:100%;object-fit:cover;display:block}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-on .ttk-av-pic {border-color:var(--a-accent)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-del {position:absolute;top:-5px;right:-5px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--a-surface);border:1px solid var(--a-line);font-size:14px;line-height:1;color:var(--a-muted)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-del:hover {color:#c2413a;border-color:#c2413a}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-add {display:flex;align-items:center;justify-content:center;aspect-ratio:1;border-radius:10px;border:1px dashed var(--a-line);color:var(--a-muted);font-size:12px;text-align:center;cursor:pointer;padding:4px}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-add:hover {color:var(--a-accent);border-color:var(--a-accent)}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-busy {opacity:.5;pointer-events:none}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-hint,:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-empty {display:block;margin-top:6px;color:var(--a-muted);font-size:12px}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-wide {display:block;margin-top:8px;padding:8px 10px;border:1px solid var(--a-line);border-radius:8px;background:var(--a-raised);text-align:center;font-size:13px;font-weight:600}
+:is(#ttk-avatar-drawer,.ttk-av-inline) .ttk-av-wide:hover {border-color:var(--a-accent)}
 .mes_button.ttk_avatar_btn {cursor:pointer}
 
 /* ---- 테마 이미지 교체 ---- */
