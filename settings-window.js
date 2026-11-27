@@ -103,7 +103,7 @@ export class SettingsWindow {
 
     // ---- 화면 ----
     render() {
-        const root = el('div', 'ttk-win'); root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', '다락방 설정');
+        const root = el('div', 'ttk-win'); root.id = 'ttk-win'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true'); root.setAttribute('aria-label', '다락방 설정');
         let mode = 'dark'; try { mode = localStorage.getItem(MODE_KEY) === 'light' ? 'light' : 'dark'; } catch { /* 저장소 사용 불가 */ }
         root.dataset.mode = mode;
         const card = el('div', 'ttk-win-card'); card.tabIndex = -1; this.card = card;
