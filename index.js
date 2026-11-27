@@ -22,7 +22,7 @@ import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.7.7';
+const VERSION = '1.7.8';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
@@ -530,7 +530,8 @@ function buildLauncher(){
  head.append(mark,el('b','ttk-launcher-name','다락방'),el('small','ttk-panel-version',`v${VERSION}`));
  const open=btn('다락방 열기',()=>{if(settingsWindow)settingsWindow.open();else globalThis.toastr?.error?.('설정 창을 열 수 없습니다. 페이지를 새로고침해 주세요.','다락방');},'menu_button ttk-launcher-open');
  const fail=el('p','ttk-launcher-fail');fail.id='ttk-launcher-fail';fail.hidden=true;fail.setAttribute('role','alert');
- root.append(head,el('p','ttk-note','설정은 별도 창에서 바꿉니다. 요술봉(확장) 메뉴의 「다락방」으로도 열 수 있어요.'),open,fail);return root;}
+ open.title='설정은 별도 창에서 바꿉니다. 요술봉(확장) 메뉴의 「다락방」으로도 열 수 있어요.';
+ const row=el('div','ttk-launcher-row');row.append(head,open);root.append(row,fail);return root;}
 async function main(){
  const ctx=window.SillyTavern?.getContext?.();
  if(!ctx?.extensionSettings||!ctx?.saveSettingsDebounced){console.error('[DARAK] Initialization failed: SillyTavern context unavailable');return;}
