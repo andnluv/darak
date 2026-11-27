@@ -50,7 +50,7 @@ export function isCandidate(text) {
     if (t.length < 2 || t.length > KEY_MAX) return false;
     if (!/[A-Za-z]/.test(t) && (!/\p{Script=Han}/u.test(t) || /[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(t))) return false;
     if (/\p{Script=Hangul}/u.test(t)) return false;
-    if (/^[\[({<].*[\])}>]$/.test(t) && t.length < 40) return false;                       // [ None ] 같은 값
+    if (/^[\[({<].*[\])}>]$/.test(t) && t.length < 40 && !/\p{Script=Han}/u.test(t)) return false;                       // [ None ] 같은 값
     if (/^(https?:|www\.|\/|[A-Za-z]:\\|\.{1,2}\/)/.test(t)) return false;                // 주소·경로
     if (/^[\w.+-]+@[\w-]+\.[\w.]+$/.test(t)) return false;                                // 이메일
     if (/^[\w./\\ -]+\.(json|jsonl|png|jpe?g|webp|gif|svg|css|js|mjs|html|txt|md|zip|ya?ml|png|mp3|wav|ogg)$/i.test(t)) return false; // 파일 이름
