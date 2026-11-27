@@ -10,10 +10,10 @@ export function buildUiTranslationPanel({el, btn, info, confirmAsk, translator, 
     section.id = 'ttk-ui-localization';
     section.append(el('summary', '', '화면 전체 한국어'));
     const body = el('div', 'ttk-controls'); section.append(body);
-    body.append(el('p', 'ttk-note', 'SillyTavern 기본 한국어에 없는 영어를 선택한 연결 프로필로 번역해 화면 글자만 바꿉니다. 확장 설정·창·고정 알림도 포함합니다. 채팅 본문, 입력칸의 값, 캐릭터·페르소나·프리셋·모델·파일 이름처럼 사용자가 쓰거나 고른 내용은 바꾸지 않습니다. 번역은 버튼을 눌렀을 때만 모델을 부르고(처음 한 번 200줄씩 7회 안팎), 결과는 설정에 저장해 다시 부르지 않습니다. 끄면 화면 전체가 원래대로 돌아옵니다. 요청에 모델 비용이 발생할 수 있습니다.'));
+    body.append(el('p', 'ttk-note', 'SillyTavern 기본 한국어에 없는 영어·중국어(한자)를 선택한 연결 프로필로 번역해 화면 글자만 바꿉니다. 확장 설정·창·고정 알림도 포함합니다. 채팅 본문, 입력칸의 값, 캐릭터·페르소나·프리셋·모델·파일 이름처럼 사용자가 쓰거나 고른 내용은 바꾸지 않습니다. 번역은 버튼을 눌렀을 때만 모델을 부르고(처음 한 번 200줄씩 7회 안팎), 결과는 설정에 저장해 다시 부르지 않습니다. 끄면 화면 전체가 원래대로 돌아옵니다. 요청에 모델 비용이 발생할 수 있습니다.'));
 
     // 켜기
-    const onRow = el('label', 'ttk-module-row'); onRow.append(info('화면 전체 한국어', '기본 꺼짐. 켜면 저장된 번역을 화면에 적용하고, 새로 생긴 영어는 대기 목록에 모읍니다.'));
+    const onRow = el('label', 'ttk-module-row'); onRow.append(info('화면 전체 한국어', '기본 꺼짐. 켜면 저장된 번역을 화면에 적용하고, 새로 생긴 영어·중국어는 대기 목록에 모읍니다.'));
     const onBox = el('input'); onBox.type = 'checkbox'; onBox.checked = getSettings().enabled === true;
     onBox.addEventListener('change', () => { getSettings().enabled = onBox.checked; changed(); paint(); });
     onRow.append(onBox); body.append(onRow);

@@ -1,6 +1,6 @@
 /** DARAK v1.4.0 — 화면 전체 한국어.
  *
- * SillyTavern 화면과 확장 화면에 남은 영어 글자(채팅 밖)를 모아 저장된 연결 프로필로 나눠 번역하고,
+ * SillyTavern 화면과 확장 화면에 남은 영어·중국어 글자(채팅 밖)를 모아 저장된 연결 프로필로 나눠 번역하고,
  * 결과를 '영어 원문 → 한국어' 표로 설정에 저장한 뒤 화면의 글자 노드만 바꿉니다.
  *
  * - 첫 번역과 대기 중인 글자 번역은 사용자가 버튼을 눌렀을 때만 모델을 부릅니다(자동 호출 없음).
@@ -44,11 +44,11 @@ export function normalizeUiTranslation(raw = {}) {
     };
 }
 
-/** 번역 대상 글자인지(영어가 있고, 한글이 없고, 이름·경로·값처럼 보이지 않는지). */
+/** 번역 대상 글자인지(영어 또는 중국어(한자)가 있고, 한글이 없고, 이름·경로·값처럼 보이지 않는지). 일본어(가나)만 있는 글자는 제외. */
 export function isCandidate(text) {
     const t = normKey(text);
     if (t.length < 2 || t.length > KEY_MAX) return false;
-    if (!/[A-Za-z]/.test(t)) return false;
+    if (!/[A-Za-z]/.test(t) && (!/\p{Script=Han}/u.test(t) || /[\p{Script=Hiragana}\p{Script=Katakana}]/u.test(t))) return false;
     if (/\p{Script=Hangul}/u.test(t)) return false;
     if (/^[\[({<].*[\])}>]$/.test(t) && t.length < 40) return false;                       // [ None ] 같은 값
     if (/^(https?:|www\.|\/|[A-Za-z]:\\|\.{1,2}\/)/.test(t)) return false;                // 주소·경로
@@ -115,7 +115,7 @@ export function buildSystemPrompt({terms, glossary} = {}) {
     const list = keepTerms(terms);
     return [
         'You localize the user interface of SillyTavern (a role-play chat web app) and its extensions into Korean.',
-        'The user message is a JSON array of {"n","t","where","kind"}. "t" is the English UI text to translate. "where" (location in the UI) and "kind" (button | label | title | description | message) are context only; never translate or output them.',
+        'The user message is a JSON array of {"n","t","where","kind"}. "t" is the English or Chinese UI text to translate. "where" (location in the UI) and "kind" (button | label | title | description | message) are context only; never translate or output them.',
         'Output ONLY one JSON object that maps every n (as a string) to the Korean text for its "t", e.g. {"1":"…","2":"…"}. Include every n. No explanations.',
         'Style: short, natural Korean UI wording. Buttons: concise noun or verb form, consistent across the list. Labels and titles: noun phrases without sentence endings. Descriptions and messages: polite plain style (…합니다 / …하세요). Follow SillyTavern\'s own Korean terminology where you know it.',
         'Keep the Korean no longer than needed; it has to fit a button or a field.',
