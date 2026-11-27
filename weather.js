@@ -1,7 +1,7 @@
 /** DARAK — 날씨·분위기 효과 (v1.3.0).
  *
- * Independent of every other module (imports nothing from them). Draws a click-through layer between the
- * SillyTavern background (#bg1) and the chat panel (#sheld): rain / snow / fog / cloud / thunderstorm plus
+ * Independent of every other module (imports nothing from them). Draws click-through layers: particles above the
+ * chat panel (#sheld, z 30) but below drawers (1000+), and the darkening tint behind the chat panel: rain / snow / fog / cloud / thunderstorm plus
  * floating petals, leaves, fireflies, embers, stars. Nothing in the chat data or the SillyTavern settings is touched.
  *
  * The choice (weather + mood) is stored per chat in chat metadata (`darak_weather`), so every chat keeps its own sky.
@@ -92,11 +92,13 @@ export class Weather {
         if (this.enabled) return; this.enabled = true;
         this.layer = el('div'); this.layer.id = 'ttk-wx'; this.layer.setAttribute('aria-hidden', 'true');
         this.canvas = el('canvas'); this.cx = this.canvas.getContext('2d'); this.tint = el('div', 'ttk-wx-tint');
-        this.layer.append(this.canvas, this.tint);
+        this.layer.append(this.tint);
+        // v1.3.3: 입자는 채팅 칸(#sheld, z-index 30) 위로 지나가고, 어둡힘(tint)만 채팅 칸 뒤에 둔다(글씨가 흐려지지 않게).
+        this.top = el('div'); this.top.id = 'ttk-wx-top'; this.top.setAttribute('aria-hidden', 'true'); this.top.append(this.canvas);
         this.flashEl = el('div'); this.flashEl.id = 'ttk-wx-flash'; this.flashEl.setAttribute('aria-hidden', 'true');
         const bg = document.getElementById('bg1'); // 같은 z-index(-1)에서 배경 바로 뒤에 놓여 배경 위에 그려진다.
         if (bg?.parentNode) bg.after(this.layer); else document.body.prepend(this.layer);
-        document.body.append(this.flashEl);
+        document.body.append(this.top, this.flashEl);
         const c = this.ctx(), ev = c?.eventSource, T = c?.eventTypes || {};
         this.handlers = [[T.CHAT_CHANGED, () => this.loadChat()]].filter(h => h[0]);
         for (const [t, f] of this.handlers) ev?.on?.(t, f);
@@ -114,7 +116,7 @@ export class Weather {
         this.mqMobile.removeEventListener('change', this.onMedia); this.mqMotion.removeEventListener('change', this.onMedia);
         document.removeEventListener('visibilitychange', this.onVisible); window.removeEventListener('resize', this.onResize);
         this.optObs?.disconnect(); this.optObs = null;
-        this.layer?.remove(); this.flashEl?.remove(); this.layer = this.flashEl = this.canvas = this.cx = this.tint = null;
+        this.layer?.remove(); this.top?.remove(); this.flashEl?.remove(); this.layer = this.top = this.flashEl = this.canvas = this.cx = this.tint = null;
         this.P = []; this.fog = [];
     }
     /** 설정(세기·양·농도·속도·밝기)이 바뀌었을 때 */
