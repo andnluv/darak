@@ -7,7 +7,7 @@
  * The choice (weather + mood) is stored per chat in chat metadata (`darak_weather`), so every chat keeps its own sky.
  * Look and amount (세기·양·농도·속도) are global settings of this module.
  */
-export const WEATHERS = [['none', '없음'], ['cloudy', '흐림'], ['rain', '비'], ['snow', '눈'], ['fog', '안개'], ['storm', '뇌우']];
+export const WEATHERS = [['none', '없음'], ['fog', '흐림·안개'], ['rain', '비'], ['snow', '눈'], ['storm', '뇌우']];
 export const MOODS = [['none', '없음'], ['petal', '꽃잎'], ['leaf', '낙엽'], ['firefly', '반딧불'], ['ember', '불똥'], ['star', '별빛']];
 export const LEVELS = [['lo', '약'], ['mid', '보통'], ['hi', '강']];
 export const TONES = [['auto', '자동'], ['light', '밝은 화면'], ['dark', '어두운 화면']];
@@ -33,14 +33,14 @@ export function normalizeWeather(raw = {}) {
 }
 /** 채팅에 저장된 값을 허용된 이름만 남기고 읽는다. */
 export function normalizeSelection(raw) {
-    const r = raw && typeof raw === 'object' ? raw : {};
+    const r = raw && typeof raw === 'object' ? { ...raw } : {};
+    if (r.weather === 'cloudy') r.weather = 'fog'; // v1.3.0의 '흐림'은 '흐림·안개'로 합쳐졌다
     return { weather: has(WEATHERS, r.weather) ? r.weather : 'none', mood: has(MOODS, r.mood) ? r.mood : 'none' };
 }
 
 // ---- Lucide 아이콘 (ISC 라이선스) — 선 굵기 1.5 ----
 const ICONS = {
     none: '<circle cx="12" cy="12" r="10"/><path d="M4.929 4.929 19.07 19.071"/>',
-    cloudy: '<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>',
     rain: '<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/>',
     snow: '<path d="m10 20-1.25-2.5L6 18"/><path d="M10 4 8.75 6.5 6 6"/><path d="m14 20 1.25-2.5L18 18"/><path d="m14 4 1.25 2.5L18 6"/><path d="m17 21-3-6h-4"/><path d="m17 3-3 6 1.5 3"/><path d="M2 12h6.5L10 9"/><path d="m20 10-1.5 2 1.5 2"/><path d="M22 12h-6.5L14 15"/><path d="m4 10 1.5 2L4 14"/><path d="m7 21 3-6-1.5-3"/><path d="m7 3 3 6h4"/>',
     fog: '<path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M16 17H7"/><path d="M17 21H9"/>',
@@ -178,7 +178,7 @@ export class Weather {
         if (mood !== 'none') kinds.push(mood);
         const limit = this.mobile() ? MAX_PARTICLES.mobile : MAX_PARTICLES.pc;
         for (const k of kinds) { const n = Math.min(limit, Math.round(this.count(k) * (weather === 'storm' && k === 'rain' ? 1.3 : 1))); for (let i = 0; i < n; i++) this.P.push(this.spawn(k, true)); }
-        if (weather === 'fog') for (let i = 0; i < 8; i++) this.fog.push({ x: R(-0.3, 1) * this.W, y: R(0.35, 1) * this.H, w: R(0.6, 1.1) * this.W, h: R(0.22, 0.4) * this.H, v: R(8, 18) * (Math.random() < 0.5 ? -1 : 1) });
+        if (weather === 'fog') for (let i = 0, n = Math.max(3, Math.min(16, Math.round(8 * this.getSettings().amount * (this.mobile() ? 0.75 : 1)))); i < n; i++) this.fog.push({ x: R(-0.3, 1) * this.W, y: R(0.35, 1) * this.H, w: R(0.6, 1.1) * this.W, h: R(0.22, 0.4) * this.H, v: R(8, 18) * (Math.random() < 0.5 ? -1 : 1) });
         const aRaw = getComputedStyle(document.documentElement).getPropertyValue('--SmartThemeQuoteColor');
         this.accent = parseColor(aRaw) || [90, 106, 160];
         this.applyTint();
@@ -190,7 +190,7 @@ export class Weather {
     /** 흐림·뇌우의 화면 어둡힘 */
     applyTint() {
         if (!this.tint) return;
-        const s = this.getSettings(), w = this.sel.weather, cl = w === 'cloudy' ? LV[s.level] : w === 'storm' ? 1.2 : 0;
+        const s = this.getSettings(), w = this.sel.weather, cl = w === 'fog' ? LV[s.level] : w === 'storm' ? 1.2 : 0;
         this.tint.style.background = cl ? (this.dark ? `rgba(6,8,14,${Math.min(0.6, (0.28 * cl * s.opacity) / 0.35)})` : `rgba(70,78,92,${Math.min(0.5, (0.2 * cl * s.opacity) / 0.35)})`) : 'transparent';
     }
     ensureLoop() {
