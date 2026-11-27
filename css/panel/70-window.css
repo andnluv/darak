@@ -37,7 +37,7 @@ html.ttk-win-open body{overscroll-behavior:none}
 .ttk-win-rail{display:flex;flex-direction:column;min-height:0;background:var(--w-rail);border-right:1px solid var(--w-line)}
 .ttk-win-brand{padding:24px 22px 18px;border-bottom:1px solid var(--w-line)}
 .ttk-win-key{display:block;width:56px;height:21px;background:var(--w-gold);-webkit-mask:var(--ttk-w-key) center/contain no-repeat;mask:var(--ttk-w-key) center/contain no-repeat}
-.ttk-win-brand-name{margin-top:8px;font:400 22px/1.2 'Gowun Batang',serif;letter-spacing:6px}
+.ttk-win-brand-name{margin-top:8px;font:400 22px/1.2 'Gowun Batang',serif;letter-spacing:2px}
 .ttk-win-ver{margin-top:2px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:2px;color:var(--w-gold)}
 .ttk-win-nav{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:2px}
 .ttk-win-nav-group{padding:12px 10px 4px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:1px;color:var(--w-muted)}
@@ -130,7 +130,7 @@ html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
   .ttk-win-top{display:contents}
   .ttk-win-brand-m{grid-area:brand;display:flex;align-items:center;gap:10px;padding:calc(14px + env(safe-area-inset-top)) 8px 12px 20px}
   .ttk-win-brand-m .ttk-win-key{width:40px;height:15px;flex:none}
-  .ttk-win-brand-m .ttk-win-brand-name{margin:0;font-size:20px;letter-spacing:4px}
+  .ttk-win-brand-m .ttk-win-brand-name{margin:0;font-size:20px;letter-spacing:1px}
   .ttk-win-mode{grid-area:mode;align-self:start;margin:calc(14px + env(safe-area-inset-top)) 4px 0 0;padding:2px;border-radius:4px}
   .ttk-win-mode-btn{width:44px;height:40px;padding:0;justify-content:center}
   .ttk-win-mode-btn span:not(.ttk-lc){display:none}
@@ -165,7 +165,7 @@ html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
 html body .ttk-win,html body .ttk-win :not([class*="fa-"],.ttk-lc,.ttk-preview-message,.ttk-preview-message *,.ttk-font-option,.ttk-font-trigger,.ttk-uf-item *){font-family:var(--w-font)!important}
 html body .ttk-win :is(.ttk-win-brand,.ttk-win-brand-m) .ttk-win-brand-name,html body .ttk-win #ttk-panel .ttk-group-head strong{font-family:var(--w-serif)!important}
 /* 왼쪽 목록·본문 스크롤 막대: 얇게, 창 색으로 */
-.ttk-win :is(.ttk-win-nav,.ttk-win-body){scrollbar-width:thin;scrollbar-color:var(--w-line) transparent}
+@supports (-moz-appearance:none){.ttk-win :is(.ttk-win-nav,.ttk-win-body){scrollbar-width:thin;scrollbar-color:var(--w-line) transparent}}
 .ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar{width:8px;height:8px}
 .ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar-track{background:transparent}
 .ttk-win :is(.ttk-win-nav,.ttk-win-body)::-webkit-scrollbar-thumb{background:var(--w-line);border-radius:4px;border:2px solid transparent;background-clip:padding-box}
@@ -177,11 +177,6 @@ html .ttk-win #ttk-panel .ttk-section-summary::-webkit-details-marker{display:no
 html .ttk-win #ttk-panel .ttk-section-summary::before{content:none!important;display:none!important}
 html .ttk-win #ttk-panel .ttk-section-summary::after{content:""!important;display:block!important;flex:none;width:16px;height:16px;background:var(--w-muted)!important;-webkit-mask:var(--ttk-lc-chev) center/contain no-repeat;mask:var(--ttk-lc-chev) center/contain no-repeat;transform:rotate(-90deg);transition:transform .15s}
 html .ttk-win #ttk-panel details[open] > .ttk-section-summary::after{transform:none}
-/* 모듈 카드 아래 세부 칸은 카드에 붙여 한 덩어리로 */
-html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub{margin:-9px 0 0 16px;border-top:0;border-radius:0 0 4px 4px;background:color-mix(in srgb,var(--w-surface) 55%,var(--w-modal))}
-html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub > .ttk-section-summary{min-height:40px;font-size:13px;font-weight:500;color:var(--w-muted)!important}
-html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub[open] > .ttk-section-summary{color:var(--w-text)!important}
-html .ttk-win .ttk-win-solo #ttk-panel .ttk-group > .ttk-section.ttk-win-sub{margin:0;border-top:1px solid var(--w-line);border-radius:4px;background:var(--w-surface)}
 html .ttk-win .ttk-win-solo #ttk-panel .ttk-section-summary.ttk-win-dup{display:none!important}
 /* 설정 창 안의 프로필 사진 */
 html .ttk-win #ttk-panel .ttk-av-inline{display:block;margin-top:4px;color:var(--w-text)}
@@ -189,11 +184,33 @@ html .ttk-win #ttk-panel .ttk-av-inline .ttk-av-group:first-child{border-top:0;p
 html .ttk-win #ttk-panel .ttk-av-inline .ttk-av-grid{grid-template-columns:repeat(auto-fill,minmax(72px,1fr))}
 /* 확장 목록의 시작 버튼: SillyTavern 버튼 폭 규칙 때문에 글자가 세로로 꺾이던 문제 */
 #ttk-launcher .ttk-launcher-open.menu_button{display:inline-flex!important;align-items:center;justify-content:center;width:auto!important;min-width:0;max-width:100%;white-space:nowrap!important;writing-mode:horizontal-tb;word-break:keep-all}
-/* 요술봉 메뉴: 아이콘 칸을 SillyTavern 기본(20px)에 맞추고, 다락방 항목은 맨 위에 모읍니다 */
+/* 요술봉 메뉴: 아이콘 칸을 SillyTavern 기본(20px)에 맞춥니다 */
 #extensionsMenu .ttk-lc.extensionsMenuExtensionButton{display:block!important;flex:0 0 20px;width:20px!important;height:20px!important;align-self:center;vertical-align:0;-webkit-mask-size:18px 18px;mask-size:18px 18px;font-size:inherit}
-#extensionsMenu > :is(#ttk_window_menu,#ttk_inventory_menu,#ttk_gallery_menu,#ttk_themeimg_menu){order:-1}
-#extensionsMenu > #ttk_window_menu{order:-2}
 @media (max-width:600px){
   html .ttk-win #ttk-panel .ttk-settings-body > .ttk-note{display:none!important}
-  html .ttk-win #ttk-panel .ttk-group > .ttk-section.ttk-win-sub{margin-left:10px}
 }
+/* ==== v1.7.2 개요(전체·묶음 탭): 시안 B처럼 모듈 카드만, 누르면 그 모듈 설정 ==== */
+.ttk-win-ovhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;max-width:760px;margin:0 auto 16px;padding-bottom:10px;border-bottom:1px solid var(--w-line)}
+html body .ttk-win .ttk-win-ovhead .ttk-win-ovtitle{margin:0;font:700 20px/1.3 var(--w-serif)!important;color:var(--w-text)}
+.ttk-win-ovcount{font-size:12px;color:var(--w-muted)}
+html .ttk-win #ttk-panel .ttk-module-row > :is(.ttk-win-no,.ttk-win-ic,.ttk-win-go){display:none}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-groups{gap:20px}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-group > .ttk-group-head{grid-column:1/-1;padding-bottom:6px}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-group-head strong{font-size:16px}
+html .ttk-win .ttk-win-gtab #ttk-panel .ttk-group-head{display:none}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-group > .ttk-module-row{display:grid;grid-template-columns:auto auto minmax(0,1fr) auto;grid-template-areas:"no ic name sw" "desc desc desc desc";column-gap:10px;row-gap:8px;align-items:center;min-height:0;padding:14px 16px;cursor:pointer;transition:border-color .15s,background .15s}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-group > .ttk-module-row:hover{border-color:var(--w-gold)}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row > .ttk-option-label{display:contents}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row > .ttk-win-no{display:block;grid-area:no;font-size:11px;letter-spacing:1px;color:var(--w-gold);font-variant-numeric:tabular-nums}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row > .ttk-win-ic{display:inline-block;grid-area:ic;width:18px;height:18px;color:var(--w-accent)}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row strong{grid-area:name;font-size:14px;font-weight:600;min-width:0}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row small{grid-area:desc;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0;font-size:12px;line-height:1.55;color:var(--w-muted)}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row > input{grid-area:sw}
+html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row:has(> input:not(:checked)) :is(strong,.ttk-win-ic,.ttk-win-no){opacity:.5}
+@media (max-width:600px){
+  html .ttk-win .ttk-win-overview #ttk-panel .ttk-group{grid-template-columns:minmax(0,1fr);gap:8px}
+  .ttk-win-ovhead{margin-bottom:12px}
+  html body .ttk-win .ttk-win-ovhead .ttk-win-ovtitle{font-size:18px!important}
+}
+

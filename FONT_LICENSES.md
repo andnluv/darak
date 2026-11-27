@@ -24,7 +24,7 @@ v0.3.14부터 이 확장은 **폰트 파일을 하나도 포함하지 않습니�
 | 프리젠테이션 (400·700) | jsDelivr · `projectnoonnu/2404` | `1.0` |
 | 마루 부리 (400·700) | 네이버 한글 CDN (`hangeul.pstatic.net`, 공식 배포처) | 고정 경로 |
 | 고운바탕 | Google Fonts | Google Fonts 최신 |
-| 고운바탕(Gowun Batang) · IBM Plex Sans KR — v1.7.0 설정 창 전용 | Google Fonts (`fonts.googleapis.com`) | Google Fonts 최신. 설정 창을 처음 열 때 불러오며, 두 글꼴 모두 SIL OFL 1.1 |
+| 고운바탕(Gowun Batang) · IBM Plex Sans KR — v1.7.0 설정 창 전용 | Google Fonts (`fonts.googleapis.com`) | Google Fonts 최신. 설정 창을 처음 열 때 불러오며, 받지 못하면 jsDelivr · `@fontsource/gowun-batang@5`, `@fontsource/ibm-plex-sans-kr@5` 사본을 씁니다. 두 글꼴 모두 SIL OFL 1.1 |
 | 북엔드 바탕 (R·SB) | jsDelivr · `projectnoonnu/2410-2` | `1.0` |
 | HS활공명조 | jsDelivr · `projectnoonnu/2604-1` | `1.0` |
 | 부크크 명조 (Lt·Bd), 부크크 고딕 (Lt·Bd) | jsDelivr · `projectnoonnu/noonfonts_2302` | `1.0` |

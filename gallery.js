@@ -40,12 +40,8 @@ export class Gallery {
     ctx() { return window.SillyTavern?.getContext?.(); }
     start() {
         if (this.enabled) return; this.enabled = true;
-        const menu = document.getElementById('extensionsMenu');
-        if (menu && !document.getElementById('ttk_gallery_menu')) {
-            const item = el('div', 'list-group-item flex-container flexGap5 interactable'); item.id = 'ttk_gallery_menu'; item.tabIndex = 0;
-            item.append(el('div', 'ttk-lc ttk-lc-images extensionsMenuExtensionButton'), el('span', '', '이미지 모아보기'));
-            item.addEventListener('click', () => this.open()); menu.append(item);
-        }
+        // v1.7.2: 요술봉 메뉴에는 「다락방」만 둡니다. 이 기능은 설정 창의 도구에서 엽니다.
+        document.getElementById('ttk_gallery_menu')?.remove();
     }
     stop() { if (!this.enabled) return; this.enabled = false; document.getElementById('ttk_gallery_menu')?.remove(); this.close(); }
     close() { document.removeEventListener('keydown', this.onKey, true); this.dialog?.remove(); this.dialog = null; this.view = null; }

@@ -130,13 +130,8 @@ export class Inventory {
         this.enabled = true;
         window.addEventListener('error', this.onError, true);
         window.addEventListener('unhandledrejection', this.onReject);
-        const menu = document.getElementById('extensionsMenu');
-        if (menu && !document.getElementById('ttk_inventory_menu')) {
-            const item = el('div', 'list-group-item flex-container flexGap5 interactable'); item.id = 'ttk_inventory_menu'; item.tabIndex = 0;
-            item.append(el('div', 'ttk-lc ttk-lc-clip-list extensionsMenuExtensionButton'), el('span', '', '통합 조회'));
-            item.addEventListener('click', () => this.open());
-            menu.append(item);
-        }
+        // v1.7.2: 요술봉 메뉴에는 「다락방」만 둡니다. 이 기능은 설정 창의 도구에서 엽니다.
+        document.getElementById('ttk_inventory_menu')?.remove();
     }
     stop() {
         if (!this.enabled) return;
