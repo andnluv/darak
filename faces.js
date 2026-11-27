@@ -62,9 +62,10 @@ export function normalizeFaces(raw = {}) {
             .filter(e => e.name && !seen.has(e.id) && seen.add(e.id)).slice(0, MAX_FACES);
         if (entries.length) cards[key] = { entries };
     }
-    return { prompt: raw?.prompt !== false, cards };
+    return { prompt: raw?.prompt !== false, size: FACE_SIZES.some(x => x[0] === raw?.size) ? raw.size : 'md', cards };
 }
 
+export const FACE_SIZES = [['sm', '작게', '1.75em'], ['md', '보통', '2.6em'], ['lg', '크게', '3.4em'], ['xl', '아주 크게', '4.4em']];
 function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 const uid = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 const norm = s => String(s || '').trim().toLowerCase();
@@ -164,6 +165,7 @@ export class Faces {
     constructor({ getSettings, save } = {}) { this.getSettings = getSettings; this.save = save; this.enabled = false; this.pop = null; }
     ctx() { return window.SillyTavern?.getContext?.(); }
     S() { return this.getSettings(); }
+    applySize() { const v = (FACE_SIZES.find(x => x[0] === this.S().size) || FACE_SIZES[1])[2]; document.documentElement.style.setProperty('--ttk-face-size', v); }
 
     // ---- whose list ----
     key() {
@@ -467,9 +469,9 @@ export class Faces {
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '페이지에서 얼굴 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
-        box.append(el('p', 'ttk-note', '인물 도감 같은 페이지의 코드(개발자 도구 Elements에서 복사)를 붙여 넣고, 사진 주소의 기준이 되는 사이트 주소를 적으세요. 사진 옆의 굵은 글씨나 제목을 이름으로 읽습니다. 코드를 비우고 주소만 적으면 그 페이지를 직접 읽어 봅니다(막힌 사이트에서는 실패합니다).'));
+        box.append(el('p', 'ttk-note', '인물 도감 같은 페이지의 코드(개발자 도구 Elements에서 복사)를 붙여 넣고, 사진 주소의 기준이 되는 사이트 주소를 적으세요. 사진 옆의 굵은 글씨나 제목을 이름으로 읽습니다.'));
         const code = el('textarea', 'ttk-fi-code'); code.rows = 5; code.placeholder = '붙여넣을 HTML 코드'; code.setAttribute('aria-label', 'HTML 코드');
-        const base = el('input', 'ttk-fi-base'); base.type = 'url'; base.placeholder = '기준 주소 (예: https://example.github.io/site/)'; base.setAttribute('aria-label', '기준 주소');
+        const base = el('input', 'ttk-fi-base'); base.type = 'url'; base.placeholder = '기준 주소 (사진 주소가 /img/… 처럼 상대 경로일 때만, 예: https://example.github.io/site/)'; base.setAttribute('aria-label', '기준 주소');
         const read = el('button', 'ttk-button', '읽기'); read.type = 'button';
         const status = el('p', 'ttk-note'), tools = el('div', 'ttk-fi-tools'), list = el('div', 'ttk-fi-list'), go = el('button', 'ttk-button', '선택한 얼굴 가져오기'); go.type = 'button'; go.hidden = true;
         box.append(code, base, read, status, tools, list, go);
@@ -495,7 +497,7 @@ export class Faces {
             read.disabled = true; status.textContent = '읽는 중…';
             try {
                 let html = code.value.trim(), b = base.value.trim();
-                if (!html) { if (!b) throw Error('코드를 붙여 넣거나 주소를 적어 주세요.'); const r = await fetch(b, { credentials: 'omit' }); if (!r.ok) throw Error(`페이지를 읽지 못했습니다 (${r.status}).`); html = await r.text(); }
+                if (!html) throw Error('페이지 코드를 붙여 넣어 주세요. (주소만으로는 읽지 않습니다)');
                 if (!b && !/^https?:/i.test((html.match(/<img[^>]+src=["']([^"']+)/i) || [])[1] || '')) throw Error('사진 주소가 상대 경로입니다. 기준 주소를 적어 주세요.');
                 items = parseGallery(html, b || undefined);
                 if (!items.length) throw Error('이미지를 찾지 못했습니다. 이미지가 스크립트로 그려지는 페이지라면 화면에 보이는 상태의 코드를 복사해 붙여 넣어 주세요.');
@@ -528,13 +530,13 @@ export class Faces {
         const c = this.ctx(), ev = c?.eventSource, T = c?.eventTypes || {};
         this.handlers = [[T.CHAT_CHANGED, () => { this.closePop(); this.refresh(); this.onChange?.(); }]];
         for (const [t, f] of this.handlers) if (t) ev?.on?.(t, f);
-        this.refresh();
+        this.applySize(); this.refresh();
     }
     stop() {
         if (!this.enabled) return; this.enabled = false;
         this.chatEl?.removeEventListener('click', this.onClick, true); this.chatEl?.removeEventListener('keydown', this.onKeyFace, true);
         const ev = this.ctx()?.eventSource; for (const [t, f] of this.handlers || []) if (t) ev?.removeListener?.(t, f);
-        this.cleanup(); this.syncPrompt();
+        document.documentElement.style.removeProperty('--ttk-face-size'); this.cleanup(); this.syncPrompt();
     }
 
     // ---- settings panel body ----
@@ -546,6 +548,11 @@ export class Faces {
         pc.addEventListener('change', () => { this.S().prompt = pc.checked; this.save(); this.syncPrompt(); });
         promptRow.append(pc, el('span', '', '대사 앞에 [이름]을 붙이도록 AI에게 지시문 보내기')); root.append(promptRow);
         root.append(el('p', 'ttk-note', '지시문은 등록된 이름만 담은 한 줄이며 끄면 보내지 않습니다. 프리셋이 대괄호 표기를 막는다면 끄고 이름 추정만 쓰세요.'));
+        const sizeRow = el('div', 'ttk-style-line'); sizeRow.append(el('small', 'ttk-style-sub', '채팅 속 얼굴 크기'));
+        const sizeSeg = el('div', 'ttk-seg'); sizeSeg.setAttribute('role', 'group'); sizeSeg.setAttribute('aria-label', '채팅 속 얼굴 크기'); const sizeBtns = {};
+        const paintSize = () => { for (const [k, b] of Object.entries(sizeBtns)) b.setAttribute('aria-pressed', String(k === (this.S().size || 'md'))); };
+        for (const [k, label] of FACE_SIZES) { const b = el('button', 'ttk-seg-btn', label); b.type = 'button'; b.addEventListener('click', () => { this.S().size = k; this.save(); this.applySize(); paintSize(); }); sizeBtns[k] = b; sizeSeg.append(b); }
+        sizeRow.append(sizeSeg); root.append(sizeRow); paintSize();
         const where = el('p', 'ttk-note ttk-face-where'), list = el('div', 'ttk-face-list'), actions = el('div', 'ttk-actions');
         root.append(where, list, actions);
         const file = el('input'); file.type = 'file'; file.accept = 'image/*'; file.multiple = true; file.hidden = true;
