@@ -84,7 +84,7 @@ export class Ghostwriter {
         // Pressing again right after a result rewrites from the same direction, not from the result.
         const draft = this.last && area.value === this.last.result ? this.last.draft : area.value;
         const prompt = buildPrompt(this.getSettings(), draft, this.getGlossary());
-        this.busy = true; this.button.classList.add('ttk-tr-spin'); this.button.title = '대필 중 · 누르면 중단'; this.button.dataset.label = '중단';
+        this.busy = true; this.button.classList.add('ttk-tr-spin'); this.button.setAttribute('aria-label', '대필 중 · 누르면 중단'); this.button.dataset.label = '중단';
         try {
             const raw = await ctx.generateQuietPrompt({ quietPrompt: ctx.substituteParams ? ctx.substituteParams(prompt) : prompt, quietToLoud: false, skipWIAN: false, removeReasoning: true });
             const result = cleanResult(raw, ctx.name1);
@@ -98,7 +98,7 @@ export class Ghostwriter {
             if (error?.name !== 'AbortError' && !/abort|cancel|stopp/i.test(String(error?.message || error))) { console.warn('[DARAK] ghostwrite', error); globalThis.toastr?.error?.(String(error?.message || error), '대필 실패'); }
         } finally {
             this.busy = false;
-            if (this.button) { this.button.classList.remove('ttk-tr-spin'); this.button.title = IDLE_TITLE; this.button.dataset.label = '대필'; }
+            if (this.button) { this.button.classList.remove('ttk-tr-spin'); this.button.setAttribute('aria-label', IDLE_TITLE); this.button.dataset.label = '대필'; }
         }
     }
 }

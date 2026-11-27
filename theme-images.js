@@ -214,7 +214,7 @@ export class ThemeImages {
             const prev = el('div', 'ttk-ti-prev'), img = el('img'); img.alt = ''; img.loading = 'lazy';
             img.src = done ? (ov[it.url] instanceof Blob ? this.blobUrl(ov[it.url]) : String(ov[it.url])) : it.url; img.addEventListener('error', () => { img.hidden = true; }); prev.append(img);
             const info = el('div', 'ttk-ti-info'); info.append(el('strong', '', it.selectors.slice(0, 3).join(', ') + (it.selectors.length > 3 ? ` 외 ${it.selectors.length - 3}곳` : '')));
-            const u = el('small', '', done ? `교체됨 · ${ov[it.url] instanceof Blob ? `${mb(ov[it.url]).toFixed(2)}MB` : '주소'}` : (it.url.startsWith('data:') ? '내장 이미지 데이터' : it.url)); u.title = it.url.startsWith('data:') ? '' : it.url; info.append(u);
+            const u = el('small', '', done ? `교체됨 · ${ov[it.url] instanceof Blob ? `${mb(ov[it.url]).toFixed(2)}MB` : '주소'}` : (it.url.startsWith('data:') ? '내장 이미지 데이터' : it.url)); u.setAttribute('aria-label', it.url.startsWith('data:') ? '' : it.url); info.append(u);
             const btns = el('div', 'ttk-ti-btns');
             const pick = el('button', 'ttk-inv-btn', done ? '다른 이미지' : '이미지 선택'); pick.type = 'button'; pick.addEventListener('click', () => { target = it.url; file.click(); }); btns.append(pick);
             if (done) { const back = el('button', 'ttk-inv-btn', '되돌리기'); back.type = 'button'; back.addEventListener('click', async () => { const cur = await this.store.get(OVERRIDES, theme, {}); delete cur[it.url]; await this.store.put(OVERRIDES, theme, cur); await this.apply(); this.render(); }); btns.append(back); }

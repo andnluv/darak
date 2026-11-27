@@ -1,0 +1,36 @@
+/* 말풍선: 큰 얼굴 + 이름, 아래 아이콘 버튼 2개 */
+.ttk-lc-repeat{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTcgMiA0IDQtNCA0IiAvPiA8cGF0aCBkPSJNMyAxMXYtMWE0IDQgMCAwIDEgNC00aDE0IiAvPiA8cGF0aCBkPSJtNyAyMi00LTQgNC00IiAvPiA8cGF0aCBkPSJNMjEgMTN2MWE0IDQgMCAwIDEtNCA0SDMiIC8+IDwvc3ZnPg==")}
+.ttk-lc-smile{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgLz4gPHBhdGggZD0iTTggMTRzMS41IDIgNCAyIDQtMiA0LTIiIC8+IDxwYXRoIGQ9Ik05IDloLjAxIiAvPiA8cGF0aCBkPSJNMTUgOWguMDEiIC8+IDwvc3ZnPg==")}
+.ttk-face-pop-card{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:150px}
+.ttk-face-pop .ttk-face-pop-big{width:72px;height:72px}
+.ttk-face-pop-name{font-size:14px;max-width:200px;text-align:center;overflow-wrap:anywhere}
+.ttk-face-pop-acts{display:flex;gap:8px}
+.ttk-face-pop-ib{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:transparent;color:inherit;border-radius:10px;cursor:pointer;font-size:18px}
+.ttk-face-pop-ib:hover{background:color-mix(in srgb,currentColor 7%,transparent)}
+
+/* ===== v1.6.0 화자 얼굴: 왼쪽 매달림 배치 ===== */
+/* 얼굴·숨긴 표기·대사를 묶은 .ttk-fl. 기본(작게·보통)은 묶음이 없는 것처럼 글줄 안에 둔다. */
+#chat :is(.mes_text,.ttk-tr-text) :is(.ttk-fl,.ttk-fl-b){display:contents}
+/* 크게 이상: 얼굴은 왼쪽 칸, 대사 전체는 오른쪽 칸에 들여 쓴다(얼굴 아래로 글이 돌아 들어가지 않음). 같은 문단의 지문은 다음 줄부터 */
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl{display:grid;grid-template-columns:var(--ttk-face-size,2.6em) minmax(0,1fr);column-gap:.7em;align-items:center;margin:.45em 0;text-indent:0}
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl-b{display:block;min-width:0;text-indent:0}
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl > .ttk-face{grid-column:1;margin:0;align-self:start}
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl > .ttk-fl-b{grid-column:2;grid-row:1}
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) p > .ttk-fl:first-child{margin-top:0}
+/* 대사가 한두 줄이면 얼굴 가운데 높이에 오도록 */
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl > .ttk-fl-b{align-self:center}
+
+/* ===== v1.6.0 얼굴 말풍선: 버튼 아래 글 · 목록 창 머리(뒤로·닫기) · 폭 고정 ===== */
+.ttk-face-pop{width:240px;min-width:0;box-sizing:border-box}
+.ttk-face-pop-name{font-family:var(--ttk-font,inherit);font-size:15px}
+.ttk-face-pop-ib{width:auto;min-width:76px;height:auto;padding:8px 10px 6px;flex-direction:column;gap:4px}
+.ttk-face-pop-ib-t{font-size:12px;line-height:1.2;white-space:nowrap}
+.ttk-face-pop-head{display:flex;align-items:center;gap:6px;margin:-2px -2px 8px}
+.ttk-face-pop-head .ttk-face-pop-title{flex:1;margin:0;font-size:13px;opacity:.85;text-align:center}
+.ttk-face-pop-nav{width:30px;height:30px;flex:none;padding:0;border:0;border-radius:8px;background:transparent;color:inherit;font-size:20px;line-height:1;cursor:pointer}
+.ttk-face-pop-nav:hover{background:color-mix(in srgb,currentColor 8%,transparent)}
+.ttk-face-pop-pick{font-size:12.5px}
+/* 휴대폰에서 '특대·최대'가 대사 칸을 너무 좁히지 않게 얼굴 폭 상한(화면 폭의 24%) */
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl{grid-template-columns:min(var(--ttk-face-size,2.6em),24vw) minmax(0,1fr)}
+html[data-ttk-face-hang=on] #chat :is(.mes_text,.ttk-tr-text) .ttk-fl > .ttk-face{width:min(var(--ttk-face-size,2.6em),24vw);height:min(var(--ttk-face-size,2.6em),24vw)}
+.ttk-face-pop-pick > span:last-child{word-break:keep-all;overflow-wrap:anywhere;text-align:center;line-height:1.25}

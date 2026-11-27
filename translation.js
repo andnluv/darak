@@ -326,7 +326,7 @@ export class MessageTranslator {
             const hint = host.querySelector(':scope > .extraMesButtonsHint');
             host.insertBefore(b, hint || host.firstChild);
         }
-        b.title = has ? '번역/원문 전환' : '이 메시지 번역';
+        b.setAttribute('aria-label', has ? '번역/원문 전환' : '이 메시지 번역');
         b.classList.toggle('ttk-tr-button-active', has);
     }
     mountInputButton() {

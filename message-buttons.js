@@ -6,22 +6,28 @@ const STYLE_ID='darak-msgbtn-style';
 // 처음 상태(고르기 전)의 앞줄 버튼. 기존 동작과 같습니다.
 export const DEFAULT_FRONT=['.mes_copy','.mes_edit','.mes_bookmark','.mes_delete','.ttk-tr-button','.mes_translate','[class*=interpres i]','[id*=interpres i]','[title*=interpres i]'];
 // 항상 앞줄에 있어야 하는 것(다락방 자체 버튼, 컨테이너).
-const ALWAYS=['.ttk-bm','.ttk-more','.extraMesButtons','.mes_edit_buttons'];
+const ALWAYS=['.ttk-bm','.ttk-more','.extraMesButtons','.extraMesButtonsHint','.mes_edit_buttons'];
 const GENERIC=/^(mes_button|interactable|fa|fa-.+|fas|far|fab|ttk-.+|extraMesButton|list-group-item|menu_button)$/;
 const MAX_SEEN=60;
 const clean=s=>String(s||'').replace(/\s+/g,' ').trim().slice(0,40);
 
 export function normalizeMsgButtons(raw){
- const front=Array.isArray(raw?.front)?raw.front.filter(k=>typeof k==='string'&&k.length<=120).slice(0,MAX_SEEN):null;
+ const front=Array.isArray(raw?.front)?[...new Set(raw.front.filter(k=>typeof k==='string'&&k.length<=120).map(migrateKey))].slice(0,MAX_SEEN):null;
  const seen={};
  if(raw?.seen&&typeof raw.seen==='object'&&!Array.isArray(raw.seen))for(const [k,v] of Object.entries(raw.seen).slice(0,MAX_SEEN)){
-  if(typeof k!=='string'||k.length>120)continue;
+  if(typeof k!=='string'||k.length>120||ALWAYS.includes(k))continue;
+  if(LEGACY_KEYS[k]){if(!seen[LEGACY_KEYS[k]])seen[LEGACY_KEYS[k]]={label:'이 메시지 번역',def:true};continue;}
   seen[k]={label:clean(v?.label)||k,def:v?.def===true};
  }
  return {front,seen};
 }
 // 버튼 하나를 안정적인 CSS 선택자로 바꿉니다. (클래스 → id → title 순서)
+// v1.6.0: 다락방 번역 버튼은 마우스 안내(title)를 없애서 title로 찾을 수 없다. 클래스 이름으로 고정하고, 예전 title 키는 옮긴다.
+const OWN_KEYS=['ttk-tr-button'];
+const LEGACY_KEYS={'[title="이 메시지 번역"]':'.ttk-tr-button','[title="번역/원문 전환"]':'.ttk-tr-button'};
+const migrateKey=k=>LEGACY_KEYS[k]||k;
 export function keyOf(node){
+ const own=OWN_KEYS.find(c=>node.classList.contains(c));if(own)return '.'+own;
  const cls=[...node.classList].filter(c=>!GENERIC.test(c));
  if(cls.length)return '.'+cls.slice(0,2).map(c=>CSS.escape(c)).join('.');
  if(node.id)return '#'+CSS.escape(node.id);

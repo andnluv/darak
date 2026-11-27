@@ -1,0 +1,599 @@
+/* Full-theme tokens: separate namespaces; don't contaminate SillyTavern's saved theme. */
+html[data-ttk-theme] body{background:var(--ttk-bg)!important;color:var(--ttk-text)!important}
+/* Layering: consistent top navigation, drawer, panels, and modals. */
+html[data-ttk-theme] :is(#top-bar,#top-settings-holder,#top-settings,#left-nav-panel,#right-nav-panel,#left-nav-panel .drawer-content,#right-nav-panel .drawer-content,#extensions_settings,#extensions_settings2,#character_popup,#rm_print_characters_block,#form_create,#form_rename,#form_delete,#form_import,#options,#world_popup){background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
+/* v0.22: 일반 클래스(.popup 등)는 다른 확장 창에도 닿으므로 !important 를 걸지 않는다. */
+html[data-ttk-theme] :is(.popup,.dialogue_popup,.ui-dialog,.drawer-content,.floating_panel,.floating-panel){background-color:var(--ttk-surface);color:var(--ttk-text);border-color:var(--ttk-border)}
+html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.drawer-icon,.menu_button){color:var(--ttk-text)}
+html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.inline-drawer-header,.inline-drawer-content,.settings-section,.settings-category,.settingsBlock){border-color:var(--ttk-border)}
+/* Existing inline extension headers used black/translucent gradients that survived the original palette override. */
+html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel) :is(.inline-drawer-header,.inline-drawer-header.inline-drawer-toggle,.inline-drawer-content,.standoutHeader,.settingsBlock,.settings-section,.settings-category){background:var(--ttk-surface)!important;background-image:none!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;box-shadow:none!important;text-shadow:none!important}
+html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) :is(.inline-drawer-header,.inline-drawer-header.inline-drawer-toggle,.standoutHeader){background:transparent;background-image:none;box-shadow:none;text-shadow:none}
+/* v0.22: 확장 목록은 칸(테두리·배경 상자) 없이, 항목 사이에 가는 구분선 하나만 둔다. */
+html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer){border-bottom:1px solid color-mix(in srgb,var(--ttk-border) 65%,transparent)}
+html[data-ttk-theme] :is(#extensions_settings,#extensions_settings2) .inline-drawer:not(.inline-drawer .inline-drawer):last-child{border-bottom:0}
+html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader)::before,html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader)::after{filter:none}
+
+/* Conversation canvas: full palette including both chat types. */
+html[data-ttk-theme] #chat{background:var(--ttk-bg)!important;color:var(--ttk-text)!important}
+html[data-ttk-theme] #chat .mes{background:var(--ttk-ai)!important;color:var(--ttk-text)!important;border:1px solid var(--ttk-border)!important;border-radius:13px!important;margin:12px auto!important;max-width:100%;padding:12px 17px!important;box-shadow:0 3px 10px var(--ttk-shadow)!important}
+html[data-ttk-theme] #chat .mes[is_user="true"]{background:var(--ttk-user)!important}
+html[data-ttk-theme] #chat .mes[is_user="false"]{background:var(--ttk-ai)!important}
+html[data-ttk-theme] #chat :is(:is(.mes_text,.ttk-tr-text),:is(.mes_text,.ttk-tr-text) p,:is(.mes_text,.ttk-tr-text) li,:is(.mes_text,.ttk-tr-text) blockquote){font-family:var(--ttk-font)!important;font-size:var(--ttk-size)!important;line-height:var(--ttk-line)!important;letter-spacing:var(--ttk-tracking)!important;color:var(--ttk-text)!important;overflow-wrap:anywhere}
+html[data-ttk-theme] #chat .mes_text{max-width:100%;margin-inline:0}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) p{margin:0 0 var(--ttk-para)!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) p:last-child{margin-bottom:0!important}
+/* Separate dialogue and narration faces, wrapping only complete quoted text segments. */
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) .ttk-dialogue{font-family:var(--ttk-dialogueFont)!important;font-size:inherit!important;font-style:inherit!important;letter-spacing:inherit!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) q{font-family:var(--ttk-dialogueFont)!important}
+
+html[data-ttk-theme] #chat :is(.name_text,.ch_name,.mes_name){color:var(--ttk-accent)!important;font-weight:700!important}
+html[data-ttk-theme] #chat :is(.mesIDDisplay,.mes_timer,.tokenCounterDisplay){color:var(--ttk-muted)!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(blockquote,pre){background:var(--ttk-raised)!important;border-left:2px solid var(--ttk-accent)!important;border-radius:4px;padding:8px 12px}
+html[data-ttk-theme] #chat .mes_text a{color:var(--ttk-accent)}
+/* Composer, action buttons, option controls. */
+html[data-ttk-theme] :is(#send_form,#send_form_holder,#send_textarea_wrapper){background:var(--ttk-surface)!important;border-color:var(--ttk-border)!important;color:var(--ttk-text)!important}
+html[data-ttk-theme] #send_textarea{background:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;font-family:var(--ttk-font)!important;font-size:var(--ttk-size)!important;line-height:var(--ttk-line)!important;letter-spacing:var(--ttk-tracking)!important}
+html[data-ttk-theme] #send_textarea::placeholder{color:var(--ttk-muted)!important;opacity:.85}
+html[data-ttk-theme] #send_but{color:var(--ttk-muted)!important}
+/* Toolkit-owned widgets (QR drawer, translation bar) style their own buttons and are excluded from the global button skin. */
+html[data-ttk-theme] :is(#send_form,#chat) :is(.menu_button,input:not([type=range]):not([type=checkbox]):not([type=radio]):not([type=color]):not([type=file]),textarea,select,button){border-color:var(--ttk-border)}
+html[data-ttk-theme] :is(#send_form,#chat,#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2,#user-settings-block,#WorldInfo,#backgrounds,#character_popup,#world_popup,.popup,.dialogue_popup) :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button,.paginationjs-page){background-color:var(--ttk-raised);color:var(--ttk-text)}
+html[data-ttk-theme] :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--ttk-accent)}
+/* v0.22: 포커스 외곽선은 다락방 화면과 입력창·채팅 안에서만. 다른 확장의 입력칸에는 닿지 않는다. */
+html[data-ttk-theme] :is(#ttk-panel,#ttk-qr-drawer,#ttk-avatar-drawer,.ttk-tr,#ttk-inventory,#ttk-themeimg,#ttk-gallery) :is(.menu_button,button,input,textarea,select):focus-visible{outline:2px solid var(--ttk-accent)!important;outline-offset:2px}
+html[data-ttk-theme] :is(#send_form,#chat) :is(.menu_button,button,input,textarea,select):focus-visible{outline:2px solid var(--ttk-accent);outline-offset:2px}
+html[data-ttk-theme] :is(.selected_option,.highlighted){border-color:var(--ttk-border)}
+/* The three themes have different layouts rather than only different palettes. */
+/* Paper: open literary page, no repeated card boxes for assistant narrative. */
+html[data-ttk-theme=paper] #chat .mes{border:0!important;border-bottom:1px solid var(--ttk-border)!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;max-width:100%;padding:17px 19px 22px!important}
+html[data-ttk-theme=paper] #chat .mes[is_user=true]{background:var(--ttk-user)!important;border:1px solid var(--ttk-border)!important;border-radius:8px!important;max-width:100%;width:100%;box-sizing:border-box}
+html[data-ttk-theme=paper] :is(#top-bar,#top-settings-holder){border-bottom:1px solid var(--ttk-border)!important}
+html[data-ttk-theme=paper] #send_form{border-top:1px solid var(--ttk-border)!important;box-shadow:0 -8px 24px var(--ttk-shadow)!important}
+/* Nocturne: restrained side-accent and low-glare cards. */
+html[data-ttk-theme=nocturne] #chat .mes{border:1px solid var(--ttk-border)!important;border-left:3px solid var(--ttk-accent)!important;border-radius:4px 13px 13px 4px!important}
+html[data-ttk-theme=nocturne] #chat .mes[is_user=true]{border-left-color:var(--ttk-muted)!important}
+html[data-ttk-theme=nocturne] #chat :is(.mes_text,.ttk-tr-text) :is(em,i){color:#C4CEE0}
+/* Studio: softened application cards, crisp sans serif layout. */
+html[data-ttk-theme=studio] #chat .mes{border-radius:16px!important;box-shadow:0 4px 17px var(--ttk-shadow)!important}
+html[data-ttk-theme=studio] #chat .mes[is_user=true]{max-width:100%;width:100%;box-sizing:border-box}
+@media(max-width:700px){
+ html[data-ttk-theme] #chat .mes{max-width:100%!important;margin:8px 3px!important;padding:10px 12px!important}
+ html[data-ttk-theme] #chat .mes_text{max-width:100%}
+ #ttk-panel .ttk-theme-grid{grid-template-columns:1fr 1fr 1fr}
+ #ttk-panel .ttk-color-grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){html[data-ttk-theme] *{scroll-behavior:auto!important}}
+
+/* Extension manager itself always follows the selected palette, never inherited dark text/shading. */
+html[data-ttk-theme] #ttk-panel > .inline-drawer-content{background:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-radius:0 0 8px 8px}
+html[data-ttk-theme] #ttk-panel :is(.ttk-section-summary){background:var(--ttk-raised)!important;color:var(--ttk-text)!important}
+html[data-ttk-theme] #ttk-panel .ttk-settings-body,html[data-ttk-theme] #ttk-panel .ttk-controls{background:var(--ttk-surface)!important;color:var(--ttk-text)!important}
+html[data-ttk-theme] #ttk-panel :is(.ttk-button,.ttk-field select){background:var(--ttk-raised)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
+html[data-ttk-theme] #ttk-panel .ttk-theme-swatch{background:var(--ttk-sample-bg)!important}
+html[data-ttk-theme] #ttk-panel .ttk-mini-preview{background:var(--pv-bg)!important;color:var(--pv-text)!important;border-color:var(--pv-border)!important}
+html[data-ttk-theme] #ttk-panel .ttk-preview-message{background:var(--pv-ai)!important;color:var(--pv-text)!important;font-family:var(--pv-font)!important;font-size:var(--pv-size)!important;line-height:var(--pv-line)!important;letter-spacing:var(--pv-tracking)!important;border-color:var(--pv-border)!important}
+html[data-ttk-theme] #ttk-panel .ttk-preview-dialogue{font-family:var(--pv-dialogue-font)!important}
+html[data-ttk-theme] #ttk-panel .ttk-mini-preview[data-theme=paper] .ttk-preview-message{background:transparent!important;border:0!important;border-bottom:1px solid var(--pv-border)!important;box-shadow:none!important;border-radius:0!important}
+html[data-ttk-theme] #ttk-panel .ttk-mini-preview[data-theme=nocturne] .ttk-preview-message{border-left:3px solid var(--pv-accent)!important}
+
+#ttk-panel .ttk-accent-chip-wrap{display:grid;gap:8px;padding:4px 0 12px;font-size:12px}
+#ttk-panel .ttk-accent-chips{display:flex;flex-wrap:wrap;gap:7px}
+#ttk-panel .ttk-accent-chip{width:28px;height:28px;padding:0;background:var(--ttk-chip-color)!important;border:2px solid rgba(128,128,128,.35)!important;border-radius:50%!important;box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)!important}
+#ttk-panel .ttk-accent-chip:focus-visible{outline:2px solid var(--ttk-text,#333)!important;outline-offset:2px}
+
+#ttk-panel .ttk-font-status{font-size:11px;line-height:1.5;opacity:.8}
+
+/* Keep editing controls sharp, even when third-party icon themes add blur, low opacity or shadows. */
+html[data-ttk-theme] #chat :is(.mes_edit_buttons,.mes_edit_buttons *, .mes_button,.mes_button *, .mes_edit,.mes_edit *){filter:none!important;backdrop-filter:none!important;-webkit-filter:none!important;opacity:1!important;text-shadow:none!important;box-shadow:none!important;transform:none!important}
+html[data-ttk-theme] #chat :is(.mes_edit_buttons,.mes_button,.mes_edit){color:var(--ttk-muted)!important}
+html[data-ttk-theme] #chat :is(.mes_edit_buttons,.mes_button,.mes_edit):hover{color:var(--ttk-text)!important}
+/* Native text rendering: no synthetic shadows or blurred glyph treatments. */
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text),html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) *{text-shadow:none!important;filter:none!important;-webkit-filter:none!important;font-synthesis:none;text-rendering:optimizeLegibility}
+#ttk-panel .ttk-palette-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#ttk-panel .ttk-palette-chip{display:flex;flex-direction:column;gap:5px;align-items:stretch;padding:5px!important;min-width:0}
+#ttk-panel .ttk-palette-chip-swatch{display:block;height:23px;border:1px solid #8886;border-radius:4px}
+#ttk-panel .ttk-palette-chip small{font-size:10px}
+
+
+/* v0.2.5 Porcelain — complete fourth theme, Blue-and-White + carved relief.
+   The porcelain motif is CSS-only: no borrowed museum drawings, no external SVG assets.
+   All of these rules disappear when the design module is disabled. */
+html[data-ttk-theme=porcelain] body{background:#fff!important;background-image:none!important}
+html[data-ttk-theme=porcelain] #chat{background:#fff!important}
+html[data-ttk-theme=porcelain] #chat .mes{
+  position:relative;border:1px solid var(--ttk-border)!important;border-radius:7px!important;
+  background:var(--ttk-ai)!important;box-shadow:inset 0 0 0 3px var(--ttk-ai)!important;
+  padding:21px 20px 19px!important;
+}
+html[data-ttk-theme=porcelain] #chat .mes[is_user=true]{background:var(--ttk-user)!important;box-shadow:inset 0 0 0 3px var(--ttk-user)!important}
+/* Decorative corner: stylized porcelain rim, no decoration behind prose. */
+html[data-ttk-theme=porcelain] #chat .mes::before{
+  content:'';pointer-events:none;position:absolute;top:7px;right:9px;width:35px;height:14px;
+  border-top:1px solid var(--ttk-accent);border-right:1px solid var(--ttk-accent);
+  border-radius:0 5px 0 0;opacity:.7;
+}
+html[data-ttk-theme=porcelain] #chat .mes[is_user=true]::before{right:auto;left:9px;border-right:0;border-left:1px solid var(--ttk-accent);border-radius:5px 0 0 0}
+html[data-ttk-theme=porcelain] #chat :is(.mes_text,.ttk-tr-text){color:var(--ttk-text)!important}
+html[data-ttk-theme=porcelain] #chat :is(.mes_edit_buttons,.mes_button,.mes_edit){border-radius:5px!important;color:var(--ttk-muted)!important;background:transparent!important;box-shadow:none!important;opacity:1!important}
+html[data-ttk-theme=porcelain] :is(#top-bar,#top-settings-holder,#top-settings){
+  background:var(--ttk-surface)!important;
+  border-color:transparent!important;
+  box-shadow:inset 0 -1px 0 var(--ttk-border)!important;
+}
+html[data-ttk-theme=porcelain] :is(#send_form,#send_form_holder,#send_textarea_wrapper){
+  background:#fff!important;border-color:var(--ttk-border)!important;box-shadow:none!important
+}
+html[data-ttk-theme=porcelain] #send_form{border-top:2px double var(--ttk-border)!important}
+html[data-ttk-theme=porcelain] #send_textarea{background:#fff!important}
+html[data-ttk-theme=porcelain] :is(#send_form,#chat,#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2,#user-settings-block,#WorldInfo,#backgrounds,#character_popup,#world_popup,.popup,.dialogue_popup) :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button){
+  border-color:var(--ttk-border);background:var(--ttk-raised)
+}
+html[data-ttk-theme=porcelain] :is(#send_form,#chat,#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2,#user-settings-block,#WorldInfo,#backgrounds,#character_popup,#world_popup,.popup,.dialogue_popup) :is(.menu_button,button:where(:not(#ttk-qr-drawer *,#ttk-avatar-drawer *,.ttk-tr *,#ttk-inventory *,#ttk-themeimg *,#ttk-gallery *)),.right_menu_button,.small_button):hover{
+  border-color:var(--ttk-accent)
+}
+html[data-ttk-theme=porcelain] #ttk-panel .ttk-section-summary{
+  background:var(--ttk-raised)!important;border-bottom:2px double var(--ttk-border)!important
+}
+html[data-ttk-theme=porcelain] #ttk-panel .ttk-theme-card[aria-pressed=true]{outline-color:var(--ttk-accent)}
+html[data-ttk-theme=porcelain] #ttk-panel .ttk-mini-preview{
+  background:#fff!important;border:1px solid var(--pv-border)!important;box-shadow:inset 0 0 0 3px var(--pv-raised)
+}
+html[data-ttk-theme=porcelain] #ttk-panel .ttk-mini-preview .ttk-preview-message{
+  position:relative;background:var(--pv-ai)!important;border:1px solid var(--pv-border)!important;
+  box-shadow:inset 0 0 0 2px var(--pv-ai)!important;border-radius:7px!important
+}
+html[data-ttk-theme=porcelain] #ttk-panel .ttk-mini-preview .ttk-preview-message::after{
+  content:'◇  ─  ◇';display:block;color:var(--pv-accent);font-size:10px;
+  font-family:serif;letter-spacing:4px;text-align:center;margin-top:10px
+}
+/* Theme swatch includes a porcelain rim, not just a generic blue accent bar. */
+#ttk-panel .ttk-theme-card:has(strong) .ttk-theme-swatch{position:relative}
+#ttk-panel .ttk-theme-card[aria-pressed=true] .ttk-theme-swatch{border-color:var(--ttk-sample-accent)}
+@media(max-width:700px){html[data-ttk-theme=porcelain] #chat .mes{padding:15px 12px!important}}
+
+/* Four theme cards (two columns on narrow settings panels) */
+#ttk-panel .ttk-theme-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:950px){#ttk-panel .ttk-theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* v0.2.6 — full-width, aligned Paper/Studio messages and themed reasoning controls.
+   Do not change the native reasoning disclosure behavior or its text. */
+html[data-ttk-theme="paper"] #chat .mes,
+html[data-ttk-theme="studio"] #chat .mes {
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+  margin:12px 0!important;
+}
+html[data-ttk-theme="paper"] #chat .mes[is_user="true"],
+html[data-ttk-theme="paper"] #chat .mes[is_user="false"],
+html[data-ttk-theme="studio"] #chat .mes[is_user="true"],
+html[data-ttk-theme="studio"] #chat .mes[is_user="false"]{
+  width:100%!important;
+  max-width:100%!important;
+  margin-inline:0!important;
+}
+/* Normalize the dark/gray native Thought disclosure with explicit surface, border,
+   text and icon colors. Scope to chat reasoning controls, not generic buttons. */
+html[data-ttk-theme] #chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary),
+html[data-ttk-theme] #chat :is(.mes_reasoning_header,.mes_reasoning_summary,summary.mes_reasoning_summary):is(:hover,:focus-visible){
+  background:var(--ttk-raised)!important;
+  background-image:none!important;
+  color:var(--ttk-text)!important;
+  border:1px solid var(--ttk-border)!important;
+  border-radius:6px!important;
+  box-shadow:none!important;
+  filter:none!important;
+  backdrop-filter:none!important;
+  text-shadow:none!important;
+  opacity:1!important;
+}
+html[data-ttk-theme] #chat :is(.mes_reasoning_header,.mes_reasoning_summary) :is(h4,span,.mes_reasoning_header_title,.mes_reasoning_arrow,svg,i,.fa-solid,.fa-regular){
+  color:var(--ttk-text)!important;
+  fill:currentColor!important;
+  text-shadow:none!important;
+  filter:none!important;
+  opacity:1!important;
+}
+html[data-ttk-theme] #chat .mes_reasoning{
+  background:var(--ttk-surface)!important;
+  color:var(--ttk-text)!important;
+  border-color:var(--ttk-border)!important;
+  box-shadow:none!important;
+}
+@media(max-width:700px){
+ html[data-ttk-theme="paper"] #chat .mes,
+ html[data-ttk-theme="studio"] #chat .mes{width:100%!important;max-width:100%!important;margin:8px 0!important;}
+}
+
+/* 0.2.8: Palette chips represent one key pigment, not a fragile multicolor gradient. */
+#ttk-panel .ttk-palette-chip-swatch {
+  display:block!important;width:24px!important;height:24px!important;
+  margin:2px auto 3px!important;border-radius:50%!important;
+  background-image:none!important;box-shadow:none!important;
+  border:2px solid var(--ttk-surface,#fff)!important;
+  outline:1px solid var(--ttk-border,#adb5bf)!important;
+}
+#ttk-panel .ttk-palette-chip {align-items:center!important;justify-content:center!important;min-height:54px}
+#ttk-panel .ttk-dialogue-color-row {padding:6px 0;border-top:1px solid var(--ttk-border,#bbb)}
+/* Keep dialogue colour independent of accent, font face, and the underlying theme. */
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) .ttk-dialogue,
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) .ttk-dialogue *,
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) q,
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) q * {color:var(--ttk-dialogue)!important;-webkit-text-fill-color:var(--ttk-dialogue)!important}
+#ttk-panel .ttk-mini-preview .ttk-preview-message .ttk-preview-dialogue {color:var(--pv-dialogue-color)!important;-webkit-text-fill-color:var(--pv-dialogue-color)!important}
+/* Menu coverage: only common SillyTavern widgets; preserve interaction and native disabled semantics.
+   Do not blanket force all descendants to white, and do not recolour SVG fills. */
+html[data-ttk-theme] :is(#world_popup,#world_info,#world_info_settings,#extensions_settings,#extensions_settings2,
+  #api_settings,#advanced-formatting,#backgrounds,#character_popup,#top-settings-holder,
+  #left-nav-panel,#right-nav-panel,.popup,.dialogue_popup,.ui-dialog) {
+  color:var(--ttk-text)!important;
+}
+html[data-ttk-theme] :is(#world_popup,#world_info,#world_info_settings,#extensions_settings,#extensions_settings2,
+  #api_settings,#advanced-formatting,#backgrounds,#character_popup,#left-nav-panel,#right-nav-panel,.popup,.dialogue_popup,.ui-dialog)
+  :is(select,textarea,input[type=text],input[type=search],input[type=number],input[type=url],.select2-selection,.select2-selection__rendered,.dropdown,
+     .multi-select,.multiselect,.text_pole,.menu_button) {
+  background-color:var(--ttk-surface)!important;background-image:none!important;
+  color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;
+  text-shadow:none!important;filter:none!important;
+}
+html[data-ttk-theme] :is(.select2-dropdown,.select2-results,.select2-results__option,.select2-search__field,
+  .ui-menu,.ui-menu-item,.ui-autocomplete,.ui-widget-content,.list-group-item,.dropdown-menu,
+  .popup-content,.popup-body,.modal-content,.extension_block) {
+  background-color:var(--ttk-surface);color:var(--ttk-text);
+  border-color:var(--ttk-border);text-shadow:none;
+}
+html[data-ttk-theme] :is(.select2-results__option--highlighted,.select2-results__option--selected,
+ .ui-state-active,.ui-state-highlight,.dropdown-item.active,[aria-selected=true]) {
+  background-color:var(--ttk-raised);color:var(--ttk-text);
+}
+/* Disabled controls must remain identifiable but text must not become illegibly pale. */
+html[data-ttk-theme] :is(select,input,textarea,button):disabled {color:var(--ttk-muted);opacity:1}
+/* Prevent inherited semi-transparent labels from looking anti-aliased/broken in the extension manager. */
+html[data-ttk-theme] :is(#extensions_management,#extensions_manager,#extensions_list,.extensions_list,.extension_list)
+  :is(.extension_name,.extension_version,.extension-name,.extension-version,label,small,span) {
+  text-shadow:none;filter:none;-webkit-filter:none;
+  -webkit-text-fill-color:currentColor;
+}
+
+/* v0.2.9: Persona, character, prompt and other native settings headers.
+   Avoid dark gradient leftovers, including third-party generic standby headers. */
+html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.settings-header,.settings-header-title,.persona_management_header,.persona-header,.persona-management-header,.character-management-header,.character_management_header) {
+  background:var(--ttk-raised);background-image:none;
+  color:var(--ttk-text);border-color:var(--ttk-border);
+  text-shadow:none;box-shadow:none;filter:none;
+}
+html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.persona_management_header,.persona-header) :is(span,strong,label,i) {
+  color:inherit;text-shadow:none;filter:none;
+}
+/* Preserve readable extension/persona labels instead of inheriting pale native opacity. */
+html[data-ttk-theme] :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader,.persona_management_header,.persona-header) {opacity:1}
+/* Paper is now very light, including its reading canvas. */
+html[data-ttk-theme=paper] #chat .mes[is_user=true] {box-shadow:none!important}
+
+/* Linear SVG glyphs for the top rail toggles and composer buttons only (never icons inside the settings windows). */
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-sliders::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAgNUgzIiAvPiA8cGF0aCBkPSJNMTIgMTlIMyIgLz4gPHBhdGggZD0iTTE0IDN2NCIgLz4gPHBhdGggZD0iTTE2IDE3djQiIC8+IDxwYXRoIGQ9Ik0yMSAxMmgtOSIgLz4gPHBhdGggZD0iTTIxIDE5aC01IiAvPiA8cGF0aCBkPSJNMjEgNWgtNyIgLz4gPHBhdGggZD0iTTggMTB2NCIgLz4gPHBhdGggZD0iTTggMTJIMyIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAgNUgzIiAvPiA8cGF0aCBkPSJNMTIgMTlIMyIgLz4gPHBhdGggZD0iTTE0IDN2NCIgLz4gPHBhdGggZD0iTTE2IDE3djQiIC8+IDxwYXRoIGQ9Ik0yMSAxMmgtOSIgLz4gPHBhdGggZD0iTTIxIDE5aC01IiAvPiA8cGF0aCBkPSJNMjEgNWgtNyIgLz4gPHBhdGggZD0iTTggMTB2NCIgLz4gPHBhdGggZD0iTTggMTJIMyIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-plug::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgMjJ2LTUiIC8+IDxwYXRoIGQ9Ik0xNSA4VjIiIC8+IDxwYXRoIGQ9Ik0xNyA4YTEgMSAwIDAgMSAxIDF2NGE0IDQgMCAwIDEtNCA0aC00YTQgNCAwIDAgMS00LTRWOWExIDEgMCAwIDEgMS0xeiIgLz4gPHBhdGggZD0iTTkgOFYyIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgMjJ2LTUiIC8+IDxwYXRoIGQ9Ik0xNSA4VjIiIC8+IDxwYXRoIGQ9Ik0xNyA4YTEgMSAwIDAgMSAxIDF2NGE0IDQgMCAwIDEtNCA0aC00YTQgNCAwIDAgMS00LTRWOWExIDEgMCAwIDEgMS0xeiIgLz4gPHBhdGggZD0iTTkgOFYyIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-font::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNHYxNiIgLz4gPHBhdGggZD0iTTQgN1Y1YTEgMSAwIDAgMSAxLTFoMTRhMSAxIDAgMCAxIDEgMXYyIiAvPiA8cGF0aCBkPSJNOSAyMGg2IiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNHYxNiIgLz4gPHBhdGggZD0iTTQgN1Y1YTEgMSAwIDAgMSAxLTFoMTRhMSAxIDAgMCAxIDEgMXYyIiAvPiA8cGF0aCBkPSJNOSAyMGg2IiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:is(.fa-book,.fa-book-atlas)::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNXYxNiIgLz4gPHBhdGggZD0iTTIwLjAwMSAxOUEyIDIgMCAwMDIyIDE3VjVhMiAyIDAgMDAtMS45OTktMkwxNiAzLjAwMkE1IDUgMCAwMDEyIDVhNSA1IDAgMDAtNC0ySDRhMiAyIDAgMDAtMiAydjEyYTIgMiAwIDAwMS45OTkgMkg4YTUgNSAwIDAxNCAyIDUgNSAwIDAxNC0yeiIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgNXYxNiIgLz4gPHBhdGggZD0iTTIwLjAwMSAxOUEyIDIgMCAwMDIyIDE3VjVhMiAyIDAgMDAtMS45OTktMkwxNiAzLjAwMkE1IDUgMCAwMDEyIDVhNSA1IDAgMDAtNC0ySDRhMiAyIDAgMDAtMiAydjEyYTIgMiAwIDAwMS45OTkgMkg4YTUgNSAwIDAxNCAyIDUgNSAwIDAxNC0yeiIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:is(.fa-user-gear,.fa-user-cog)::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTQuMzA1IDE5LjUzLjkyMy0uMzgyIiAvPiA8cGF0aCBkPSJtMTUuMjI4IDE2Ljg1Mi0uOTIzLS4zODMiIC8+IDxwYXRoIGQ9Im0xNi44NTIgMTUuMjI4LS4zODMtLjkyMyIgLz4gPHBhdGggZD0ibTE2Ljg1MiAyMC43NzItLjM4My45MjQiIC8+IDxwYXRoIGQ9Im0xOS4xNDggMTUuMjI4LjM4My0uOTIzIiAvPiA8cGF0aCBkPSJtMTkuNTMgMjEuNjk2LS4zODItLjkyNCIgLz4gPHBhdGggZD0iTTIgMjFhOCA4IDAgMCAxIDEwLjQzNC03LjYyIiAvPiA8cGF0aCBkPSJtMjAuNzcyIDE2Ljg1Mi45MjQtLjM4MyIgLz4gPHBhdGggZD0ibTIwLjc3MiAxOS4xNDguOTI0LjM4MyIgLz4gPGNpcmNsZSBjeD0iMTAiIGN5PSI4IiByPSI1IiAvPiA8Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIzIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTQuMzA1IDE5LjUzLjkyMy0uMzgyIiAvPiA8cGF0aCBkPSJtMTUuMjI4IDE2Ljg1Mi0uOTIzLS4zODMiIC8+IDxwYXRoIGQ9Im0xNi44NTIgMTUuMjI4LS4zODMtLjkyMyIgLz4gPHBhdGggZD0ibTE2Ljg1MiAyMC43NzItLjM4My45MjQiIC8+IDxwYXRoIGQ9Im0xOS4xNDggMTUuMjI4LjM4My0uOTIzIiAvPiA8cGF0aCBkPSJtMTkuNTMgMjEuNjk2LS4zODItLjkyNCIgLz4gPHBhdGggZD0iTTIgMjFhOCA4IDAgMCAxIDEwLjQzNC03LjYyIiAvPiA8cGF0aCBkPSJtMjAuNzcyIDE2Ljg1Mi45MjQtLjM4MyIgLz4gPHBhdGggZD0ibTIwLjc3MiAxOS4xNDguOTI0LjM4MyIgLz4gPGNpcmNsZSBjeD0iMTAiIGN5PSI4IiByPSI1IiAvPiA8Y2lyY2xlIGN4PSIxOCIgY3k9IjE4IiByPSIzIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:is(.fa-image,.fa-panorama)::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiByeT0iMiIgLz4gPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjIiIC8+IDxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiByeT0iMiIgLz4gPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjIiIC8+IDxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIiAvPiA8L3N2Zz4=") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-cubes::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMi45NyAxMi45MkEyIDIgMCAwIDAgMiAxNC42M3YzLjI0YTIgMiAwIDAgMCAuOTcgMS43MWwzIDEuOGEyIDIgMCAwIDAgMi4wNiAwTDEyIDE5di01LjVsLTUtMy00LjAzIDIuNDJaIiAvPiA8cGF0aCBkPSJtNyAxNi41LTQuNzQtMi44NSIgLz4gPHBhdGggZD0ibTcgMTYuNSA1LTMiIC8+IDxwYXRoIGQ9Ik03IDE2LjV2NS4xNyIgLz4gPHBhdGggZD0iTTEyIDEzLjVWMTlsMy45NyAyLjM4YTIgMiAwIDAgMCAyLjA2IDBsMy0xLjhhMiAyIDAgMCAwIC45Ny0xLjcxdi0zLjI0YTIgMiAwIDAgMC0uOTctMS43MUwxNyAxMC41bC01IDNaIiAvPiA8cGF0aCBkPSJtMTcgMTYuNS01LTMiIC8+IDxwYXRoIGQ9Im0xNyAxNi41IDQuNzQtMi44NSIgLz4gPHBhdGggZD0iTTE3IDE2LjV2NS4xNyIgLz4gPHBhdGggZD0iTTcuOTcgNC40MkEyIDIgMCAwIDAgNyA2LjEzdjQuMzdsNSAzIDUtM1Y2LjEzYTIgMiAwIDAgMC0uOTctMS43MWwtMy0xLjhhMiAyIDAgMCAwLTIuMDYgMGwtMyAxLjhaIiAvPiA8cGF0aCBkPSJNMTIgOCA3LjI2IDUuMTUiIC8+IDxwYXRoIGQ9Im0xMiA4IDQuNzQtMi44NSIgLz4gPHBhdGggZD0iTTEyIDEzLjVWOCIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMi45NyAxMi45MkEyIDIgMCAwIDAgMiAxNC42M3YzLjI0YTIgMiAwIDAgMCAuOTcgMS43MWwzIDEuOGEyIDIgMCAwIDAgMi4wNiAwTDEyIDE5di01LjVsLTUtMy00LjAzIDIuNDJaIiAvPiA8cGF0aCBkPSJtNyAxNi41LTQuNzQtMi44NSIgLz4gPHBhdGggZD0ibTcgMTYuNSA1LTMiIC8+IDxwYXRoIGQ9Ik03IDE2LjV2NS4xNyIgLz4gPHBhdGggZD0iTTEyIDEzLjVWMTlsMy45NyAyLjM4YTIgMiAwIDAgMCAyLjA2IDBsMy0xLjhhMiAyIDAgMCAwIC45Ny0xLjcxdi0zLjI0YTIgMiAwIDAgMC0uOTctMS43MUwxNyAxMC41bC01IDNaIiAvPiA8cGF0aCBkPSJtMTcgMTYuNS01LTMiIC8+IDxwYXRoIGQ9Im0xNyAxNi41IDQuNzQtMi44NSIgLz4gPHBhdGggZD0iTTE3IDE2LjV2NS4xNyIgLz4gPHBhdGggZD0iTTcuOTcgNC40MkEyIDIgMCAwIDAgNyA2LjEzdjQuMzdsNSAzIDUtM1Y2LjEzYTIgMiAwIDAgMC0uOTctMS43MWwtMy0xLjhhMiAyIDAgMCAwLTIuMDYgMGwtMyAxLjhaIiAvPiA8cGF0aCBkPSJNMTIgOCA3LjI2IDUuMTUiIC8+IDxwYXRoIGQ9Im0xMiA4IDQuNzQtMi44NSIgLz4gPHBhdGggZD0iTTEyIDEzLjVWOCIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-face-smile::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTUgMTBWOSIgLz4gPHBhdGggZD0iTTE2LjQ3MiAxNWE2IDYgMCAwMS04Ljk0MyAwIiAvPiA8cGF0aCBkPSJNOSAxMFY5IiAvPiA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTUgMTBWOSIgLz4gPHBhdGggZD0iTTE2LjQ3MiAxNWE2IDYgMCAwMS04Ljk0MyAwIiAvPiA8cGF0aCBkPSJNOSAxMFY5IiAvPiA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.fa-address-card::before {
+  content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;
+  background-color:currentColor!important;
+  -webkit-mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTMgMTlhNCA0IDAgMDAtOCAwIiAvPiA8cGF0aCBkPSJNMTYgMTBoMiIgLz4gPHBhdGggZD0iTTE2IDE0aDIiIC8+IDxjaXJjbGUgY3g9IjkiIGN5PSIxMiIgcj0iMyIgLz4gPHJlY3QgeD0iMiIgeT0iNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE0IiByeD0iMiIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  mask:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTMgMTlhNCA0IDAgMDAtOCAwIiAvPiA8cGF0aCBkPSJNMTYgMTBoMiIgLz4gPHBhdGggZD0iTTE2IDE0aDIiIC8+IDxjaXJjbGUgY3g9IjkiIGN5PSIxMiIgcj0iMyIgLz4gPHJlY3QgeD0iMiIgeT0iNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE0IiByeD0iMiIgLz4gPC9zdmc+") center / contain no-repeat!important;
+  vertical-align:-.12em!important;opacity:1!important;
+}
+/* v1.3.2: 모든 아이콘은 Lucide(ISC) 선 아이콘, 굵기 1.5 · 둥근 끝으로 통일. 모양·굵기는 테마와 무관하다. */
+html[data-ttk-theme]{--ttk-ic-menu:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNCA1aDE2IiAvPiA8cGF0aCBkPSJNNCAxMmgxNiIgLz4gPHBhdGggZD0iTTQgMTloMTYiIC8+IDwvc3ZnPg==");--ttk-ic-spark:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMjEuNjQgMy42NC0xLjI4LTEuMjhhMS4yMSAxLjIxIDAgMCAwLTEuNzIgMEwyLjM2IDE4LjY0YTEuMjEgMS4yMSAwIDAgMCAwIDEuNzJsMS4yOCAxLjI4YTEuMiAxLjIgMCAwIDAgMS43MiAwTDIxLjY0IDUuMzZhMS4yIDEuMiAwIDAgMCAwLTEuNzIiIC8+IDxwYXRoIGQ9Im0xNCA3IDMgMyIgLz4gPHBhdGggZD0iTTUgNnY0IiAvPiA8cGF0aCBkPSJNMTkgMTR2NCIgLz4gPHBhdGggZD0iTTEwIDJ2MiIgLz4gPHBhdGggZD0iTTcgOEgzIiAvPiA8cGF0aCBkPSJNMjEgMTZoLTQiIC8+IDxwYXRoIGQ9Ik0xMSAzSDkiIC8+IDwvc3ZnPg==");--ttk-ic-up:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTggMTUtNi02LTYgNiIgLz4gPC9zdmc+");--ttk-ic-send:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTQuNTM2IDIxLjY4NmEuNS41IDAgMCAwIC45MzctLjAyNGw2LjUtMTlhLjQ5Ni40OTYgMCAwIDAtLjYzNS0uNjM1bC0xOSA2LjVhLjUuNSAwIDAgMC0uMDI0LjkzN2w3LjkzIDMuMThhMiAyIDAgMCAxIDEuMTEyIDEuMTF6IiAvPiA8cGF0aCBkPSJtMjEuODU0IDIuMTQ3LTEwLjk0IDEwLjkzOSIgLz4gPC9zdmc+");--ttk-ic-dots:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxIiAvPiA8Y2lyY2xlIGN4PSIxOSIgY3k9IjEyIiByPSIxIiAvPiA8Y2lyY2xlIGN4PSI1IiBjeT0iMTIiIHI9IjEiIC8+IDwvc3ZnPg==");--ttk-ic-tune:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAgNUgzIiAvPiA8cGF0aCBkPSJNMTIgMTlIMyIgLz4gPHBhdGggZD0iTTE0IDN2NCIgLz4gPHBhdGggZD0iTTE2IDE3djQiIC8+IDxwYXRoIGQ9Ik0yMSAxMmgtOSIgLz4gPHBhdGggZD0iTTIxIDE5aC01IiAvPiA8cGF0aCBkPSJNMjEgNWgtNyIgLz4gPHBhdGggZD0iTTggMTB2NCIgLz4gPHBhdGggZD0iTTggMTJIMyIgLz4gPC9zdmc+");--ttk-ic-edit:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMjEuMTc0IDYuODEyYTEgMSAwIDAgMC0zLjk4Ni0zLjk4N0wzLjg0MiAxNi4xNzRhMiAyIDAgMCAwLS41LjgzbC0xLjMyMSA0LjM1MmEuNS41IDAgMCAwIC42MjMuNjIybDQuMzUzLTEuMzJhMiAyIDAgMCAwIC44My0uNDk3eiIgLz4gPHBhdGggZD0ibTE1IDUgNCA0IiAvPiA8L3N2Zz4=");--ttk-ic-copy:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMTQiIGhlaWdodD0iMTQiIHg9IjgiIHk9IjgiIHJ4PSIyIiByeT0iMiIgLz4gPHBhdGggZD0iTTQgMTZjLTEuMSAwLTItLjktMi0yVjRjMC0xLjEuOS0yIDItMmgxMGMxLjEgMCAyIC45IDIgMiIgLz4gPC9zdmc+");--ttk-ic-lang:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtNSA4IDYgNiIgLz4gPHBhdGggZD0ibTQgMTQgNi02IDItMyIgLz4gPHBhdGggZD0iTTIgNWgxMiIgLz4gPHBhdGggZD0iTTcgMmgxIiAvPiA8cGF0aCBkPSJtMjIgMjItNS0xMC01IDEwIiAvPiA8cGF0aCBkPSJNMTQgMThoNiIgLz4gPC9zdmc+");--ttk-ic-next:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNSAxMmgxNCIgLz4gPHBhdGggZD0ibTEyIDUgNyA3LTcgNyIgLz4gPC9zdmc+");--ttk-ic-trash:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAgMTF2NiIgLz4gPHBhdGggZD0iTTE0IDExdjYiIC8+IDxwYXRoIGQ9Ik0xOSA2djE0YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0yVjYiIC8+IDxwYXRoIGQ9Ik0zIDZoMTgiIC8+IDxwYXRoIGQ9Ik04IDZWNGEyIDIgMCAwIDEgMi0yaDRhMiAyIDAgMCAxIDIgMnYyIiAvPiA8L3N2Zz4=");--ttk-ic-branch:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTUgNmE5IDkgMCAwIDAtOSA5VjMiIC8+IDxjaXJjbGUgY3g9IjE4IiBjeT0iNiIgcj0iMyIgLz4gPGNpcmNsZSBjeD0iNiIgY3k9IjE4IiByPSIzIiAvPiA8L3N2Zz4=");--ttk-ic-doc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNiAyMmEyIDIgMCAwIDEtMi0yVjRhMiAyIDAgMCAxIDItMmg4YTIuNCAyLjQgMCAwIDEgMS43MDQuNzA2bDMuNTg4IDMuNTg4QTIuNCAyLjQgMCAwIDEgMjAgOHYxMmEyIDIgMCAwIDEtMiAyeiIgLz4gPHBhdGggZD0iTTE0IDJ2NWExIDEgMCAwIDAgMSAxaDUiIC8+IDxwYXRoIGQ9Ik0xMCA5SDgiIC8+IDxwYXRoIGQ9Ik0xNiAxM0g4IiAvPiA8cGF0aCBkPSJNMTYgMTdIOCIgLz4gPC9zdmc+");--ttk-ic-eyeoff:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAuNzMzIDUuMDc2YTEwLjc0NCAxMC43NDQgMCAwIDEgMTEuMjA1IDYuNTc1IDEgMSAwIDAgMSAwIC42OTYgMTAuNzQ3IDEwLjc0NyAwIDAgMS0xLjQ0NCAyLjQ5IiAvPiA8cGF0aCBkPSJNMTQuMDg0IDE0LjE1OGEzIDMgMCAwIDEtNC4yNDItNC4yNDIiIC8+IDxwYXRoIGQ9Ik0xNy40NzkgMTcuNDk5YTEwLjc1IDEwLjc1IDAgMCAxLTE1LjQxNy01LjE1MSAxIDEgMCAwIDEgMC0uNjk2IDEwLjc1IDEwLjc1IDAgMCAxIDQuNDQ2LTUuMTQzIiAvPiA8cGF0aCBkPSJtMiAyIDIwIDIwIiAvPiA8L3N2Zz4=");--ttk-ic-voice:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTEgNC43MDJhLjcwNS43MDUgMCAwIDAtMS4yMDMtLjQ5OEw2LjQxMyA3LjU4N0ExLjQgMS40IDAgMCAxIDUuNDE2IDhIM2ExIDEgMCAwIDAtMSAxdjZhMSAxIDAgMCAwIDEgMWgyLjQxNmExLjQgMS40IDAgMCAxIC45OTcuNDEzbDMuMzgzIDMuMzg0QS43MDUuNzA1IDAgMCAwIDExIDE5LjI5OHoiIC8+IDxwYXRoIGQ9Ik0xNiA5YTUgNSAwIDAgMSAwIDYiIC8+IDxwYXRoIGQ9Ik0xOS4zNjQgMTguMzY0YTkgOSAwIDAgMCAwLTEyLjcyOCIgLz4gPC9zdmc+");--ttk-ic-badge:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTMgMTlhNCA0IDAgMDAtOCAwIiAvPiA8cGF0aCBkPSJNMTYgMTBoMiIgLz4gPHBhdGggZD0iTTE2IDE0aDIiIC8+IDxjaXJjbGUgY3g9IjkiIGN5PSIxMiIgcj0iMyIgLz4gPHJlY3QgeD0iMiIgeT0iNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE0IiByeD0iMiIgLz4gPC9zdmc+");--ttk-ic-box:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iNSIgeD0iMiIgeT0iMyIgcng9IjEiIC8+IDxwYXRoIGQ9Ik00IDh2MTFhMiAyIDAgMCAwIDIgMmgxMmEyIDIgMCAwIDAgMi0yVjgiIC8+IDxwYXRoIGQ9Ik0xMCAxMmg0IiAvPiA8L3N2Zz4=");--ttk-ic-feather:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTQuMDg2IDE4LjQxMkEyIDIgMCAwMTEyLjY3IDE5SDV2LTcuNjcyYTIgMiAwIDAxLjU4Ni0xLjQxNEwxMS43NSAzLjc1YTYgNiAwIDExOC40OSA4LjQ5eiIgLz4gPHBhdGggZD0iTTE2IDggMiAyMiIgLz4gPHBhdGggZD0iTTE3LjQ4OCAxNUg5IiAvPiA8L3N2Zz4=");--ttk-ic-undo:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNOSAxNCA0IDlsNS01IiAvPiA8cGF0aCBkPSJNNCA5aDEwLjVhNS41IDUuNSAwIDAgMSA1LjUgNS41YTUuNSA1LjUgMCAwIDEtNS41IDUuNUgxMSIgLz4gPC9zdmc+");--ttk-ic-pin:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgMTd2NSIgLz4gPHBhdGggZD0iTTkgMTAuNzZhMiAyIDAgMCAxLTEuMTEgMS43OWwtMS43OC45QTIgMiAwIDAgMCA1IDE1LjI0VjE2YTEgMSAwIDAgMCAxIDFoMTJhMSAxIDAgMCAwIDEtMXYtLjc2YTIgMiAwIDAgMC0xLjExLTEuNzlsLTEuNzgtLjlBMiAyIDAgMCAxIDE1IDEwLjc2VjdhMSAxIDAgMCAxIDEtMSAyIDIgMCAwIDAgMC00SDhhMiAyIDAgMCAwIDAgNCAxIDEgMCAwIDEgMSAxeiIgLz4gPC9zdmc+");--ttk-ic-star:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTEuNTI1IDIuMjk1YS41My41MyAwIDAgMSAuOTUgMGwyLjMxIDQuNjc5YTIuMTIzIDIuMTIzIDAgMCAwIDEuNTk1IDEuMTZsNS4xNjYuNzU2YS41My41MyAwIDAgMSAuMjk0LjkwNGwtMy43MzYgMy42MzhhMi4xMjMgMi4xMjMgMCAwIDAtLjYxMSAxLjg3OGwuODgyIDUuMTRhLjUzLjUzIDAgMCAxLS43NzEuNTZsLTQuNjE4LTIuNDI4YTIuMTIyIDIuMTIyIDAgMCAwLTEuOTczIDBMNi4zOTYgMjEuMDFhLjUzLjUzIDAgMCAxLS43Ny0uNTZsLjg4MS01LjEzOWEyLjEyMiAyLjEyMiAwIDAgMC0uNjExLTEuODc5TDIuMTYgOS43OTVhLjUzLjUzIDAgMCAxIC4yOTQtLjkwNmw1LjE2NS0uNzU1YTIuMTIyIDIuMTIyIDAgMCAwIDEuNTk3LTEuMTZ6IiAvPiA8L3N2Zz4=");--ttk-ic-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiByeT0iMiIgLz4gPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjIiIC8+IDxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIiAvPiA8L3N2Zz4=");--ttk-ic-brush:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTEgMTAgMyAzIiAvPiA8cGF0aCBkPSJNNi41IDIxQTMuNSAzLjUgMCAxIDAgMyAxNy41YTIuNjIgMi42MiAwIDAgMS0uNzA4IDEuNzkyQTEgMSAwIDAgMCAzIDIxeiIgLz4gPHBhdGggZD0iTTkuOTY5IDE3LjAzMSAyMS4zNzggNS42MjRhMSAxIDAgMCAwLTMuMDAyLTMuMDAyTDYuOTY3IDE0LjAzMSIgLz4gPC9zdmc+");--ttk-ic-clip:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTYgNi04LjQxNCA4LjU4NmEyIDIgMCAwIDAgMi44MjkgMi44MjlsOC40MTQtOC41ODZhNCA0IDAgMSAwLTUuNjU3LTUuNjU3bC04LjM3OSA4LjU1MWE2IDYgMCAxIDAgOC40ODUgOC40ODVsOC4zNzktOC41NTEiIC8+IDwvc3ZnPg==");--ttk-ic-flag:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNCAyMlY0YTEgMSAwIDAgMSAuNC0uOEE2IDYgMCAwIDEgOCAyYzMgMCA1IDIgNy4zMzMgMnEyIDAgMy4wNjctLjhBMSAxIDAgMCAxIDIwIDR2MTBhMSAxIDAgMCAxLS40LjhBNiA2IDAgMCAxIDE2IDE2Yy0zIDAtNS0yLTgtMmE2IDYgMCAwIDAtNCAxLjUyOCIgLz4gPC9zdmc+");--ttk-ic-broom:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTYgMjItMS00IiAvPiA8cGF0aCBkPSJNMTkgMTRhMSAxIDAgMCAwIDEtMXYtMWEyIDIgMCAwIDAtMi0yaC0zYTEgMSAwIDAgMS0xLTFWNGEyIDIgMCAwIDAtNCAwdjVhMSAxIDAgMCAxLTEgMUg2YTIgMiAwIDAgMC0yIDJ2MWExIDEgMCAwIDAgMSAxIiAvPiA8cGF0aCBkPSJNMTkgMTRINWwtMS45NzMgNi43NjdBMSAxIDAgMCAwIDQgMjJoMTZhMSAxIDAgMCAwIC45NzMtMS4yMzN6IiAvPiA8cGF0aCBkPSJtOCAyMiAxLTQiIC8+IDwvc3ZnPg==");--ttk-ic-camera:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTMuOTk3IDRhMiAyIDAgMCAxIDEuNzYgMS4wNWwuNDg2LjlBMiAyIDAgMCAwIDE4LjAwMyA3SDIwYTIgMiAwIDAgMSAyIDJ2OWEyIDIgMCAwIDEtMiAySDRhMiAyIDAgMCAxLTItMlY5YTIgMiAwIDAgMSAyLTJoMS45OTdhMiAyIDAgMCAwIDEuNzU5LTEuMDQ4bC40ODktLjkwNEEyIDIgMCAwIDEgMTAuMDA0IDR6IiAvPiA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEzIiByPSIzIiAvPiA8L3N2Zz4=");--ttk-ic-pie:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMjEgMTJjLjU1MiAwIDEuMDA1LS40NDkuOTUtLjk5OGExMCAxMCAwIDAgMC04Ljk1My04Ljk1MWMtLjU1LS4wNTUtLjk5OC4zOTgtLjk5OC45NXY4YTEgMSAwIDAgMCAxIDF6IiAvPiA8cGF0aCBkPSJNMjEuMjEgMTUuODlBMTAgMTAgMCAxIDEgOCAyLjgzIiAvPiA8L3N2Zz4=")}
+html[data-ttk-theme] #send_form :is(#options_button,.fa-bars)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-menu) center/contain no-repeat!important;mask:var(--ttk-ic-menu) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#extensionsMenuButton,.fa-wand-magic-sparkles,.fa-magic-wand-sparkles,.fa-wand-sparkles)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-spark) center/contain no-repeat!important;mask:var(--ttk-ic-spark) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(.fa-chevron-up,.fa-angle-up,.fa-caret-up)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-up) center/contain no-repeat!important;mask:var(--ttk-ic-up) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#send_but,.fa-paper-plane)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-send) center/contain no-repeat!important;mask:var(--ttk-ic-send) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#ttk_input_translate)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-lang) center/contain no-repeat!important;mask:var(--ttk-ic-lang) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#ttk_avatar_button)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-badge) center/contain no-repeat!important;mask:var(--ttk-ic-badge) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#ttk_qr_vault)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-box) center/contain no-repeat!important;mask:var(--ttk-ic-box) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#ttk_ghostwrite)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-feather) center/contain no-repeat!important;mask:var(--ttk-ic-feather) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(#ttk_ghostwrite_undo)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-undo) center/contain no-repeat!important;mask:var(--ttk-ic-undo) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(.fa-chevron-down,.fa-angle-down,.fa-caret-down)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-up) center/contain no-repeat!important;mask:var(--ttk-ic-up) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important;transform:scaleY(-1)}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.extraMesButtonsHint,.fa-ellipsis,.fa-ellipsis-h,.fa-ellipsis-vertical)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-dots) center/contain no-repeat!important;mask:var(--ttk-ic-dots) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-sliders,.fa-sliders-h)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-tune) center/contain no-repeat!important;mask:var(--ttk-ic-tune) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_edit,.fa-pencil,.fa-pen,.fa-pen-to-square,.fa-edit)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-edit) center/contain no-repeat!important;mask:var(--ttk-ic-edit) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_copy,.fa-copy)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-copy) center/contain no-repeat!important;mask:var(--ttk-ic-copy) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_translate,.fa-language)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-lang) center/contain no-repeat!important;mask:var(--ttk-ic-lang) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_continue,.fa-arrow-right)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-next) center/contain no-repeat!important;mask:var(--ttk-ic-next) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_delete,.fa-trash,.fa-trash-can)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-trash) center/contain no-repeat!important;mask:var(--ttk-ic-trash) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_branch,.fa-code-branch)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-branch) center/contain no-repeat!important;mask:var(--ttk-ic-branch) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_prompt,.fa-square-poll-horizontal,.fa-file-lines)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-doc) center/contain no-repeat!important;mask:var(--ttk-ic-doc) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_hide,.fa-eye-slash,.fa-eye)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-eyeoff) center/contain no-repeat!important;mask:var(--ttk-ic-eyeoff) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_narrate,.fa-bullhorn,.fa-volume-high)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-voice) center/contain no-repeat!important;mask:var(--ttk-ic-voice) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+/* v0.22.4: 나머지 메시지 버튼 아이콘(고정·즐겨찾기·이미지·프로필·붓·클립·깃발·빗자루·카메라) + 하단 카메라 */
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-thumbtack,.fa-thumbtack-slash)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-pin) center/contain no-repeat!important;mask:var(--ttk-ic-pin) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-star,.mes_favorite)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-star) center/contain no-repeat!important;mask:var(--ttk-ic-star) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-wand-magic-sparkles,.fa-magic-wand-sparkles,.fa-wand-sparkles)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-spark) center/contain no-repeat!important;mask:var(--ttk-ic-spark) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-panorama,.fa-image,.fa-images,.mes_img_swipes)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-image) center/contain no-repeat!important;mask:var(--ttk-ic-image) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-address-card,.fa-id-card,.fa-id-badge,.fa-portrait,.fa-user-circle)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-badge) center/contain no-repeat!important;mask:var(--ttk-ic-badge) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-chart-pie,.fa-chart-simple)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-pie) center/contain no-repeat!important;mask:var(--ttk-ic-pie) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-paintbrush,.fa-brush,.fa-paint-brush)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-brush) center/contain no-repeat!important;mask:var(--ttk-ic-brush) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-paperclip,.mes_embed)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-clip) center/contain no-repeat!important;mask:var(--ttk-ic-clip) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.mes_bookmark,.fa-flag-checkered,.fa-flag)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-flag) center/contain no-repeat!important;mask:var(--ttk-ic-flag) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-broom,.fa-broom-ball)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-broom) center/contain no-repeat!important;mask:var(--ttk-ic-broom) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #chat .mes :is(.mes_buttons,.extraMesButtons) :is(.fa-camera)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-camera) center/contain no-repeat!important;mask:var(--ttk-ic-camera) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+html[data-ttk-theme] #send_form :is(.fa-camera)::before{content:""!important;display:inline-block!important;width:1.18em!important;height:1.18em!important;background-color:currentColor!important;-webkit-mask:var(--ttk-ic-camera) center/contain no-repeat!important;mask:var(--ttk-ic-camera) center/contain no-repeat!important;vertical-align:-.12em!important;opacity:1!important}
+/* Profile translation editor - only inside Toolkit panel, independent from ST menus */
+#ttk-panel .ttk-field input[type="text"]{width:100%;min-width:0;box-sizing:border-box;padding:8px 10px;border-radius:6px;border:1px solid var(--ttk-border,rgba(128,128,128,.35));background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);font:inherit;box-shadow:none;text-shadow:none;filter:none}
+#ttk-panel .ttk-translation-edit{padding:8px 0;border-bottom:1px solid var(--ttk-border,rgba(128,128,128,.2))}
+#ttk-panel .ttk-translation-edit>small{overflow-wrap:anywhere;opacity:.85}
+#ttk-panel .ttk-translation-edit .ttk-actions{display:flex;gap:6px;flex-wrap:wrap}
+
+/* v0.3.5: high-contrast native prompt names and readable native typography.
+   Never paint a replacement label above the original text or mutate its layout. */
+html[data-ttk-theme] [data-pm-name].ttk-prompt-localized
+  :is(a.prompt-manager-inspect-action,.prompt-manager-inspect-action,span[title]:not(.fa)) {
+  color:var(--ttk-text)!important;
+  -webkit-text-fill-color:var(--ttk-text)!important;
+  -webkit-text-stroke:0!important;
+  text-shadow:none!important;
+  filter:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+  font-size:inherit!important;
+  font-style:normal!important;
+  white-space:normal!important;
+  word-break:keep-all!important;
+  overflow-wrap:break-word!important;
+  writing-mode:horizontal-tb!important;
+}
+/* Clean the inherited native ST outline/blur and effects for text only.
+   The WHITE reference disables blur and shadows at the theme level;
+   because this extension must not overwrite the native saved theme, do it
+   with CSS limited to the active toolkit theme. */
+html[data-ttk-theme] :is(#chat,#left-nav-panel,#right-nav-panel,
+  #top-settings-holder,#extensions_settings,#extensions_settings2,
+  .popup,.dialogue_popup,.ui-dialog) {
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+html[data-ttk-theme] :is(#chat,#left-nav-panel,#right-nav-panel,
+  #top-settings-holder,#extensions_settings,#extensions_settings2,
+  .popup,.dialogue_popup,.ui-dialog)
+  :is(.mes_text,.mes_text *, .name_text, .ch_name, .inline-drawer-header,
+      .standoutHeader, .settingsBlockHeader, .prompt-manager-inspect-action,
+      label, p, h1, h2, h3, h4, h5, h6) {
+  text-shadow:none!important;
+  -webkit-text-stroke-width:0!important;
+  -webkit-text-stroke-color:transparent!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+html[data-ttk-theme] #chat .mes_text,
+html[data-ttk-theme] #chat .mes_text * {
+  text-rendering:auto!important;
+  -webkit-font-smoothing:auto!important;
+  font-kerning:normal;
+}
+html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel,#extensions_settings,#extensions_settings2)
+  :is(.standoutHeader,.inline-drawer-header,.settingsBlockHeader) {
+  background-image:none!important;
+  box-shadow:none!important;
+}
+
+
+/* Checkboxes (rewritten in 0.3.14).
+   Drawn entirely by this rule — no pseudo-elements, no native white box on dark palettes.
+   display/position are deliberately NOT set: SillyTavern keeps several checkboxes hidden on
+   purpose (message delete mode, panel pins, power toggles) and they must stay hidden. */
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox),
+#ttk-panel input[type="checkbox"] {
+  -webkit-appearance:none!important;appearance:none!important;box-sizing:border-box!important;
+  width:17px!important;min-width:17px!important;max-width:17px!important;
+  height:17px!important;min-height:17px!important;max-height:17px!important;
+  margin:0 6px 0 0;padding:0!important;vertical-align:middle!important;flex:0 0 auto;
+  border:1.5px solid color-mix(in srgb,var(--ttk-muted,#7b8794) 70%,var(--ttk-border,#c9d2dc))!important;border-radius:4px!important;
+  background:var(--ttk-surface,#fff) center/12px 12px no-repeat!important;
+  box-shadow:none!important;text-shadow:none!important;filter:none!important;opacity:1!important;transform:none!important;
+  cursor:pointer;transition:background-color .12s ease,border-color .12s ease;
+}
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox)::before,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox)::after,
+#ttk-panel input[type="checkbox"]::before,
+#ttk-panel input[type="checkbox"]::after {content:none!important;display:none!important}
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):hover,
+#ttk-panel input[type="checkbox"]:hover {border-color:var(--ttk-accent,#587997)!important}
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):checked,
+#ttk-panel input[type="checkbox"]:checked {
+  background-color:var(--ttk-accent,#587997)!important;border-color:var(--ttk-accent,#587997)!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.3l2.4 2.4 4.6-5'/%3E%3C/svg%3E")!important;
+}
+/* On dark palettes the accent is light, so the tick turns dark. */
+html[data-ttk-theme][data-ttk-scheme=dark] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):checked,
+html[data-ttk-theme][data-ttk-scheme=dark] #ttk-panel input[type="checkbox"]:checked {
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23141a22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.3l2.4 2.4 4.6-5'/%3E%3C/svg%3E")!important;
+}
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):disabled,
+#ttk-panel input[type="checkbox"]:disabled {opacity:.5!important;cursor:not-allowed}
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):focus-visible,
+#ttk-panel input[type="checkbox"]:focus-visible {outline:2px solid var(--ttk-accent,#587997)!important;outline-offset:2px!important}
+
+/* A unified surface system for native settings, lorebook, backgrounds and drawers. */
+html[data-ttk-theme] :is(#WorldInfo,#world_info,#WorldInfoEditor,#world_popup,#backgrounds,
+  #backgrounds_menu,#backgrounds_settings,#backgrounds_holder,
+  #user-settings-block,#user-settings,#extensions_settings,#extensions_settings2,
+  #api_settings,#advanced-formatting,#left-nav-panel,#right-nav-panel,
+  .drawer-content,.inline-drawer-content,.popup,.dialogue_popup,.ui-dialog,
+  .select2-dropdown,.select2-results,.select2-search--dropdown) {
+  background-color:var(--ttk-surface);
+  color:var(--ttk-text);
+  border-color:var(--ttk-border);
+  background-image:none;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader,.settingsBlockHeader,
+  .settings-header,.settings-header-title,.drawer-header,
+  #backgrounds .inline-drawer-header,#WorldInfo .inline-drawer-header,
+  #user-settings-block .inline-drawer-header):not(:is(#extensions_settings,#extensions_settings2) *) {
+  background:var(--ttk-raised);
+  border-color:var(--ttk-border);
+  
+  color:var(--ttk-text);
+  box-shadow:none;
+  text-shadow:none;
+  -webkit-text-stroke:0;
+  filter:none;
+  opacity:1;
+}
+/* Remove the extra decorative strokes appended to headers by older Toolkit builds. */
+html[data-ttk-theme] :is(.inline-drawer-header,.standoutHeader,.settingsBlockHeader,.drawer-header)::after {
+  background-image:none;
+  box-shadow:none;
+}
+/* Input and Select2 background should follow the palette, not native grey gradients. */
+html[data-ttk-theme] :is(.drawer-content,.inline-drawer-content,.popup,
+  #world_popup,#WorldInfo,#world_info,#backgrounds,#user-settings-block)
+  :is(.text_pole,input[type="text"],input[type="search"],input[type="number"],textarea,select,
+      .select2-selection,.select2-selection--single,.select2-selection--multiple,
+      .select2-selection__rendered,.dropdown,.multiselect) {
+  background:var(--ttk-surface);
+  color:var(--ttk-text);
+  border-color:var(--ttk-border);
+  box-shadow:none;
+  filter:none;
+  opacity:1;
+}
+html[data-ttk-theme] :is(.select2-container--default .select2-selection__rendered,
+  .select2-selection__placeholder,.select2-results__option,
+  .select2-search__field) {
+  color:var(--ttk-text);
+  -webkit-text-fill-color:currentColor;
+  text-shadow:none;
+  filter:none;
+}
+html[data-ttk-theme] :is(input::placeholder,textarea::placeholder) {
+  color:var(--ttk-muted);
+  opacity:1;
+  text-shadow:none;
+}
+
+/* Native disabled setting rows must remain readable. Disabled ACTIONS remain
+   non-interactive; this changes appearance only and never their disabled flag. */
+html[data-ttk-theme] :is(#user-settings-block,#left-nav-panel,#right-nav-panel,
+  #extensions_settings,#extensions_settings2,#WorldInfo,#backgrounds)
+  :is(label,.checkbox_label,.checkbox-label,.setting_label,.settings_label,small,span) {
+  text-shadow:none!important;
+  -webkit-text-stroke:0!important;
+  -webkit-text-stroke-width:0!important;
+  filter:none!important;
+  -webkit-filter:none!important;
+}
+html[data-ttk-theme] :is(#user-settings-block,#left-nav-panel,#right-nav-panel,
+  #extensions_settings,#extensions_settings2,#WorldInfo,#backgrounds)
+  :is(.disabled,.disabled_text,[aria-disabled="true"]):not(input):not(button):not(select):not(textarea) {
+  opacity:1!important;
+  color:var(--ttk-muted)!important;
+}
+html[data-ttk-theme] :is(#user-settings-block,#left-nav-panel,#right-nav-panel,
+  #extensions_settings,#extensions_settings2,#WorldInfo,#backgrounds)
+  :is(.disabled,.disabled_text,[aria-disabled="true"]):not(input):not(button):not(select):not(textarea)
+  :is(label,span,small) {
+  color:var(--ttk-muted)!important;
+  opacity:1!important;
+}
+html[data-ttk-theme] :is(#user-settings-block,#left-nav-panel,#right-nav-panel,
+  #extensions_settings,#extensions_settings2,#WorldInfo,#backgrounds)
+  :is(label,small,.description,.hint,.help_text,.text-muted) {
+  -webkit-text-fill-color:currentColor!important;
+}
+/* Extension settings need a legible text hierarchy, even when native theme
+   uses low opacity on help text. Keep truly disabled checkboxes disabled. */
+#ttk-panel .ttk-group-head small,
+#ttk-panel .ttk-note,
+#ttk-panel .ttk-option-label small,
+#ttk-panel .ttk-theme-card small {opacity:1!important;color:var(--ttk-muted,#606a76)!important;}
+#ttk-panel .ttk-module-row:has(input:disabled){opacity:1!important;}
+#ttk-panel .ttk-module-row:has(input:disabled) .ttk-option-label{color:var(--ttk-muted,#606a76)!important;}
+/* Prevent the generic disabled override from washing out functional controls. */
+html[data-ttk-theme] :is(input,textarea,select):disabled {
+  background-color:var(--ttk-raised);
+  color:var(--ttk-muted);
+  opacity:1;
+}
+
+/* Only the icon itself is transparent; a menu's containing panel stays opaque. */
+html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel,
+ #extensions_settings,#extensions_settings2,#WorldInfo,#backgrounds,
+ .drawer-content,.inline-drawer-content,.popup,.dialogue_popup,.ui-dialog,
+ .floating_panel,.floating-panel) {
+  background-color:var(--ttk-surface);
+  color:var(--ttk-text);
+  border-color:var(--ttk-border);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+/* Both menu frames and native inner drawer surfaces must be painted.
+   Avoid global overlays, transient tooltips and the chat itself. */
+html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel)
+  :is(.drawer-content,.inline-drawer-content,.inline-drawer,.settings-block,.settingsBlock,
+      .settings-section,.settings-category) {
+  background-color:var(--ttk-surface)!important;
+  color:var(--ttk-text)!important;
+}
+html[data-ttk-theme] :is(#top-settings-holder,#top-bar,#top-settings)
+  :is(.drawer-content,.inline-drawer-content,.popup,.floating_panel,.floating-panel) {
+  background-color:var(--ttk-surface)!important;
+  color:var(--ttk-text)!important;
+  opacity:1!important;
+}

@@ -114,7 +114,7 @@ export class QrVault {
             b.addEventListener('click', () => { this.tab = id; this.render(); });
             tabs.append(b);
         }
-        const x = el('button', 'ttk-qr-close'); x.append(el('i', 'ttk-lc ttk-lc-x')); x.type = 'button'; x.title = '닫기'; x.setAttribute('aria-label', '닫기'); x.addEventListener('click', () => this.close());
+        const x = el('button', 'ttk-qr-close'); x.append(el('i', 'ttk-lc ttk-lc-x')); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.setAttribute('aria-label', '닫기'); x.addEventListener('click', () => this.close());
         head.append(tabs, x);
         const body = el('div', 'ttk-qr-body');
         if (!this.api()) body.append(el('p', 'ttk-qr-empty', 'SillyTavern의 빠른 답장(Quick Reply) 확장을 찾지 못했습니다. 확장 관리에서 Quick Reply가 켜져 있는지 확인하세요.'));
@@ -159,7 +159,7 @@ export class QrVault {
                     const b = el('button', 'ttk-qr-item'); b.type = 'button';
                     if (qr.icon) b.append(el('i', `fa-solid ${String(qr.icon).replace(/[^\w -]/g, '')}`));
                     b.append(el('span', '', qr.label || qr.title || preview(qr).slice(0, 24) || '(이름 없음)'));
-                    b.title = qr.title || preview(qr).slice(0, 200);
+                    b.setAttribute('aria-label', qr.title || preview(qr).slice(0, 200));
                     b.addEventListener('click', () => this.run(set, qr, b));
                     grid.append(b);
                 }
@@ -197,7 +197,7 @@ export class QrVault {
                 c.addEventListener('change', () => { try { (c.checked ? on : off)(); } catch (error) { c.checked = !c.checked; globalThis.toastr?.error?.(String(error?.message || error), 'QR 세트'); } });
                 l.append(c, el('span', '', label)); return l;
             };
-            const exp = el('button', 'ttk-qr-icon'); exp.append(el('i', 'ttk-lc ttk-lc-export')); exp.type = 'button'; exp.title = `${set.name} 내보내기`; exp.setAttribute('aria-label', exp.title);
+            const exp = el('button', 'ttk-qr-icon'); exp.append(el('i', 'ttk-lc ttk-lc-export')); exp.type = 'button'; exp.setAttribute('aria-label', `${set.name} 내보내기`); exp.setAttribute('aria-label', exp.title);
             exp.addEventListener('click', () => download(`${set.name}.json`, set));
             row.append(name,
                 toggle('전역', globals.has(set.name), false, () => api.addGlobalSet(set.name, true), () => api.removeGlobalSet(set.name)),

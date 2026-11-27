@@ -1,0 +1,156 @@
+/* ==========================================================================
+   v0.3.14 — theme bridge, consolidated icons, design audit
+   ========================================================================== */
+
+/* 1. Theme bridge.
+   SillyTavern paints most of its UI from --SmartTheme* variables. Earlier builds left
+   them alone, so the saved native theme leaked through wherever no override existed
+   (near-invisible hint text, timestamps, glows on light palettes). These declarations
+   live only in this stylesheet: nothing is written to the saved theme, and they vanish
+   with the design module. !important is required to outrank the inline values that
+   SillyTavern sets on <html>. */
+html[data-ttk-theme] {
+  color-scheme:light;
+  --ttk-icon:var(--ttk-muted);
+  --SmartThemeBodyColor:var(--ttk-text)!important;
+  --SmartThemeEmColor:var(--ttk-muted)!important;
+  --SmartThemeUnderlineColor:var(--ttk-accent)!important;
+  --SmartThemeQuoteColor:var(--ttk-dialogue)!important;
+  --SmartThemeBlurTintColor:var(--ttk-surface)!important;
+  --SmartThemeChatTintColor:var(--ttk-bg)!important;
+  --SmartThemeUserMesBlurTintColor:var(--ttk-user)!important;
+  --SmartThemeBotMesBlurTintColor:var(--ttk-ai)!important;
+  --SmartThemeBorderColor:var(--ttk-border)!important;
+  --SmartThemeShadowColor:transparent!important;
+  --SmartThemeBlurStrength:0px!important;
+  --blurStrength:0!important;
+  --shadowWidth:0!important;
+  --interactable-outline-color:var(--ttk-accent);
+  --interactable-outline-color-faint:color-mix(in srgb,var(--ttk-accent) 28%,transparent);
+  /* Native "white/grey overlay" constants assume a dark canvas; express them as ink of the palette. */
+  --white20a:color-mix(in srgb,var(--ttk-text) 10%,transparent);
+  --white30a:color-mix(in srgb,var(--ttk-text) 16%,transparent);
+  --white50a:color-mix(in srgb,var(--ttk-text) 45%,transparent);
+  --white60a:color-mix(in srgb,var(--ttk-text) 60%,transparent);
+  --white70a:color-mix(in srgb,var(--ttk-text) 72%,transparent);
+  --grey30:var(--ttk-raised);
+  --grey50:var(--ttk-muted);
+  --grey70:var(--ttk-muted);
+  --grey75:var(--ttk-muted);
+  --grey5020a:color-mix(in srgb,var(--ttk-text) 9%,transparent);
+  --grey5050a:color-mix(in srgb,var(--ttk-text) 24%,transparent);
+  --grey7070a:color-mix(in srgb,var(--ttk-muted) 75%,transparent);
+  --grey30a:color-mix(in srgb,var(--ttk-text) 8%,transparent);
+}
+html[data-ttk-theme][data-ttk-scheme=dark] {color-scheme:dark}
+html[data-ttk-theme][data-ttk-icon-tone=accent] {--ttk-icon:var(--ttk-accent)}
+/* "Black overlay" constants darken insets on dark themes; on a light palette they become soft ink washes. */
+html[data-ttk-theme][data-ttk-scheme=light] {
+  --black30a:color-mix(in srgb,var(--ttk-text) 4%,transparent);
+  --black50a:color-mix(in srgb,var(--ttk-text) 8%,transparent);
+  --black60a:color-mix(in srgb,var(--ttk-text) 10%,transparent);
+  --black70a:var(--ttk-raised);
+  --black90a:var(--ttk-surface);
+}
+html[data-ttk-theme] select option {background-color:var(--ttk-surface);color:var(--ttk-text)}
+html[data-ttk-theme] ::selection {background:color-mix(in srgb,var(--ttk-accent) 26%,transparent);color:inherit}
+
+/* 2. Top rail + composer icons — one block replacing the 0.2.4–0.3.13 patches.
+   Scope is the toggle button itself (.drawer-toggle > .drawer-icon): icons inside the
+   settings windows are never recoloured or swapped. */
+html[data-ttk-theme] #top-settings-holder .drawer-toggle {
+  box-sizing:border-box!important;position:relative!important;display:flex!important;
+  align-items:center!important;justify-content:center!important;
+  height:36px!important;min-height:36px!important;padding:0!important;margin:0!important;line-height:1!important;
+  background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;transform:none!important;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle::before,
+html[data-ttk-theme] #top-settings-holder .drawer-toggle::after {content:none!important}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon {
+  box-sizing:border-box!important;position:relative!important;inset:auto!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:32px!important;height:32px!important;min-width:32px!important;flex:0 0 32px!important;
+  padding:0!important;margin:0!important;line-height:1!important;transform:none!important;
+  font-size:calc(var(--mainFontSize,15px) * 1.35)!important;
+  color:var(--ttk-icon)!important;-webkit-text-fill-color:currentColor!important;
+  background:transparent!important;border:1px solid transparent!important;border-radius:8px!important;
+  box-shadow:none!important;text-shadow:none!important;filter:none!important;opacity:1!important;
+  transition:background-color .12s ease,color .12s ease,border-color .12s ease;
+}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon::before {vertical-align:middle!important}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:hover {color:var(--ttk-text)!important;background:var(--ttk-raised)!important}
+/* The open drawer is marked on the icon itself (SillyTavern toggles .openIcon/.closedIcon). */
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon.openIcon {color:var(--ttk-accent)!important;box-shadow:inset 0 -2px 0 var(--ttk-accent)!important;border-radius:8px 8px 0 0!important}
+html[data-ttk-theme] #top-settings-holder .drawer-toggle:focus-visible > .drawer-icon,
+html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon:focus-visible {outline:2px solid var(--ttk-accent)!important;outline-offset:1px!important}
+/* Composer buttons share the same ink. */
+html[data-ttk-theme] #send_form :is(#leftSendForm,#rightSendForm) > div {
+  color:var(--ttk-icon)!important;-webkit-text-fill-color:currentColor!important;
+  filter:none!important;text-shadow:none!important;opacity:1!important;border-radius:8px;
+  transition:background-color .12s ease,color .12s ease;
+}
+html[data-ttk-theme] #send_form :is(#leftSendForm,#rightSendForm) > div:hover {color:var(--ttk-text)!important}
+html[data-ttk-theme] #send_form #send_but {color:var(--ttk-accent)!important}
+html[data-ttk-theme] #send_form #mes_stop {color:var(--ttk-accent)!important}
+
+/* Icon style: 윤곽형(outline) is the base above. */
+/* 부드러운 버튼형 — each icon sits on a soft tile. */
+html[data-ttk-theme][data-ttk-icon-style=soft] #top-settings-holder .drawer-toggle > .drawer-icon {background:var(--ttk-raised)!important;border-color:var(--ttk-border)!important;border-radius:10px!important}
+html[data-ttk-theme][data-ttk-icon-style=soft] #top-settings-holder .drawer-toggle > .drawer-icon:hover {border-color:var(--ttk-accent)!important}
+html[data-ttk-theme][data-ttk-icon-style=soft] #top-settings-holder .drawer-toggle > .drawer-icon.openIcon {background:color-mix(in srgb,var(--ttk-accent) 14%,var(--ttk-surface))!important;border-color:var(--ttk-accent)!important;box-shadow:none!important;border-radius:10px!important}
+html[data-ttk-theme][data-ttk-icon-style=soft] #send_form :is(#leftSendForm,#rightSendForm) > div {background:var(--ttk-raised)!important}
+/* 미니멀형 — smaller, quieter glyphs; no tiles, no underline. */
+html[data-ttk-theme][data-ttk-icon-style=minimal] #top-settings-holder .drawer-toggle > .drawer-icon {font-size:calc(var(--mainFontSize,15px) * 1.12)!important;color:color-mix(in srgb,var(--ttk-icon) 72%,transparent)!important}
+html[data-ttk-theme][data-ttk-icon-style=minimal] #top-settings-holder .drawer-toggle > .drawer-icon:hover {background:transparent!important;color:var(--ttk-text)!important}
+html[data-ttk-theme][data-ttk-icon-style=minimal] #top-settings-holder .drawer-toggle > .drawer-icon.openIcon {box-shadow:none!important;color:var(--ttk-text)!important}
+html[data-ttk-theme][data-ttk-icon-style=minimal] #send_form :is(#leftSendForm,#rightSendForm) > div {color:color-mix(in srgb,var(--ttk-icon) 72%,transparent)!important}
+
+/* 3. Chat details the palette did not reach. */
+html[data-ttk-theme] #chat .mes .timestamp,
+html[data-ttk-theme] #chat .mes :is(.mesIDDisplay,.mes_timer,.tokenCounterDisplay) {color:var(--ttk-muted)!important;opacity:1!important;text-shadow:none!important}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(em,i) {color:var(--ttk-muted)}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) u {color:var(--ttk-accent)}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(strong,b) {color:inherit}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) hr {border:0;border-top:1px solid var(--ttk-border);opacity:1}
+/* Inline code is a quiet chip in palette colours. */
+html[data-ttk-theme] #chat code:not(.hljs) {
+  background:var(--ttk-raised)!important;color:var(--ttk-text)!important;border:1px solid var(--ttk-border)!important;
+  border-radius:4px;line-height:inherit;font-size:.92em;
+}
+/* A code block is one box: the <pre> no longer wears the blockquote frame around the <code>. */
+html[data-ttk-theme] #chat .mes_text pre {background:transparent!important;border:0!important;border-left:0!important;padding:0!important;margin:0 0 var(--ttk-para)}
+html[data-ttk-theme] #chat :is(.mes_text,.mes_reasoning) pre code {display:block;white-space:pre-wrap!important;overflow-wrap:anywhere;padding:12px 14px!important;border-radius:8px!important;border:1px solid var(--ttk-border)!important;line-height:1.55!important;font-size:.88em}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) blockquote {margin-inline:0}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) table {border-collapse:collapse}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) :is(th,td) {border:1px solid var(--ttk-border)!important;padding:5px 9px}
+html[data-ttk-theme] #chat :is(.mes_text,.ttk-tr-text) th {background:var(--ttk-raised)}
+html[data-ttk-theme] #chat .mes_reasoning {border-radius:0 0 6px 6px}
+html[data-ttk-theme] #chat .mes_reasoning :is(p,li,em,i) {color:var(--ttk-muted)!important}
+/* Sliders: a thin palette track with an accent ring, instead of the native black bar. */
+html[data-ttk-theme] input[type=range] {background:color-mix(in srgb,var(--ttk-muted) 34%,var(--ttk-surface));box-shadow:none;height:4px}
+html[data-ttk-theme] input[type=range]:hover {filter:none}
+html[data-ttk-theme] input[type=range]::-webkit-slider-thumb {background:var(--ttk-surface);border:2px solid var(--ttk-accent);box-shadow:0 1px 3px var(--ttk-shadow)}
+html[data-ttk-theme] input[type=range]::-moz-range-thumb {background:var(--ttk-surface);border:2px solid var(--ttk-accent);box-shadow:0 1px 3px var(--ttk-shadow)}
+/* Scrollbars follow the palette. */
+html[data-ttk-theme] * {scrollbar-color:color-mix(in srgb,var(--ttk-muted) 55%,transparent) transparent}
+
+/* 4. Toolkit panel. */
+#ttk-panel,#ttk-panel * {text-shadow:none}
+@media (max-width:1000px) {
+  /* SillyTavern switches to its mobile layout at 1000px; follow the same breakpoint. */
+  html[data-ttk-theme] #chat .mes {max-width:100%!important;margin:8px 0!important;padding:11px 12px!important}
+  html[data-ttk-theme=porcelain] #chat .mes {padding:15px 12px 13px!important}
+  /* The rim ornament must not run into the message buttons on a narrow screen. */
+  html[data-ttk-theme=porcelain] #chat .mes::before {top:4px;right:5px;width:20px;height:9px}
+  html[data-ttk-theme=porcelain] #chat .mes[is_user=true]::before {left:5px}
+  html[data-ttk-theme] #top-settings-holder .drawer-toggle {height:40px!important;min-height:40px!important}
+  html[data-ttk-theme] #top-settings-holder .drawer-toggle > .drawer-icon {width:36px!important;height:36px!important;min-width:36px!important;flex-basis:36px!important}
+  /* 16px inputs stop iOS Safari from zooming the page on focus. */
+  #ttk-panel :is(input[type=text],select,textarea) {font-size:16px!important}
+  #ttk-panel .ttk-button {min-height:40px;padding:9px 12px}
+  #ttk-panel input[type=color] {width:48px;height:36px}
+  #ttk-panel input[type=range] {height:28px}
+  #ttk-panel .ttk-module-row {min-height:44px}
+  #ttk-panel .ttk-theme-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  #ttk-panel .ttk-color-grid {grid-template-columns:1fr}
+}

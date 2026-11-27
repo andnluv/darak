@@ -159,6 +159,7 @@ export function setUserFonts(list){
 const clamp = (v,min,max,fallback) => v!==undefined && v!==null && v!=='' && Number.isFinite(Number(v))? Math.min(max,Math.max(min,Number(v))): fallback;
 const safeHex=(v, fallback)=>typeof v==='string' && /^#[0-9a-fA-F]{6}$/.test(v)?v:fallback;
 const PALETTE_KEYS=['bg','surface','raised','text','muted','accent','border','user','ai'];
+export const DIALOGUE_FOLLOW=new Set(['paper','porcelain','studio']);
 const DEFAULT={theme:'paper',dialogueColors:{},font:'nanummyeongjo',dialogueFont:'nanummyeongjo',size:17,lineHeight:1.85,letterSpacing:0,paragraphSpacing:14,palettes:{},iconStyle:'outline',iconTone:'neutral'};
 // v1.1.0: 지문·대사 각각의 굵기(기본=테마 기본 그대로)·기울임·밑줄. 강조 서식은 기본 꺼짐.
 export function normalizeTextStyle(raw){return {weight:WEIGHT_STEPS.some(([v])=>v===raw?.weight)?raw.weight:'auto',italic:raw?.italic===true,underline:UNDERLINES.some(([v])=>v===raw?.underline)?raw.underline:'none'};}
@@ -178,10 +179,13 @@ export function normalizeDesign(raw={}){
  for(const [id,keys] of Object.entries(lowContrast))for(const [k,[from,to]] of Object.entries(keys))if(palettes[id][k].toLowerCase()===from.toLowerCase())palettes[id][k]=to;
  const dialogueDefaults={paper:'#7A5C44',nocturne:'#F6F8FB',porcelain:'#2A4E9C',studio:'#46627F'};
  const legacyDialogue={paper:'#79543B',nocturne:'#9EC5FF',porcelain:'#315F95',studio:'#396750'};
- const dialogueColors={};for(const id of Object.keys(THEMES))dialogueColors[id]=safeHex(raw.dialogueColors?.[id],dialogueDefaults[id]);
+ const dialogueColors={};for(const id of Object.keys(THEMES))dialogueColors[id]=raw.dialogueColors?.[id]===null&&DIALOGUE_FOLLOW.has(id)?null:safeHex(raw.dialogueColors?.[id],dialogueDefaults[id]);
  // v0.3.14: the old Nocturne dialogue default was indistinguishable from body text (1.19:1). Move only that exact default.
  if(dialogueColors.nocturne.toUpperCase()==='#CAD6F1')dialogueColors.nocturne=dialogueDefaults.nocturne;
- for(const id of Object.keys(THEMES))if(dialogueColors[id].toUpperCase()===legacyDialogue[id].toUpperCase())dialogueColors[id]=dialogueDefaults[id];
+ for(const id of Object.keys(THEMES))if(dialogueColors[id]&&dialogueColors[id].toUpperCase()===legacyDialogue[id].toUpperCase())dialogueColors[id]=dialogueDefaults[id];
+ // v1.6.0: 대사 색은 기본으로 컬러칩의 강조색을 따라간다(null). 테마 기본값과 같은 값은 '따라가기'로 옮기고, 직접 고른 색만 남긴다.
+ // Nocturne은 대사가 흰 글자 + 자막 배경이라 따라가지 않는다.
+ for(const id of DIALOGUE_FOLLOW)if(dialogueColors[id]&&dialogueColors[id].toUpperCase()===dialogueDefaults[id].toUpperCase())dialogueColors[id]=null;
  // v1.4.0: 형광펜 색은 테마별로 따로 고른다. 비어 있으면(null) 예전처럼 그 테마의 강조색을 따라간다.
  const markerColors={};for(const id of Object.keys(THEMES))markerColors[id]=safeHex(raw.markerColors?.[id],null);
  return {grain:raw.grain===true,vignette:raw.vignette===true,entrance:['fade','rise'].includes(raw.entrance)?raw.entrance:'off',theme,font,dialogueFont,dialogueColors,markerColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false,photoSize:['off','sm','md','lg'].includes(raw.photoSize)?raw.photoSize:'md',narrationStyle:normalizeTextStyle(raw.narrationStyle),dialogueStyle:normalizeTextStyle(raw.dialogueStyle),emphasis:raw.emphasis===true};
@@ -259,7 +263,7 @@ export function applyDesign(enabled,raw){
  // Studio's cover numerals are set in Playfair Display; it is requested only while Studio is active.
  syncFontSources([d.font,d.dialogueFont,...(d.theme==='studio'?['playfair']:[]),...(d.theme==='nocturne'?['oswald']:[])]);
  const hexRgb=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)).join(',');
- const vars={...p,rgbAccent:hexRgb(p.accent),dialogueBg:d.theme==='nocturne'?`rgba(${hexRgb(p.accent)},.26)`:d.theme==='paper'?`rgba(${hexRgb(p.accent)},.12)`:'transparent',shadow:THEMES[d.theme].shadow,dialogue:d.dialogueColors[d.theme],marker:d.markerColors[d.theme]||p.accent,font:FONTS[d.font].family,dialogueFont:FONTS[d.dialogueFont].family,size:`${d.size}px`,line:d.lineHeight,tracking:`${d.letterSpacing}px`,para:`${d.paragraphSpacing}px`,narrWeight:nw.value,dlgWeight:dw.value,emphWeight:emph.value};
+ const vars={...p,rgbAccent:hexRgb(p.accent),dialogueBg:d.theme==='nocturne'?`rgba(${hexRgb(p.accent)},.26)`:d.theme==='paper'?`rgba(${hexRgb(p.accent)},.12)`:'transparent',shadow:THEMES[d.theme].shadow,dialogue:d.dialogueColors[d.theme]||p.accent,marker:d.markerColors[d.theme]||p.accent,font:FONTS[d.font].family,dialogueFont:FONTS[d.dialogueFont].family,size:`${d.size}px`,line:d.lineHeight,tracking:`${d.letterSpacing}px`,para:`${d.paragraphSpacing}px`,narrWeight:nw.value,dlgWeight:dw.value,emphWeight:emph.value};
  for(const k of Object.keys(vars))if(vars[k]===null||vars[k]===undefined)delete vars[k];
  let node=document.getElementById(STYLE_ID);
  if(!node){node=document.createElement('style');node.id=STYLE_ID;document.head.append(node);}

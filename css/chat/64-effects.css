@@ -1,0 +1,23 @@
+/* v1.3.2 테마 효과: 필름 그레인 · 비네트 · 새 응답 등장 (설정에서 켤 때만) */
+#ttk-fx-grain{position:fixed;inset:0;z-index:2147483000;pointer-events:none;opacity:.16;background-size:180px 180px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.4 -1.15'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url%28%23n%29'/%3E%3C/svg%3E");-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform}
+html[data-ttk-scheme=dark] #ttk-fx-grain{opacity:.12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 2.4 -1.15'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url%28%23n%29'/%3E%3C/svg%3E")}
+#ttk-fx-vig{position:fixed;inset:0;z-index:2147482999;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.42) 100%);-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform}
+html[data-ttk-scheme=dark] #ttk-fx-vig{background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 100%)}
+@keyframes ttk-enter-fade{from{opacity:0}to{opacity:1}}
+@keyframes ttk-enter-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+html[data-ttk-enter=fade] #chat .mes.ttk-enter{animation:ttk-enter-fade .45s ease-out both}
+html[data-ttk-enter=rise] #chat .mes.ttk-enter{animation:ttk-enter-rise .45s ease-out both}
+@media (prefers-reduced-motion:reduce){html[data-ttk-enter] #chat .mes.ttk-enter{animation:none}}
+html[data-ttk-opt~=motion][data-ttk-enter] #chat .mes.ttk-enter{animation:none}
+.ttk-fx-row{display:flex;flex-direction:column;gap:8px}
+.ttk-add-menu>summary::marker,.ttk-more>summary::marker{content:""}
+#ttk-face-import .ttk-actions.ttk-drop-on{border-color:var(--ttk-accent,currentColor);background:color-mix(in srgb,var(--ttk-accent,currentColor) 8%,transparent)}
+.ttk-fx-diag textarea{width:100%;font-size:11px;line-height:1.4;font-family:ui-monospace,monospace;margin-top:6px}
+
+/* v1.3.5: html에 transform이 걸린 환경(휴대폰 SillyTavern 등)에서는 fixed 층의 기준이 화면이 아니라 html이 되고,
+   body가 fixed라 html 높이가 0이어서 inset:0만으로는 효과 층 높이가 0이 됐다. 화면 크기를 직접 준다. */
+:is(#ttk-fx-grain,#ttk-fx-vig,#ttk-wx,#ttk-wx-top,#ttk-wx-flash){top:0!important;left:0!important;right:auto!important;bottom:auto!important;width:100vw!important;width:100dvw!important;height:100vh!important;height:100dvh!important}
+
+#ttk-panel .ttk-marker-row{display:grid;gap:6px;padding:6px 0;border-top:1px solid var(--ttk-border,#bbb)}
+#ttk-panel .ttk-marker-row .ttk-color-field{justify-content:flex-start;gap:10px;font-size:inherit}
+#ttk-panel .ttk-marker-row input[type=color][data-follow=true]{opacity:.55}
