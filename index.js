@@ -22,7 +22,7 @@ import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.7.8';
+const VERSION = '1.7.9';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
