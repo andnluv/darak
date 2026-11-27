@@ -37,7 +37,7 @@ html.ttk-win-open body{overscroll-behavior:none}
 .ttk-win-rail{display:flex;flex-direction:column;min-height:0;background:var(--w-rail);border-right:1px solid var(--w-line)}
 .ttk-win-brand{padding:24px 22px 18px;border-bottom:1px solid var(--w-line)}
 .ttk-win-key{display:block;width:56px;height:21px;background:var(--w-gold);-webkit-mask:var(--ttk-w-key) center/contain no-repeat;mask:var(--ttk-w-key) center/contain no-repeat}
-.ttk-win-brand-name{margin-top:8px;font:400 22px/1.2 'Gowun Batang',serif;letter-spacing:2px}
+.ttk-win-brand-name{margin-top:8px;font:700 23px/1.2 'Gowun Batang',serif;letter-spacing:2px}
 .ttk-win-ver{margin-top:2px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:2px;color:var(--w-gold)}
 .ttk-win-nav{flex:1;min-height:0;overflow:auto;padding:12px;display:flex;flex-direction:column;gap:2px}
 .ttk-win-nav-group{padding:12px 10px 4px;font:500 11px 'IBM Plex Sans KR',sans-serif;letter-spacing:1px;color:var(--w-muted)}
