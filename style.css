@@ -1977,3 +1977,65 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 #ttk-panel > .inline-drawer-header > .inline-drawer-icon.up::before{transform:rotate(180deg)}
 :root{--ttk-lc-chev:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtNiA5IDYgNiA2LTYiIC8+IDwvc3ZnPg==")}
 .ttk-lc-img{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiByeT0iMiIgLz4gPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjIiIC8+IDxwYXRoIGQ9Im0yMSAxNS0zLjA4Ni0zLjA4NmEyIDIgMCAwIDAtMi44MjggMEw2IDIxIiAvPiA8L3N2Zz4=")}
+
+/* v1.3.2 디자인 정비: 표정 창 */
+.ttk-lc-trash{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAgMTF2NiIgLz4gPHBhdGggZD0iTTE0IDExdjYiIC8+IDxwYXRoIGQ9Ik0xOSA2djE0YTIgMiAwIDAgMS0yIDJIN2EyIDIgMCAwIDEtMi0yVjYiIC8+IDxwYXRoIGQ9Ik0zIDZoMTgiIC8+IDxwYXRoIGQ9Ik04IDZWNGEyIDIgMCAwIDEgMi0yaDRhMiAyIDAgMCAxIDIgMnYyIiAvPiA8L3N2Zz4=")}
+.ttk-lc-crop{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNiAydjE0YTIgMiAwIDAgMCAyIDJoMTQiIC8+IDxwYXRoIGQ9Ik0xOCAyMlY4YTIgMiAwIDAgMC0yLTJIMiIgLz4gPC9zdmc+")}
+.ttk-lc-plus{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNSAxMmgxNCIgLz4gPHBhdGggZD0iTTEyIDV2MTQiIC8+IDwvc3ZnPg==")}
+.ttk-lc-upload{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTIgM3YxMiIgLz4gPHBhdGggZD0ibTE3IDgtNS01LTUgNSIgLz4gPHBhdGggZD0iTTIxIDE1djRhMiAyIDAgMCAxLTIgMkg1YTIgMiAwIDAgMS0yLTJ2LTQiIC8+IDwvc3ZnPg==")}
+.ttk-lc-link{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTAgMTNhNSA1IDAgMCAwIDcuNTQuNTRsMy0zYTUgNSAwIDAgMC03LjA3LTcuMDdsLTEuNzIgMS43MSIgLz4gPHBhdGggZD0iTTE0IDExYTUgNSAwIDAgMC03LjU0LS41NGwtMyAzYTUgNSAwIDAgMCA3LjA3IDcuMDdsMS43MS0xLjcxIiAvPiA8L3N2Zz4=")}
+.ttk-lc-code{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNNiAyMmEyIDIgMCAwIDEtMi0yVjRhMiAyIDAgMCAxIDItMmg4YTIuNCAyLjQgMCAwIDEgMS43MDQuNzA2bDMuNTg4IDMuNTg4QTIuNCAyLjQgMCAwIDEgMjAgOHYxMmEyIDIgMCAwIDEtMiAyeiIgLz4gPHBhdGggZD0iTTE0IDJ2NWExIDEgMCAwIDAgMSAxaDUiIC8+IDxwYXRoIGQ9Ik0xMCAxMi41IDggMTVsMiAyLjUiIC8+IDxwYXRoIGQ9Im0xNCAxMi41IDIgMi41LTIgMi41IiAvPiA8L3N2Zz4=")}
+.ttk-lc-zip{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTMuNjU5IDIySDE4YTIgMiAwIDAgMCAyLTJWOGEyLjQgMi40IDAgMCAwLS43MDYtMS43MDZsLTMuNTg4LTMuNTg4QTIuNCAyLjQgMCAwIDAgMTQgMkg2YTIgMiAwIDAgMC0yIDJ2MTEuNSIgLz4gPHBhdGggZD0iTTE0IDJ2NWExIDEgMCAwIDAgMSAxaDUiIC8+IDxwYXRoIGQ9Ik04IDEydi0xIiAvPiA8cGF0aCBkPSJNOCAxOHYtMiIgLz4gPHBhdGggZD0iTTggN1Y2IiAvPiA8Y2lyY2xlIGN4PSI4IiBjeT0iMjAiIHI9IjIiIC8+IDwvc3ZnPg==")}
+.ttk-lc-users{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJNMTYgMjF2LTJhNCA0IDAgMCAwLTQtNEg2YTQgNCAwIDAgMC00IDR2MiIgLz4gPHBhdGggZD0iTTE2IDMuMTI4YTQgNCAwIDAgMSAwIDcuNzQ0IiAvPiA8cGF0aCBkPSJNMjIgMjF2LTJhNCA0IDAgMCAwLTMtMy44NyIgLz4gPGNpcmNsZSBjeD0iOSIgY3k9IjciIHI9IjQiIC8+IDwvc3ZnPg==")}
+
+/* 창 공통: 가져오기·위치 조정 */
+:is(#ttk-face-import,#ttk-face-crop){background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#ttk-face-crop{background:rgba(0,0,0,.68)}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-box{gap:12px;padding:0 16px 16px;border-radius:16px;border:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-head{position:sticky;top:0;z-index:1;margin:0 -16px;padding:12px 16px;background:inherit;border-bottom:1px solid color-mix(in srgb,currentColor 12%,transparent)}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-x{border-color:transparent;padding:6px 10px}
+:is(#ttk-face-import,#ttk-face-crop) :is(textarea,input[type=url],input[type=search],input[type=text]){background:transparent!important;border:0!important;border-bottom:1px solid color-mix(in srgb,currentColor 28%,transparent)!important;border-radius:0!important;box-shadow:none!important;padding:6px 2px!important}
+:is(#ttk-face-import,#ttk-face-crop) :is(textarea,input):focus{border-bottom-color:var(--ttk-accent,currentColor)!important;outline:0}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-field>span{display:block;font-size:12px;opacity:.7;margin-bottom:4px}
+/* 안내문 접기 */
+.ttk-more{font-size:13px}
+.ttk-more>summary{cursor:pointer;list-style:none;display:inline-flex;align-items:center;gap:4px;opacity:.75;padding:2px 0}
+.ttk-more>summary::-webkit-details-marker{display:none}
+.ttk-more>summary::after{content:"";width:14px;height:14px;background:currentColor;-webkit-mask:var(--ttk-lc-chev) center/contain no-repeat;mask:var(--ttk-lc-chev) center/contain no-repeat;transition:transform .2s}
+.ttk-more[open]>summary::after{transform:rotate(180deg)}
+.ttk-more>p{margin:6px 0 0}
+/* 표정 고르기: 3열 + 큰 얼굴 */
+.ttk-face-pop{border-radius:16px;padding:12px;min-width:210px}
+.ttk-face-pop-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+.ttk-face-pop .ttk-face-thumb{width:52px;height:52px}
+.ttk-face-pop-pick{padding:8px 4px;border-radius:12px}
+.ttk-face-pop-pick:hover{background:color-mix(in srgb,currentColor 7%,transparent)}
+.ttk-face-pop-pick[aria-pressed=true]{background:color-mix(in srgb,var(--ttk-accent,currentColor) 10%,transparent)}
+.ttk-face-pop-row strong{display:flex;align-items:center;gap:8px}
+/* 목록 줄 */
+#ttk-panel .ttk-face-row{border:0;border-bottom:1px solid color-mix(in srgb,currentColor 12%,transparent);border-radius:0;padding:8px 2px}
+#ttk-panel .ttk-face-row>.ttk-face-thumb{width:52px;height:52px}
+#ttk-panel .ttk-face-fields input{background:transparent!important;border:0!important;border-bottom:1px solid color-mix(in srgb,currentColor 22%,transparent)!important;border-radius:0!important;box-shadow:none!important;padding:4px 2px!important}
+#ttk-panel .ttk-face-fields input:focus{border-bottom-color:var(--ttk-accent,currentColor)!important;outline:0}
+#ttk-panel .ttk-ib{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;flex:none}
+/* 추가 메뉴 */
+.ttk-add-menu{position:relative}
+.ttk-add-menu>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.ttk-add-menu>summary::-webkit-details-marker{display:none}
+.ttk-add-list{display:flex;flex-direction:column;margin-top:6px;border-radius:12px;overflow:hidden;border:1px solid color-mix(in srgb,currentColor 16%,transparent);background:var(--ttk-surface,transparent)}
+.ttk-add-list>.ttk-add-item{display:flex!important;align-items:center;gap:10px;justify-content:flex-start;text-align:left;border:0!important;border-radius:0!important;border-bottom:1px solid color-mix(in srgb,currentColor 10%,transparent)!important;background:transparent!important;box-shadow:none!important;padding:10px 12px!important}
+.ttk-add-list>.ttk-add-item:last-child{border-bottom:0!important}
+/* zip 끌어놓기 칸 */
+#ttk-face-import .ttk-actions{padding:18px 12px;border:1.5px dashed color-mix(in srgb,currentColor 30%,transparent);border-radius:14px;justify-content:center;flex-wrap:wrap}
+
+/* v1.3.2 테마 효과: 필름 그레인 · 비네트 · 새 응답 등장 (설정에서 켤 때만) */
+html[data-ttk-grain]::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.07;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+html[data-ttk-scheme=dark][data-ttk-grain]::after{mix-blend-mode:screen;opacity:.05}
+html[data-ttk-vignette]::before{content:"";position:fixed;inset:0;z-index:39;pointer-events:none;background:radial-gradient(ellipse at center,transparent 58%,rgba(0,0,0,.22) 100%)}
+@keyframes ttk-enter-fade{from{opacity:0}to{opacity:1}}
+@keyframes ttk-enter-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+html[data-ttk-enter=fade] #chat .mes.ttk-enter{animation:ttk-enter-fade .45s ease-out both}
+html[data-ttk-enter=rise] #chat .mes.ttk-enter{animation:ttk-enter-rise .45s ease-out both}
+@media (prefers-reduced-motion:reduce){html[data-ttk-enter] #chat .mes.ttk-enter{animation:none}}
+.ttk-fx-row{display:flex;flex-direction:column;gap:8px}
+.ttk-add-menu>summary::marker,.ttk-more>summary::marker{content:""}

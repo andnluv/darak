@@ -16,6 +16,10 @@ export const MAX_MOODS = 12;
 export const MOOD_LABELS = { angry: '화남', annoyed: '짜증', blush: '홍조', crying: '울음', embarrassed: '당황', expressionless: '무표정', gloomy: '우울', laughing: '웃음', panic: '놀람', smile: '미소', mask: '가면', happy: '기쁨', sad: '슬픔', surprised: '놀람', neutral: '기본', shy: '수줍음' };
 const NEUTRAL_ORDER = ['expressionless', 'neutral', 'smile', 'default'];
 const moodLabel = k => MOOD_LABELS[k] || k;
+/** 긴 안내문은 「자세히」로 접어 둔다 (hover 없이 눌러서 펼침). */
+const ic = k => el('i', `ttk-lc ttk-lc-${k}`);
+function more(text, label = '자세히') { const d = el('details', 'ttk-more'); d.append(el('summary', '', label), el('p', 'ttk-note', text)); return d; }
+
 const pickUrl = (e, mood) => (mood && e.moods?.find(m => m.k === mood)?.url) || e.url;
 const NAMES_IN_PROMPT = 30; // 이름이 이보다 많으면 지시문에 이름 목록을 싣지 않는다(토큰 절약)
 const URL_OK = /^\/?user\/files\/[\w.\-%]+$/;
@@ -358,7 +362,7 @@ export class Faces {
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', `${entry.name} · 얼굴 위치 조정`)); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
-        box.append(el('p', 'ttk-note', '그림을 끌어서 옮기고(키보드는 방향키), 아래 칸으로 크기를 맞추세요. 어두운 바깥쪽은 채팅에서 보이지 않습니다. 원본은 자르지 않으므로 언제든 다시 바꿀 수 있고, 표정 그림도 같은 위치를 씁니다.'));
+        box.append(more('그림을 끌어서 옮기고(키보드는 방향키), 아래 칸으로 크기를 맞추세요. 어두운 바깥쪽은 채팅에서 보이지 않습니다. 원본은 자르지 않으므로 언제든 다시 바꿀 수 있고, 표정 그림도 같은 위치를 씁니다.'));
         const stage = el('div', 'ttk-crop-stage'); stage.tabIndex = 0; stage.setAttribute('aria-label', '얼굴 위치 (끌거나 방향키)'); box.append(stage);
         let url = entry.url;
         const dims = () => { const kx = fit.z * Math.max(fit.r, 1), ky = kx / fit.r; return { kx, ky }; };
@@ -408,7 +412,7 @@ export class Faces {
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '표정 묶음(zip)에서 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
-        box.append(el('p', 'ttk-note', '“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 얼굴 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
+        box.append(more('“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 얼굴 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
         const file = el('input'); file.type = 'file'; file.accept = '.zip,application/zip'; file.hidden = true; file.setAttribute('aria-label', 'zip 파일'); // 테마가 파일 입력칸을 가릴 수 있어 자체 버튼을 쓴다
         const pickRow = el('div', 'ttk-actions'), pickBtn = el('button', 'ttk-button', 'zip 파일 고르기'); pickBtn.type = 'button'; pickBtn.addEventListener('click', () => file.click());
         const pickName = el('span', 'ttk-note', '고른 파일 없음'); pickRow.append(pickBtn, pickName, file);
@@ -469,7 +473,7 @@ export class Faces {
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '페이지에서 얼굴 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
-        box.append(el('p', 'ttk-note', '인물 도감 같은 페이지의 코드(개발자 도구 Elements에서 복사)를 붙여 넣고, 사진 주소의 기준이 되는 사이트 주소를 적으세요. 사진 옆의 굵은 글씨나 제목을 이름으로 읽습니다.'));
+        box.append(more('인물 도감 같은 페이지의 코드(개발자 도구 Elements에서 복사)를 붙여 넣고, 사진 주소의 기준이 되는 사이트 주소를 적으세요. 사진 옆의 굵은 글씨나 제목을 이름으로 읽습니다.'));
         const code = el('textarea', 'ttk-fi-code'); code.rows = 5; code.placeholder = '붙여넣을 HTML 코드'; code.setAttribute('aria-label', 'HTML 코드');
         const base = el('input', 'ttk-fi-base'); base.type = 'url'; base.placeholder = '기준 주소 (사진 주소가 /img/… 처럼 상대 경로일 때만, 예: https://example.github.io/site/)'; base.setAttribute('aria-label', '기준 주소');
         const read = el('button', 'ttk-button', '읽기'); read.type = 'button';
@@ -574,14 +578,20 @@ export class Faces {
                 const hit = chars.find(x => norm(x.name) === norm(name)); if (!hit) throw Error('같은 이름의 카드가 없습니다.');
                 await self.addFromCard(hit.avatar);
             })));
+        // 「추가」 메뉴: 흩어져 있던 추가 버튼을 한 곳에 모은다
+        { const menu = el('details', 'ttk-add-menu'), sum = el('summary', 'ttk-button'); sum.append(ic('plus'), el('span', '', '추가'), ic('chev'));
+          const body = el('div', 'ttk-add-list'); const icons = ['upload', 'link', 'code', 'zip', 'users'];
+          [...actions.querySelectorAll(':scope > button')].forEach((b, i) => { b.classList.add('ttk-add-item'); b.prepend(ic(icons[i] || 'plus')); body.append(b); });
+          menu.append(sum, body); actions.replaceChildren(menu, file);
+          body.addEventListener('click', () => { menu.open = false; }); }
         function row(e) {
             const r = el('div', 'ttk-face-row'), img = el('span', 'ttk-face-thumb'); facePaint(img, e, e.url); r.append(img);
             const name = el('input'); name.type = 'text'; name.value = e.name; name.maxLength = 20; name.placeholder = '이름'; name.setAttribute('aria-label', '이름');
             const al = el('input'); al.type = 'text'; al.value = (e.aliases || []).join(', '); al.placeholder = '다른 이름 (쉼표로 구분)'; al.setAttribute('aria-label', '다른 이름');
             const apply = () => { e.name = name.value.trim().slice(0, 20) || e.name; e.aliases = al.value.split(/[,，、]/).map(s => s.trim().slice(0, 20)).filter(Boolean).slice(0, 6); self.save(); self.refresh(); };
             name.addEventListener('change', apply); al.addEventListener('change', apply);
-            const del = btn('삭제', async () => { if (!(await confirmAsk(`“${e.name}” 얼굴을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger');
-            const fields = el('div', 'ttk-face-fields'); fields.append(name, al); r.append(fields, btn('위치 조정', () => self.openCrop(e, render)), del); return r;
+            const del = btn('', async () => { if (!(await confirmAsk(`“${e.name}” 얼굴을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger ttk-ib'); del.title = '삭제'; del.setAttribute('aria-label', `${e.name} 삭제`); del.append(ic('trash'));
+            const fields = el('div', 'ttk-face-fields'); fields.append(name, al); const crop = btn('', () => self.openCrop(e, render), 'ttk-ib'); crop.title = '위치 조정'; crop.setAttribute('aria-label', `${e.name} 위치 조정`); crop.append(ic('crop')); r.append(fields, crop, del); return r;
         }
         function render() {
             const key = self.key(), c = self.ctx(); list.replaceChildren();
