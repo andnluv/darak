@@ -182,7 +182,7 @@ export function normalizeDesign(raw={}){
  // v0.3.14: the old Nocturne dialogue default was indistinguishable from body text (1.19:1). Move only that exact default.
  if(dialogueColors.nocturne.toUpperCase()==='#CAD6F1')dialogueColors.nocturne=dialogueDefaults.nocturne;
  for(const id of Object.keys(THEMES))if(dialogueColors[id].toUpperCase()===legacyDialogue[id].toUpperCase())dialogueColors[id]=dialogueDefaults[id];
- return {theme,font,dialogueFont,dialogueColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false,photoSize:['off','sm','md','lg'].includes(raw.photoSize)?raw.photoSize:'md',narrationStyle:normalizeTextStyle(raw.narrationStyle),dialogueStyle:normalizeTextStyle(raw.dialogueStyle),emphasis:raw.emphasis===true};
+ return {grain:raw.grain===true,vignette:raw.vignette===true,entrance:['fade','rise'].includes(raw.entrance)?raw.entrance:'off',theme,font,dialogueFont,dialogueColors,size:clamp(raw.size,10,23,DEFAULT.size),lineHeight:clamp(raw.lineHeight,1.4,2.4,DEFAULT.lineHeight),letterSpacing:clamp(raw.letterSpacing,-.6,1.8,DEFAULT.letterSpacing),paragraphSpacing:clamp(raw.paragraphSpacing,0,32,DEFAULT.paragraphSpacing),palettes,custom:palettes[theme],iconStyle:['outline','soft','minimal'].includes(raw.iconStyle)?raw.iconStyle:DEFAULT.iconStyle,iconTone:['neutral','accent'].includes(raw.iconTone)?raw.iconTone:DEFAULT.iconTone,dropCap:raw.dropCap!==false,typing:raw.typing!==false,photoSize:['off','sm','md','lg'].includes(raw.photoSize)?raw.photoSize:'md',narrationStyle:normalizeTextStyle(raw.narrationStyle),dialogueStyle:normalizeTextStyle(raw.dialogueStyle),emphasis:raw.emphasis===true};
 }
 // A theme switch changes only the palette + layout. Typography and all theme palettes survive.
 export function selectTheme(raw,id){if(!THEMES[id])return normalizeDesign(raw);return normalizeDesign({...normalizeDesign(raw),theme:id});}
@@ -214,7 +214,7 @@ export function clearFontPreviews(){document.head.querySelectorAll(`[${PREVIEW_A
 function fontFaceCss(f){if(f.cssText)return f.cssText;return [].concat(f.face).map(face=>`@font-face{font-family:'${face.family}';src:url('${encodeURI(face.url)}') format('${face.format}');font-weight:${face.weight||400};font-style:${face.style||'normal'};font-display:swap}`).join('\n');}
 function luminance(hex){const v=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255).map(c=>c<=.03928?c/12.92:((c+.055)/1.055)**2.4);return .2126*v[0]+.7152*v[1]+.0722*v[2];}
 export function schemeOf(palette){return luminance(palette.bg)<.3?'dark':'light';}
-const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap','data-ttk-photo','data-ttk-narr-w','data-ttk-dlg-w','data-ttk-narr-i','data-ttk-dlg-i','data-ttk-narr-u','data-ttk-dlg-u','data-ttk-emph'];
+const ROOT_ATTRS=['data-ttk-theme','data-ttk-icon-style','data-ttk-icon-tone','data-ttk-scheme','data-ttk-dropcap','data-ttk-photo','data-ttk-narr-w','data-ttk-dlg-w','data-ttk-narr-i','data-ttk-dlg-i','data-ttk-narr-u','data-ttk-dlg-u','data-ttk-emph','data-ttk-grain','data-ttk-vignette','data-ttk-enter'];
 export const PHOTO_SIZES=[['off','끄기'],['sm','작게'],['md','기본'],['lg','크게']];
 // v0.11.0: while the design is ON, the original ST theme's user CSS (#custom-style) is switched off so it
 // cannot decide avatar size/position or message structure. media="not all" survives ST rewriting the
@@ -232,7 +232,16 @@ export function setOriginalThemeCss(muted){
   if(node?.hasAttribute(MUTE_ATTR)){const prev=node.getAttribute(MUTE_ATTR);if(prev)node.setAttribute('media',prev);else node.removeAttribute('media');node.removeAttribute(MUTE_ATTR);}
  }
 }
-export function teardownDesign(){setOriginalThemeCss(false);clearFontPreviews();document.getElementById(STYLE_ID)?.remove();syncFontSources([]);for(const a of ROOT_ATTRS)document.documentElement.removeAttribute(a);}
+let enterObs=null;
+function syncEnter(mode){
+ if(enterObs){enterObs.disconnect();enterObs=null;}
+ const chat=document.getElementById('chat');if(!mode||!chat||typeof MutationObserver==='undefined')return;
+ if(matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+ // 채팅을 불러올 때처럼 한꺼번에 많이 들어올 때는 건너뛰고, 새 메시지 1~2개만 등장 효과를 준다.
+ enterObs=new MutationObserver(list=>{const add=list.flatMap(m=>[...m.addedNodes]).filter(n=>n.nodeType===1&&n.classList?.contains('mes'));if(!add.length||add.length>2)return;for(const n of add){n.classList.add('ttk-enter');n.addEventListener('animationend',()=>n.classList.remove('ttk-enter'),{once:true});}});
+ enterObs.observe(chat,{childList:true});
+}
+export function teardownDesign(){syncEnter(false);setOriginalThemeCss(false);clearFontPreviews();document.getElementById(STYLE_ID)?.remove();syncFontSources([]);for(const a of ROOT_ATTRS)document.documentElement.removeAttribute(a);}
 export function applyDesign(enabled,raw){
  if(!enabled){teardownDesign();return;}
  const d=normalizeDesign(raw),p=d.custom;
@@ -242,7 +251,7 @@ export function applyDesign(enabled,raw){
  const ns=d.narrationStyle,ds=d.dialogueStyle,nw=resolveWeight(d.font,ns.weight),dw=resolveWeight(d.dialogueFont,ds.weight),emph=emphasisOf(d.font,ns.weight);
  const flag=(name,on)=>{if(on)root.setAttribute(name,typeof on==='string'?on:'on');else root.removeAttribute(name);};
  flag('data-ttk-narr-w',nw.value!==null);flag('data-ttk-dlg-w',dw.value!==null);flag('data-ttk-narr-i',ns.italic);flag('data-ttk-dlg-i',ds.italic);
- flag('data-ttk-narr-u',ns.underline!=='none'&&ns.underline);flag('data-ttk-dlg-u',ds.underline!=='none'&&ds.underline);flag('data-ttk-emph',d.emphasis&&emph.mode);
+ flag('data-ttk-narr-u',ns.underline!=='none'&&ns.underline);flag('data-ttk-dlg-u',ds.underline!=='none'&&ds.underline);flag('data-ttk-emph',d.emphasis&&emph.mode);flag('data-ttk-grain',d.grain);flag('data-ttk-vignette',d.vignette);flag('data-ttk-enter',d.entrance!=='off'&&d.entrance);syncEnter(d.entrance!=='off'&&d.entrance);
  setOriginalThemeCss(true);
  // Studio's cover numerals are set in Playfair Display; it is requested only while Studio is active.
  syncFontSources([d.font,d.dialogueFont,...(d.theme==='studio'?['playfair']:[]),...(d.theme==='nocturne'?['oswald']:[])]);
