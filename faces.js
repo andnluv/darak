@@ -69,7 +69,7 @@ export function normalizeFaces(raw = {}) {
     return { prompt: raw?.prompt !== false, size: FACE_SIZES.some(x => x[0] === raw?.size) ? raw.size : 'md', cards };
 }
 
-export const FACE_SIZES = [['sm', '작게', '1.75em'], ['md', '보통', '2.6em'], ['lg', '크게', '3.4em'], ['xl', '아주 크게', '4.4em']];
+export const FACE_SIZES = [['sm', '작게', '1.75em'], ['md', '보통', '2.6em'], ['lg', '크게', '3.4em'], ['xl', '아주 크게', '4.4em'], ['xxl', '특대', 5.6 + 'em'], ['mx', '최대', 7 + 'em']];
 function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
 const uid = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 const norm = s => String(s || '').trim().toLowerCase();
@@ -84,6 +84,9 @@ export function buildIndex(entries, minLen = 2) {
     uniq.sort((a, b) => b.k.length - a.k.length);
     return uniq;
 }
+export const NPC_ID = '__npc';
+const NPC_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" fill="#9aa0a6"/><circle cx="32" cy="25" r="11" fill="#e8eaed"/><path d="M10 60c2-14 12-20 22-20s20 6 22 20z" fill="#e8eaed"/></svg>';
+const NPC_ENTRY = { id: NPC_ID, name: 'NPC', url: `data:image/svg+xml;base64,${btoa(NPC_SVG)}`, moods: [] };
 export const byName = (index, name) => index.find(x => x.k === norm(name))?.id || null;
 /** The registered name that appears last in `text` (the nearest one before a dialogue). */
 export function lastMention(index, text) {
@@ -200,7 +203,7 @@ export class Faces {
         return { before, after, block };
     }
     /** If the text right before the dialogue ends with a registered `[이름]`, return {id, node, from, to}. */
-    tagBefore(range, index) {
+    tagBefore(range, index, npcNames) {
         const walker = document.createTreeWalker(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
         let last = null, n;
         while ((n = walker.nextNode())) {
@@ -212,7 +215,7 @@ export class Faces {
         let text = last.nodeValue;
         if (last === range.endContainer) text = text.slice(0, range.endOffset);
         const m = TAG_RE.exec(text); if (!m) return null;
-        const id = byName(index, m[1]); if (!id) return null;
+        const id = byName(index, m[1]) || (npcNames?.has(norm(m[1])) ? NPC_ID : null); if (!id) return null;
         return { id, node: last, from: m.index, to: m.index + m[0].replace(/\s+$/, '').length };
     }
     process(host) {
@@ -221,12 +224,14 @@ export class Faces {
         const entries = this.entries(); if (!entries.length) return;
         const spans = [...host.querySelectorAll('span.ttk-dialogue')]; if (!spans.length) return;
         const index = buildIndex(entries), tagIndex = buildIndex(entries, 1), mes = host.closest('.mes'), c = this.ctx();
+        // 봇카드 이름으로 붙은 [이름] 표기(등록된 얼굴이 아닌 것)는 NPC 하나로 표시
+        const npcNames = new Set([c?.name2, c?.characters?.[c?.characterId]?.name].filter(Boolean).map(norm));
         const mesId = mes ? Number(mes.getAttribute('mesid')) : NaN, msg = Number.isNaN(mesId) ? null : c?.chat?.[mesId];
         const pick = msg?.extra?.ttk_face_pick || {};
         spans.forEach((span, ord) => {
             let id = null, tag = null;
             const { before, after } = this.around(host, span, spans);
-            tag = this.tagBefore(before, tagIndex);
+            tag = this.tagBefore(before, tagIndex, npcNames);
             if (tag) id = tag.id;
             else id = firstMention(index, after.toString()) || lastMention(index, before.toString());
             let mood = '';
@@ -235,7 +240,7 @@ export class Faces {
                 const node = tag.node, mid = node.splitText(tag.from), rest = mid.splitText(tag.to - tag.from);
                 const w = el('span', 'ttk-ftag'); mid.replaceWith(w); w.append(mid); void rest;
             }
-            const e = id && entries.find(x => x.id === id); if (!e) return;
+            const e = id === NPC_ID ? NPC_ENTRY : id && entries.find(x => x.id === id); if (!e) return;
             const b = el('span', 'ttk-face'); b.setAttribute('role', 'button'); b.tabIndex = 0; b.dataset.id = e.id; b.dataset.ord = String(ord); b.dataset.mood = mood;
             b.setAttribute('aria-label', `${e.name} (눌러서 이름 보기)`);
             facePaint(b, e, pickUrl(e, mood));
@@ -254,13 +259,17 @@ export class Faces {
     closePop() { this.pop?.remove(); this.pop = null; document.removeEventListener('pointerdown', this.onDown, true); document.removeEventListener('keydown', this.onKey, true); }
     openPop(faceEl, { change = false, mood = false } = {}) {
         this.closePop();
-        const entries = this.entries(), e = entries.find(x => x.id === faceEl.dataset.id); if (!e) return;
+        const entries = this.entries(), e = faceEl.dataset.id === NPC_ID ? NPC_ENTRY : entries.find(x => x.id === faceEl.dataset.id); if (!e) return;
         const pop = this.pop = el('div', 'ttk-face-pop'); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', '화자 얼굴');
         if (!change && !mood) {
-            const row = el('div', 'ttk-face-pop-row'); row.append(el('strong', '', e.name));
-            const b = el('button', 'ttk-face-pop-btn', '바꾸기'); b.type = 'button'; b.addEventListener('click', () => this.openPop(faceEl, { change: true })); row.append(b);
-            if (e.moods?.length) { const m = el('button', 'ttk-face-pop-btn', '표정'); m.type = 'button'; m.addEventListener('click', () => this.openPop(faceEl, { mood: true })); row.append(m); }
-            pop.append(row);
+            const card = el('div', 'ttk-face-pop-card');
+            const big = el('span', 'ttk-face-thumb ttk-face-pop-big'); facePaint(big, e, pickUrl(e, faceEl.dataset.mood || ''));
+            const acts = el('div', 'ttk-face-pop-acts');
+            const ib = (k, label, fn) => { const x = el('button', 'ttk-face-pop-ib'); x.type = 'button'; x.setAttribute('aria-label', label); x.append(ic(k)); x.addEventListener('click', fn); return x; };
+            acts.append(ib('repeat', '화자 바꾸기', () => this.openPop(faceEl, { change: true })));
+            if (e.moods?.length) acts.append(ib('smile', '표정 고르기', () => this.openPop(faceEl, { mood: true })));
+            card.append(big, el('strong', 'ttk-face-pop-name', e.name), acts);
+            pop.append(card);
         } else if (mood) {
             pop.append(el('div', 'ttk-face-pop-title', `${e.name}의 표정`));
             const grid = el('div', 'ttk-face-pop-grid');
