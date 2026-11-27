@@ -22,7 +22,7 @@ import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.7.5';
+const VERSION = '1.7.6';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
@@ -310,7 +310,7 @@ function build(){
  const previewBox=el('div','ttk-preview-message');
  const previewName=el('strong','ttk-preview-name','CHARACTER');
  const narration=el('p','ttk-preview-narration','그는 창밖을 바라보다 천천히 고개를 돌렸다. 비에 젖은 유리창 너머로 가로등 불빛이 번지고, 방 안에는 식어 가는 ');narration.append(el('em','','찻잔의 김'),document.createTextNode('만 희미하게 남아 있었다.'));
- const dialogue=el('p','ttk-preview-dialogue','“오늘은 여기까지 이야기해도 괜찮아. 나머지는 내일 다시 듣고 싶어.”');
+ const dialogue=el('p','ttk-preview-dialogue');dialogue.append(el('span','ttk-preview-dlg-text','“오늘은 여기까지 이야기해도 괜찮아. 나머지는 내일 다시 듣고 싶어.”'));
  const narration2=el('p','ttk-preview-narration','소리 없이 책장이 넘어갔다. 짧은 침묵이 이어지는 동안 누구도 먼저 입을 열지 않았고, 시계 초침 소리만 또렷하게 들렸다.');
  previewBox.append(previewName,narration,dialogue,narration2);preview.append(previewHead,previewBox);controls.append(preview);
  // v0.23: 테마는 한 줄 4칸 칩(색 견본 + 이름), 설명은 고른 테마 하나만 아래에.

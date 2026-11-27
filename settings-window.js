@@ -251,7 +251,7 @@ export class SettingsWindow {
     // 탭과 검색어에 맞춰 보이는 모듈만 남깁니다.
     apply() {
         const p = this.panelEl; if (!p) return;
-        const q = this.q.trim().toLowerCase(), solo = this.tab.startsWith('m:'), overview = !solo && !q;
+        const q = this.q.trim().toLowerCase(), solo = !q && this.tab.startsWith('m:'), overview = !this.tab.startsWith('m:') && !q;
         this.body.classList.toggle('ttk-win-solo', solo);
         this.body.classList.toggle('ttk-win-overview', overview);
         this.body.classList.toggle('ttk-win-gtab', overview && this.tab.startsWith('g:'));
@@ -260,7 +260,8 @@ export class SettingsWindow {
             let n = 0;
             for (const it of g.items) {
                 let vis = true;
-                if (this.tab.startsWith('g:')) vis = this.tab === `g:${gi}`;
+                if (q) vis = true;                                   // 검색은 어느 탭에서든 전체에서 찾습니다
+                else if (this.tab.startsWith('g:')) vis = this.tab === `g:${gi}`;
                 else if (solo) vis = this.tab === `m:${it.key}`;
                 if (vis && q) vis = this.textOf(it).includes(q);
                 if (overview && !it.row) vis = false;              // 개요에는 모듈 카드만
