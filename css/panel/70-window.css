@@ -136,7 +136,7 @@ html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
   .ttk-win-mode-btn span:not(.ttk-lc){display:none}
   .ttk-win-close{grid-area:close;align-self:start;width:44px;height:44px;margin:calc(12px + env(safe-area-inset-top)) 12px 0 0;border:0}
   .ttk-win-search{grid-area:search;height:44px;margin:10px 16px;border-radius:4px}
-  .ttk-win-search input{font-size:16px}
+  .ttk-win-search input{font-size:15px}
   .ttk-win-tabs{grid-area:tabs;display:flex;gap:4px;padding:0 12px;border-top:1px solid var(--w-line);border-bottom:1px solid var(--w-line);overflow-x:auto;scrollbar-width:none}
   .ttk-win-body{grid-area:body}
   .ttk-win-foot{grid-area:foot}
@@ -153,7 +153,6 @@ html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
   html .ttk-win #ttk-panel .ttk-group-head strong{font-size:16px}
   html .ttk-win #ttk-panel .ttk-group > .ttk-module-row{padding:8px 12px}
   html .ttk-win #ttk-panel .ttk-group > .ttk-module-row .ttk-option-label small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  html .ttk-win #ttk-panel :is(input[type=text],input[type=number],input[type=search],textarea,select){font-size:16px!important}
 }
 @media (prefers-reduced-motion:reduce){
   .ttk-win *,.ttk-win *::before,.ttk-win *::after{transition:none!important;animation:none!important}
@@ -215,5 +214,29 @@ html .ttk-win .ttk-win-overview #ttk-panel .ttk-module-row:has(> input:not(:chec
   html .ttk-win .ttk-win-overview #ttk-panel .ttk-group{grid-template-columns:minmax(0,1fr);gap:8px}
   .ttk-win-ovhead{margin-bottom:12px}
   html body .ttk-win .ttk-win-ovhead .ttk-win-ovtitle{font-size:18px!important}
+}
+/* ==== v1.7.6 휴대폰·세부 칸 정리 ==== */
+/* 접힘 표시: 기본 삼각형(▸▾)은 모두 숨기고, 안쪽 접힘 칸에도 선 아이콘을 씁니다(자체 아이콘이 있는 ⋯·추가 메뉴 제외). */
+html .ttk-win #ttk-panel summary{list-style:none!important}
+html .ttk-win #ttk-panel summary::marker{content:""!important}
+html .ttk-win #ttk-panel summary::-webkit-details-marker{display:none!important}
+html .ttk-win #ttk-panel details:not(.ttk-section,.ttk-more,.ttk-add-menu) > summary{display:flex!important;align-items:center;justify-content:space-between;gap:10px}
+html .ttk-win #ttk-panel details:not(.ttk-section,.ttk-more,.ttk-add-menu) > summary::after{content:""!important;display:block!important;flex:none;width:14px;height:14px;background:var(--w-muted)!important;-webkit-mask:var(--ttk-lc-chev) center/contain no-repeat;mask:var(--ttk-lc-chev) center/contain no-repeat;transform:rotate(-90deg);transition:transform .15s}
+html .ttk-win #ttk-panel details:not(.ttk-section,.ttk-more,.ttk-add-menu)[open] > summary::after{transform:none}
+/* 안쪽 칸이 겹겹이 들여 써지지 않게: 칸 안의 칸은 좌우 여백 없이 */
+html .ttk-win #ttk-panel .ttk-controls .ttk-controls{padding-left:0!important;padding-right:0!important}
+/* 짧은 이름표(굵기 등) 옆에 버튼 줄이 오는 칸: 긴 이름표는 한 줄로 두고, 자리가 모자라면 버튼 줄이 아래로 내려갑니다 */
+html .ttk-win #ttk-panel .ttk-style-sub{flex:0 0 auto;min-width:34px;white-space:nowrap}
+/* 테마 미리보기 글꼴: 다른 확장의 전체 글꼴 규칙보다 우선 */
+html body #ttk-win#ttk-win #ttk-panel .ttk-preview-message,html body #ttk-win#ttk-win #ttk-panel .ttk-preview-message :is(.ttk-preview-name,.ttk-preview-narration,.ttk-preview-narration *){font-family:var(--pv-font,serif)!important}
+html body #ttk-win#ttk-win #ttk-panel .ttk-preview-message :is(.ttk-preview-dialogue,.ttk-preview-dialogue *){font-family:var(--pv-dialogue-font,serif)!important}
+@media (max-width:600px){
+  /* SillyTavern 화면은 확대가 막혀 있어(maximum-scale=1) 입력칸이 16px이 아니어도 확대되지 않습니다 */
+  html .ttk-win #ttk-panel :is(input[type=text],input[type=number],input[type=search],input[type=url],textarea,select){font-size:14px!important;min-height:38px}
+  html .ttk-win #ttk-panel .ttk-button{min-height:36px!important;padding:7px 12px!important;font-size:13px}
+  html .ttk-win #ttk-panel .ttk-controls{padding:12px}
+  html .ttk-win #ttk-panel .ttk-section-summary{min-height:44px;padding:10px 12px;font-size:14px}
+  html .ttk-win #ttk-panel .ttk-seg-btn{font-size:13px;padding:6px 6px}
+  html .ttk-win #ttk-panel .ttk-preview-message{padding:12px 14px}
 }
 
