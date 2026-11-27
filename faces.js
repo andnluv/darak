@@ -22,6 +22,29 @@ const URL_OK = /^\/?user\/files\/[\w.\-%]+$/;
 const PROMPT_KEY = 'darak_faces';
 const TAG_RE = /[\[［【〔]\s*([^\]］】〕\n]{1,20}?)\s*[\]］】〕]\s*[:：]?\s*$/;
 
+/** fit = {cx, cy, z, r}: the square shown in the face circle is centred at (cx, cy) (fractions of the picture) and is 1/z of the
+ *  picture's shorter side; r is width/height of the stored picture. Nothing is cut from the stored file — it can be moved later. */
+export function normalizeFit(f) {
+    if (!f || typeof f !== 'object') return null;
+    const n = (v, lo, hi, d) => { v = Number(v); return Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
+    return { cx: n(f.cx, 0, 1, 0.5), cy: n(f.cy, 0, 1, 0.5), z: n(f.z, 1, 6, 1), r: n(f.r, 0.2, 5, 1) };
+}
+/** Draw a picture into a round/square node with its fit. Without a fit it is centred and covers the node. */
+export function facePaint(node, e, url) {
+    node.style.backgroundImage = `url("${url}")`; node.style.backgroundRepeat = 'no-repeat';
+    const f = e?.fit;
+    if (!f) { node.style.backgroundSize = 'cover'; node.style.backgroundPosition = 'center'; return; }
+    const kx = f.z * Math.max(f.r, 1), ky = kx / f.r, pos = (c, k) => (Math.abs(k - 1) < 1e-6 ? 50 : ((0.5 - c * k) / (1 - k)) * 100);
+    node.style.backgroundSize = `${kx * 100}% ${ky * 100}%`; node.style.backgroundPosition = `${pos(f.cx, kx)}% ${pos(f.cy, ky)}%`;
+}
+/** Starting fit for a bust-up picture: its upper middle, where the face usually is. */
+export function presetFit(w, h) {
+    const r = w / h;
+    if (r > 1.15) { const side = 0.62; return { cx: 0.5, cy: 0.03 + side / 2, z: 1 / side, r }; }
+    if (r < 1 / 1.15) return { cx: 0.5, cy: 0.03 + 0.5 * r, z: 1, r };
+    return null;
+}
+
 export const DEFAULT_FACES = Object.freeze({ prompt: true, cards: {} });
 export function normalizeFaces(raw = {}) {
     const cards = {};
@@ -32,6 +55,7 @@ export function normalizeFaces(raw = {}) {
             .map(e => ({
                 id: e.id.slice(0, 40), url: e.url.startsWith('/') ? e.url : `/${e.url}`, name: String(e.name || '').trim().slice(0, 20),
                 aliases: (Array.isArray(e.aliases) ? e.aliases : []).map(a => String(a || '').trim().slice(0, 20)).filter(Boolean).slice(0, 6),
+                fit: normalizeFit(e.fit),
                 moods: (Array.isArray(e.moods) ? e.moods : []).filter(m => m && typeof m.k === 'string' && typeof m.url === 'string' && URL_OK.test(m.url)).slice(0, MAX_MOODS)
                     .map(m => ({ k: m.k.slice(0, 20), url: m.url.startsWith('/') ? m.url : `/${m.url}` })),
             }))
@@ -208,7 +232,7 @@ export class Faces {
             const e = id && entries.find(x => x.id === id); if (!e) return;
             const b = el('span', 'ttk-face'); b.setAttribute('role', 'button'); b.tabIndex = 0; b.dataset.id = e.id; b.dataset.ord = String(ord); b.dataset.mood = mood;
             b.setAttribute('aria-label', `${e.name} (눌러서 이름 보기)`);
-            const img = el('img'); img.src = pickUrl(e, mood); img.alt = ''; img.loading = 'lazy'; img.decoding = 'async'; img.draggable = false; b.append(img);
+            facePaint(b, e, pickUrl(e, mood));
             const anchor = span.previousSibling instanceof Element && span.previousSibling.classList?.contains('ttk-ftag') ? span.previousSibling : span;
             anchor.before(b);
         });
@@ -236,7 +260,7 @@ export class Faces {
             const grid = el('div', 'ttk-face-pop-grid');
             for (const x of [{ k: '', url: e.url }, ...e.moods]) {
                 const b = el('button', 'ttk-face-pop-pick'); b.type = 'button'; b.setAttribute('aria-pressed', String((faceEl.dataset.mood || '') === x.k));
-                const img = el('img'); img.src = x.url; img.alt = ''; b.append(img, el('span', '', x.k ? moodLabel(x.k) : '기본')); b.addEventListener('click', () => this.setPick(faceEl, x.k ? `${e.id}#${x.k}` : e.id)); grid.append(b);
+                const th = el('span', 'ttk-face-thumb'); facePaint(th, e, x.url); b.append(th, el('span', '', x.k ? moodLabel(x.k) : '기본')); b.addEventListener('click', () => this.setPick(faceEl, x.k ? `${e.id}#${x.k}` : e.id)); grid.append(b);
             }
             pop.append(grid);
         } else {
@@ -244,7 +268,7 @@ export class Faces {
             const grid = el('div', 'ttk-face-pop-grid');
             for (const x of entries) {
                 const b = el('button', 'ttk-face-pop-pick'); b.type = 'button'; b.setAttribute('aria-pressed', String(x.id === e.id));
-                const img = el('img'); img.src = x.url; img.alt = ''; b.append(img, el('span', '', x.name)); b.addEventListener('click', () => this.setPick(faceEl, x.id)); grid.append(b);
+                const th = el('span', 'ttk-face-thumb'); facePaint(th, x, x.url); b.append(th, el('span', '', x.name)); b.addEventListener('click', () => this.setPick(faceEl, x.id)); grid.append(b);
             }
             const none = el('button', 'ttk-face-pop-pick ttk-face-pop-none'); none.type = 'button'; none.append(el('span', '', '얼굴 없음')); none.addEventListener('click', () => this.setPick(faceEl, '')); grid.append(none);
             pop.append(grid);
@@ -323,6 +347,50 @@ export class Faces {
         }
     }
 
+    // ---- move/zoom the face inside its circle (non-destructive) ----
+    async openCrop(entry, done) {
+        document.getElementById('ttk-face-crop')?.remove();
+        const probe = new Image(); probe.src = entry.url; try { await probe.decode(); } catch { return window.toastr?.error?.('사진을 불러오지 못했습니다.'); }
+        const r = probe.naturalWidth / probe.naturalHeight, fit = { ...(normalizeFit(entry.fit) || { cx: 0.5, cy: 0.5, z: 1 }), r };
+        const wrap = el('div'); wrap.id = 'ttk-face-crop'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', '얼굴 위치 조정');
+        const box = el('div', 'ttk-fi-box'); wrap.append(box);
+        const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
+        const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', `${entry.name} · 얼굴 위치 조정`)); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
+        box.append(el('p', 'ttk-note', '그림을 끌어서 옮기고(키보드는 방향키), 아래 칸으로 크기를 맞추세요. 어두운 바깥쪽은 채팅에서 보이지 않습니다. 원본은 자르지 않으므로 언제든 다시 바꿀 수 있고, 표정 그림도 같은 위치를 씁니다.'));
+        const stage = el('div', 'ttk-crop-stage'); stage.tabIndex = 0; stage.setAttribute('aria-label', '얼굴 위치 (끌거나 방향키)'); box.append(stage);
+        let url = entry.url;
+        const dims = () => { const kx = fit.z * Math.max(fit.r, 1), ky = kx / fit.r; return { kx, ky }; };
+        const clamp = () => { const { kx, ky } = dims(); fit.cx = Math.min(1 - 0.5 / kx, Math.max(0.5 / kx, fit.cx)); fit.cy = Math.min(1 - 0.5 / ky, Math.max(0.5 / ky, fit.cy)); };
+        const draw = () => { clamp(); facePaint(stage, { fit }, url); };
+        const zoom = el('input'); zoom.type = 'range'; zoom.min = '1'; zoom.max = '4'; zoom.step = '0.05'; zoom.value = String(Math.min(4, fit.z)); zoom.setAttribute('aria-label', '크기');
+        zoom.addEventListener('input', () => { fit.z = Number(zoom.value); draw(); });
+        const zl = el('label', 'ttk-field'); zl.append(el('span', '', '크기'), zoom); box.append(zl);
+        if (entry.moods?.length) {
+            const sel = el('select'); sel.setAttribute('aria-label', '미리 볼 표정'); sel.append(new Option('기본', ''));
+            for (const m of entry.moods) sel.append(new Option(moodLabel(m.k), m.url));
+            sel.addEventListener('change', () => { url = sel.value || entry.url; draw(); });
+            const sl = el('label', 'ttk-field'); sl.append(el('span', '', '미리 볼 표정'), sel); box.append(sl);
+        }
+        let drag = null;
+        stage.addEventListener('pointerdown', ev => { drag = { x: ev.clientX, y: ev.clientY, cx: fit.cx, cy: fit.cy }; stage.setPointerCapture?.(ev.pointerId); ev.preventDefault(); });
+        stage.addEventListener('pointermove', ev => {
+            if (!drag) return; const { kx, ky } = dims(), w = stage.clientWidth || 240;
+            fit.cx = drag.cx - (ev.clientX - drag.x) / (kx * w); fit.cy = drag.cy - (ev.clientY - drag.y) / (ky * w); draw();
+        });
+        const end = () => { drag = null; }; stage.addEventListener('pointerup', end); stage.addEventListener('pointercancel', end);
+        stage.addEventListener('keydown', ev => {
+            const st = 0.02 / fit.z, d = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, -st], ArrowDown: [0, st] }[ev.key]; if (!d) return;
+            ev.preventDefault(); ev.stopPropagation(); fit.cx += d[0]; fit.cy += d[1]; draw();
+        });
+        const actions = el('div', 'ttk-actions');
+        const reset = el('button', 'ttk-button', '처음 위치로'); reset.type = 'button'; reset.addEventListener('click', () => { const p = presetFit(probe.naturalWidth, probe.naturalHeight) || { cx: 0.5, cy: 0.5, z: 1, r }; Object.assign(fit, p, { r }); zoom.value = String(Math.min(4, fit.z)); draw(); });
+        const save = el('button', 'ttk-button', '저장'); save.type = 'button'; save.addEventListener('click', () => { clamp(); entry.fit = normalizeFit(fit); this.save(); this.refresh(); close(); });
+        const cancel = el('button', 'ttk-button', '취소'); cancel.type = 'button'; cancel.addEventListener('click', close);
+        actions.append(reset, cancel, save); box.append(actions);
+        const onKey = ev => { if (ev.key === 'Escape') close(); }; document.addEventListener('keydown', onKey, true);
+        document.body.append(wrap); draw(); stage.focus();
+    }
+
     // ---- import from a page's code (or its address) ----
     async putBlob(blob, ext = 'webp') {
         const c = this.ctx(), name = `ttk_face_${uid()}.${ext}`;
@@ -338,9 +406,9 @@ export class Faces {
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '표정 묶음(zip)에서 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
-        box.append(el('p', 'ttk-note', '“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 줄여서 올리므로 zip이 커도 서버에는 조금만 쌓입니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
+        box.append(el('p', 'ttk-note', '“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 얼굴 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
         const file = el('input'); file.type = 'file'; file.accept = '.zip,application/zip'; file.setAttribute('aria-label', 'zip 파일');
-        const cropRow = el('label', 'ttk-style-check'), crop = el('input'); crop.type = 'checkbox'; crop.checked = true; cropRow.append(crop, el('span', '', '가로가 긴 그림은 위쪽 가운데(얼굴)만 잘라 쓰기'));
+        const cropRow = el('label', 'ttk-style-check'), crop = el('input'); crop.type = 'checkbox'; crop.checked = true; cropRow.append(crop, el('span', '', '가로·세로가 긴 그림은 처음 위치를 위쪽 가운데(얼굴)에 맞추기 (나중에 목록의 [위치 조정]으로 바꿀 수 있음)'));
         const status = el('p', 'ttk-note'), list = el('div', 'ttk-fi-list'), go = el('button', 'ttk-button', '선택한 인물 가져오기'); go.type = 'button'; go.hidden = true;
         box.append(file, cropRow, status, list, go);
         let groups = [];
@@ -369,12 +437,13 @@ export class Faces {
             if (picks.length + this.entries().length > MAX_FACES) return window.toastr?.warning?.(`카드마다 최대 ${MAX_FACES}명입니다.`);
             go.disabled = file.disabled = true; let ok = 0, fail = 0, n = 0, i = 0;
             const one = async g => {
-                const up = async f => this.putBlob(await faceBlob(await f.entry.blob(), crop.checked));
+                let dims = null;
+                const up = async f => { const src = await f.entry.blob(); if (!dims) { const bmp = await createImageBitmap(src); dims = [bmp.width, bmp.height]; bmp.close?.(); } return this.putBlob(await faceBlob(src, false, 512)); };
                 const moods = g.files.filter(f => f.mood).slice(0, MAX_MOODS), pool = moods.length ? moods : g.files.slice(0, 1);
                 const def = moods.length ? pool.find(f => f.mood === defaultMood(pool.map(x => x.mood))) || pool[0] : pool[0];
                 const urls = new Map(); for (const f of pool) urls.set(f, await up(f));
                 const card = this.S().cards[this.key()] ||= { entries: [] };
-                card.entries.push({ id: uid(), name: g.name, aliases: g.aliases, url: urls.get(def), moods: moods.map(f => ({ k: f.mood, url: urls.get(f) })) });
+                card.entries.push({ id: uid(), name: g.name, aliases: g.aliases, url: urls.get(def), fit: crop.checked && dims ? presetFit(dims[0], dims[1]) : null, moods: moods.map(f => ({ k: f.mood, url: urls.get(f) })) });
             };
             const work = async () => { while (i < picks.length) { const g = picks[i++]; try { await one(g); ok++; } catch (e) { fail++; console.warn('[DARAK] zip import failed', g.name, e); } status.textContent = `가져오는 중… ${++n}/${picks.length}`; } };
             await Promise.all([work(), work(), work()]);
@@ -497,13 +566,13 @@ export class Faces {
                 await self.addFromCard(hit.avatar);
             })));
         function row(e) {
-            const r = el('div', 'ttk-face-row'), img = el('img'); img.src = e.url; img.alt = ''; r.append(img);
+            const r = el('div', 'ttk-face-row'), img = el('span', 'ttk-face-thumb'); facePaint(img, e, e.url); r.append(img);
             const name = el('input'); name.type = 'text'; name.value = e.name; name.maxLength = 20; name.placeholder = '이름'; name.setAttribute('aria-label', '이름');
             const al = el('input'); al.type = 'text'; al.value = (e.aliases || []).join(', '); al.placeholder = '다른 이름 (쉼표로 구분)'; al.setAttribute('aria-label', '다른 이름');
             const apply = () => { e.name = name.value.trim().slice(0, 20) || e.name; e.aliases = al.value.split(/[,，、]/).map(s => s.trim().slice(0, 20)).filter(Boolean).slice(0, 6); self.save(); self.refresh(); };
             name.addEventListener('change', apply); al.addEventListener('change', apply);
             const del = btn('삭제', async () => { if (!(await confirmAsk(`“${e.name}” 얼굴을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger');
-            const fields = el('div', 'ttk-face-fields'); fields.append(name, al); r.append(fields, del); return r;
+            const fields = el('div', 'ttk-face-fields'); fields.append(name, al); r.append(fields, btn('위치 조정', () => self.openCrop(e, render)), del); return r;
         }
         function render() {
             const key = self.key(), c = self.ctx(); list.replaceChildren();

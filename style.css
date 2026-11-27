@@ -1920,7 +1920,7 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 
 /* v1.2.0 화자 얼굴 */
 #chat .mes_text .ttk-ftag,#chat .ttk-tr-text .ttk-ftag{display:none!important}
-#chat .mes_text .ttk-face,#chat .ttk-tr-text .ttk-face{display:inline-block;width:1.75em;height:1.75em;margin:0 .4em 0 0;vertical-align:-.5em;border-radius:50%;overflow:hidden;cursor:pointer;flex:none;line-height:0;box-shadow:0 0 0 1px color-mix(in srgb,currentColor 22%,transparent);-webkit-tap-highlight-color:transparent}
+#chat .mes_text .ttk-face,#chat .ttk-tr-text .ttk-face{background-color:color-mix(in srgb,currentColor 12%,transparent);display:inline-block;width:1.75em;height:1.75em;margin:0 .4em 0 0;vertical-align:-.5em;border-radius:50%;overflow:hidden;cursor:pointer;flex:none;line-height:0;box-shadow:0 0 0 1px color-mix(in srgb,currentColor 22%,transparent);-webkit-tap-highlight-color:transparent}
 #chat .mes_text .ttk-face img,#chat .ttk-tr-text .ttk-face img{display:block;width:100%;height:100%;object-fit:cover;border-radius:50%;margin:0;max-width:none;pointer-events:none}
 #chat .mes_text .ttk-face:focus-visible,#chat .ttk-tr-text .ttk-face:focus-visible{outline:2px solid var(--ttk-accent,currentColor);outline-offset:2px}
 .ttk-face-pop{position:fixed;z-index:99999;min-width:150px;max-width:min(320px,calc(100vw - 16px));padding:10px;border-radius:12px;background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);border:1px solid color-mix(in srgb,currentColor 18%,transparent);box-shadow:0 8px 28px rgba(0,0,0,.28);font-size:14px}
@@ -1929,26 +1929,33 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 .ttk-face-pop-btn{border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:transparent;color:inherit;border-radius:8px;padding:4px 10px;font-size:13px;cursor:pointer}
 .ttk-face-pop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;max-height:min(50vh,260px);overflow:auto}
 .ttk-face-pop-pick{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border:1px solid transparent;border-radius:10px;background:transparent;color:inherit;font-size:12px;cursor:pointer}
-.ttk-face-pop-pick img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.ttk-face-thumb{display:inline-block;width:40px;height:40px;border-radius:50%;flex:none;background-color:color-mix(in srgb,currentColor 12%,transparent)}
 .ttk-face-pop-pick[aria-pressed=true]{border-color:var(--ttk-accent,currentColor)}
 .ttk-face-pop-none{justify-content:center;min-height:64px;opacity:.75}
 #ttk-panel .ttk-face-list{display:flex;flex-direction:column;gap:8px;margin:8px 0}
 #ttk-panel .ttk-face-row{display:flex;align-items:center;gap:10px;padding:6px;border-radius:10px;border:1px solid color-mix(in srgb,currentColor 14%,transparent)}
-#ttk-panel .ttk-face-row>img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
+#ttk-panel .ttk-face-row>.ttk-face-thumb{width:44px;height:44px}
 #ttk-panel .ttk-face-fields{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
 #ttk-panel .ttk-face-fields input{width:100%;box-sizing:border-box}
 
 /* v1.2.2 페이지에서 얼굴 가져오기 */
-#ttk-face-import{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.45)}
-#ttk-face-import .ttk-fi-box{width:min(640px,100%);max-height:min(88vh,100%);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);box-shadow:0 12px 40px rgba(0,0,0,.35)}
-#ttk-face-import .ttk-fi-head{display:flex;align-items:center;justify-content:space-between}
-#ttk-face-import .ttk-fi-x{border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:transparent;color:inherit;border-radius:8px;padding:4px 10px;cursor:pointer}
-#ttk-face-import textarea,#ttk-face-import input[type=url],#ttk-face-import input[type=search]{width:100%;box-sizing:border-box;font-size:13px}
-#ttk-face-import .ttk-fi-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-#ttk-face-import .ttk-fi-tools input{flex:1;min-width:140px}
-#ttk-face-import .ttk-fi-list{display:flex;flex-direction:column;gap:4px;max-height:42vh;overflow:auto}
-#ttk-face-import .ttk-fi-row{display:flex;align-items:center;gap:10px;padding:4px 6px;border-radius:8px;cursor:pointer}
-#ttk-face-import .ttk-fi-row[hidden]{display:none}
-#ttk-face-import .ttk-fi-row img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none}
-#ttk-face-import .ttk-fi-name{display:flex;flex-direction:column;min-width:0}
-#ttk-face-import .ttk-fi-name small{opacity:.7}
+:is(#ttk-face-import,#ttk-face-crop){position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.45)}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-box{width:min(640px,100%);max-height:min(88vh,100%);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-head{display:flex;align-items:center;justify-content:space-between}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-x{border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:transparent;color:inherit;border-radius:8px;padding:4px 10px;cursor:pointer}
+:is(#ttk-face-import,#ttk-face-crop) textarea,:is(#ttk-face-import,#ttk-face-crop) input[type=url],:is(#ttk-face-import,#ttk-face-crop) input[type=search]{width:100%;box-sizing:border-box;font-size:13px}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-tools input{flex:1;min-width:140px}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-list{display:flex;flex-direction:column;gap:4px;max-height:42vh;overflow:auto}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-row{display:flex;align-items:center;gap:10px;padding:4px 6px;border-radius:8px;cursor:pointer}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-row[hidden]{display:none}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-row img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-name{display:flex;flex-direction:column;min-width:0}
+:is(#ttk-face-import,#ttk-face-crop) .ttk-fi-name small{opacity:.7}
+#ttk-face-crop .ttk-crop-stage{flex:none;position:relative;width:min(260px,70vw);aspect-ratio:1;margin:0 auto;overflow:hidden;border-radius:12px;cursor:grab;touch-action:none;background-color:#888;user-select:none}
+#ttk-face-crop .ttk-crop-stage:active{cursor:grabbing}
+#ttk-face-crop .ttk-crop-stage::after{content:'';position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.85);pointer-events:none}
+#ttk-face-crop .ttk-crop-stage:focus-visible{outline:2px solid var(--ttk-accent,currentColor);outline-offset:3px}
+#ttk-face-crop .ttk-fi-box{width:min(420px,100%)}
+#ttk-face-crop .ttk-actions{display:flex;gap:8px;justify-content:flex-end}
+#ttk-face-crop .ttk-field input[type=range]{width:100%}
