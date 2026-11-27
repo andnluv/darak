@@ -12,7 +12,7 @@ import {confirmAsk} from './dialogs.js';
 import {syncMessageFooters} from './message-footer.js';
 import {normalizeMsgButtons,scanButtons,syncMessageButtons,isFront,setFront,resetFront} from './message-buttons.js';
 import {syncTyping} from './typing.js';
-import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId} from './design.js';
+import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
 const VERSION = '1.0.0';
@@ -29,7 +29,7 @@ const failed=new Map();
 function guard(name,fn,cleanup){try{return fn();}catch(e){console.error(`[DARAK] ${name} 오류`,e);try{cleanup?.();}catch{}if(!failed.has(name)){failed.set(name,String(e?.message||e).slice(0,160));globalThis.toastr?.error?.(`${name}에서 오류가 나 이 모듈만 멈췄습니다. 다른 모듈은 계속 동작합니다. 자세한 내용은 다락방 설정 맨 위에 있습니다.`,'다락방',{timeOut:9000});}showFailures();}}
 function showFailures(){const box=document.getElementById('ttk-failures');if(!box)return;box.hidden=!failed.size;if(!failed.size)return;box.replaceChildren(el('strong','','멈춘 모듈이 있습니다'),...[...failed].map(([n,m])=>el('p','',`${n}: ${m}`)),el('p','','나머지 모듈은 그대로 동작합니다. 브라우저 콘솔(F12)의 [DARAK] 줄에 자세한 오류가 있습니다. 페이지를 새로고침하면 다시 시도합니다.'));}
 const footerHooks={shelf:id=>(settings?.modules?.avatars&&avatars)?avatars.shelfFor(id):null};
-function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncMessageFooters(settings.modules.design,footerHooks);syncMessageButtons(settings.modules.design,settings.msgButtons);syncTyping(settings.modules.design&&settings.design.typing!==false);},()=>{teardownDesign();syncMessageFooters(false);syncMessageButtons(false);syncTyping(false);});guard('한글화',syncLocalization);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);}
+function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncStyleMarks();syncMessageFooters(settings.modules.design,footerHooks);syncMessageButtons(settings.modules.design,settings.msgButtons);syncTyping(settings.modules.design&&settings.design.typing!==false);},()=>{teardownDesign();syncMessageFooters(false);syncMessageButtons(false);syncTyping(false);});guard('한글화',syncLocalization);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);}
 function changed(){applyModules();save();}
 function syncAvatars(){if(!avatars)return;if(settings.modules.avatars)avatars.start();else avatars.stop();}
 function syncThemeImages(){if(!themeImages)return;if(settings.modules.themeImages)themeImages.start();else themeImages.stop();}
@@ -67,16 +67,56 @@ function highlightDialogue(container){
  }
  QUOTES.lastIndex=0;
 }
+// v1.1.0: 지문 밑줄·강조 서식을 위한 표시. 메시지 데이터는 건드리지 않고 화면의 글자만 감싼다.
+// 밑줄(text-decoration)은 자식 글자에서 끌 수 없어서, 지문 밑줄을 켰을 때만 지문 글자를 span.ttk-narr로 감싸 대사와 분리한다.
+const OBSERVE={childList:true,characterData:true,subtree:true};
+const SKIP_WRAP='span.ttk-dialogue,span.ttk-narr,q,pre,code,kbd,script,style,textarea,button,a,[contenteditable="true"],.mes_edit,.mes_reasoning';
+function unwrapNarration(host){host.querySelectorAll('span.ttk-narr').forEach(n=>n.replaceWith(document.createTextNode(n.textContent)));host.normalize();}
+function wrapNarration(host){
+ const walker=document.createTreeWalker(host,NodeFilter.SHOW_TEXT),targets=[];let node;
+ while((node=walker.nextNode())){if(!node.nodeValue||!node.nodeValue.trim())continue;if(node.parentElement?.closest(SKIP_WRAP))continue;targets.push(node);}
+ for(const t of targets){if(!t.isConnected)continue;const s=document.createElement('span');s.className='ttk-narr';t.replaceWith(s);s.append(t);}
+}
+// 지문 글자 수(대사 제외). 한 문단의 지문 80% 이상이 *…*로 감싸져 있으면 강조가 아니라 지문 서식으로 보고 강조 처리에서 뺀다.
+function narrationChars(node){let c=0;const w=document.createTreeWalker(node,NodeFilter.SHOW_TEXT);let t;while((t=w.nextNode())){if(t.parentElement?.closest('.ttk-dialogue,q'))continue;c+=t.nodeValue.replace(/\s+/g,'').length;}return c;}
+function markEmphasis(host){
+ const seen=new Set();
+ for(const em of host.querySelectorAll('em,i')){
+  const block=em.closest('p,li,blockquote')||host;if(seen.has(block))continue;seen.add(block);
+  const all=[...block.querySelectorAll('em,i')];
+  const total=narrationChars(block),part=all.filter(e=>!e.parentElement?.closest('em,i')).reduce((n,e)=>n+narrationChars(e),0);
+  const skip=total>0&&part/total>=.8;
+  for(const e of all)skip?e.setAttribute('data-ttk-emph-skip',''):e.removeAttribute('data-ttk-emph-skip');
+ }
+}
+function processHost(host){
+ const d=settings?.design;
+ if(host.querySelector('span.ttk-narr'))unwrapNarration(host);
+ highlightDialogue(host);
+ if(d?.narrationStyle?.underline&&d.narrationStyle.underline!=='none')wrapNarration(host);
+ if(d?.emphasis)markEmphasis(host);
+}
+let styleMarkKey='';
+// 설정이 바뀌면 이미 그려진 메시지에도 다시 반영한다(관찰을 잠시 멈춰 자기 변경에 반응하지 않게).
+function syncStyleMarks(){
+ const on=!!settings?.modules?.design,d=settings?.design;
+ const key=on?`${d?.narrationStyle?.underline!=='none'}|${!!d?.emphasis}`:'off';
+ if(key===styleMarkKey)return;styleMarkKey=key;
+ const chat=document.querySelector('#chat');if(!chat||!dialogueObserver)return;
+ dialogueObserver.disconnect();
+ chat.querySelectorAll('.mes_text,.ttk-tr-text').forEach(host=>{if(!d.emphasis)host.querySelectorAll('[data-ttk-emph-skip]').forEach(e=>e.removeAttribute('data-ttk-emph-skip'));processHost(host);});
+ dialogueObserver.observe(chat,OBSERVE);
+}
 function syncDialogueHighlights(enabled){
  if(enabled && dialogueObserver && activeChat===document.querySelector('#chat'))return;
  if(dialogueObserver){dialogueObserver.disconnect();dialogueObserver=null;}
  if(dialogueTimer){clearTimeout(dialogueTimer);dialogueTimer=null;}
- if(!enabled){activeChat=null;document.querySelectorAll('#chat .ttk-dialogue').forEach(node=>node.replaceWith(document.createTextNode(node.textContent)));return;}
+ if(!enabled){activeChat=null;document.querySelectorAll('#chat .ttk-dialogue,#chat .ttk-narr').forEach(node=>node.replaceWith(document.createTextNode(node.textContent)));document.querySelectorAll('#chat [data-ttk-emph-skip]').forEach(e=>e.removeAttribute('data-ttk-emph-skip'));styleMarkKey='';return;}
  const chat=document.querySelector('#chat');if(!chat)return;activeChat=chat;
- chat.querySelectorAll('.mes_text,.ttk-tr-text').forEach(highlightDialogue);
+ chat.querySelectorAll('.mes_text,.ttk-tr-text').forEach(processHost);
  // v0.3.14: only messages that actually changed are rescanned (streaming used to rescan the whole chat every 100ms).
  const dirty=new Set();
- const options={childList:true,characterData:true,subtree:true};
+ const options=OBSERVE;
  dialogueObserver=new MutationObserver(records=>{
   for(const record of records){
    const origin=record.target.nodeType===1?record.target:record.target.parentElement;
@@ -85,7 +125,7 @@ function syncDialogueHighlights(enabled){
    else for(const node of record.addedNodes)if(node.nodeType===1){if(node.matches?.('.mes_text,.ttk-tr-text'))dirty.add(node);node.querySelectorAll?.('.mes_text,.ttk-tr-text').forEach(x=>dirty.add(x));}
   }
   if(!dirty.size||dialogueTimer)return;
-  dialogueTimer=setTimeout(()=>{dialogueTimer=null;const batch=[...dirty];dirty.clear();dialogueObserver?.disconnect();for(const host of batch)if(host.isConnected)highlightDialogue(host);dialogueObserver?.observe(chat,options);},100);
+  dialogueTimer=setTimeout(()=>{dialogueTimer=null;const batch=[...dirty];dirty.clear();dialogueObserver?.disconnect();for(const host of batch)if(host.isConnected)processHost(host);dialogueObserver?.observe(chat,options);},100);
  });
  dialogueObserver.observe(chat,options);
 }
@@ -240,7 +280,7 @@ function build(){
  previewHead.append(pinBtn);syncPin();
  const previewBox=el('div','ttk-preview-message');
  const previewName=el('strong','ttk-preview-name','CHARACTER');
- const narration=el('p','ttk-preview-narration','그는 창밖을 바라보다 천천히 고개를 돌렸다. 비에 젖은 유리창 너머로 가로등 불빛이 번지고, 방 안에는 식어 가는 찻잔의 김만 희미하게 남아 있었다.');
+ const narration=el('p','ttk-preview-narration','그는 창밖을 바라보다 천천히 고개를 돌렸다. 비에 젖은 유리창 너머로 가로등 불빛이 번지고, 방 안에는 식어 가는 ');narration.append(el('em','','찻잔의 김'),document.createTextNode('만 희미하게 남아 있었다.'));
  const dialogue=el('p','ttk-preview-dialogue','“오늘은 여기까지 이야기해도 괜찮아. 나머지는 내일 다시 듣고 싶어.”');
  const narration2=el('p','ttk-preview-narration','소리 없이 책장이 넘어갔다. 짧은 침묵이 이어지는 동안 누구도 먼저 입을 열지 않았고, 시계 초침 소리만 또렷하게 들렸다.');
  previewBox.append(previewName,narration,dialogue,narration2);preview.append(previewHead,previewBox);controls.append(preview);
@@ -301,8 +341,37 @@ function build(){
   api.updateStatus=updateStatus;api.rebuild=()=>{build();paint();};paint();
   wrap.append(trigger,list);row.append(wrap,note);controls.append(row);return api;
  }
+ // ---- 지문·대사 서식 (v1.1.0) ---- 굵기 · 기울임 · 밑줄. 안내 문구는 화면에 항상 보이는 글로 두고, 마우스를 올려야 뜨는 설명은 쓰지 않는다.
+ let narrStyle=null,dlgStyle=null,emphPaint=null;
+ function makeStyleRow(title,styleKey,fontKey,isDialogue){
+  const box=el('div','ttk-field ttk-style-field');box.append(el('strong','',`${title} 서식`));
+  const seg=(label,items,onPick)=>{const wrap=el('div','ttk-style-line');wrap.append(el('small','ttk-style-sub',label));const g=el('div','ttk-seg');g.setAttribute('role','group');g.setAttribute('aria-label',`${title} ${label}`);const map={};for(const [value,text] of items){const b=el('button','ttk-seg-btn',text);b.type='button';b.addEventListener('click',()=>onPick(value));map[value]=b;g.append(b);}wrap.append(g);box.append(wrap);return map;};
+  const wBtns=seg('굵기',WEIGHT_STEPS,v=>{settings.design[styleKey].weight=v;syncPreview();changed();});
+  const iLine=el('div','ttk-style-line');iLine.append(el('small','ttk-style-sub','기울임'));
+  const iRow=el('label','ttk-style-check');const iBox=el('input');iBox.type='checkbox';iBox.addEventListener('change',()=>{settings.design[styleKey].italic=iBox.checked;syncPreview();changed();});iRow.append(iBox,el('span','','기울임체'));iLine.append(iRow);box.append(iLine);
+  const uBtns=seg('밑줄',UNDERLINES,v=>{settings.design[styleKey].underline=v;syncPreview();changed();});
+  const note=el('small','ttk-note ttk-style-note');box.append(note);
+  controls.append(box);
+  return {paint(){
+   const st=settings.design[styleKey],fid=settings.design[fontKey];
+   for(const [v,b] of Object.entries(wBtns)){b.setAttribute('aria-pressed',String(st.weight===v));b.dataset.dim=String(v!=='auto'&&!resolveWeight(fid,v).exact);}
+   iBox.checked=!!st.italic;
+   const overlap=isDialogue&&settings.design.theme==='nocturne';
+   for(const [v,b] of Object.entries(uBtns)){b.setAttribute('aria-pressed',String(st.underline===v));b.dataset.dim=String(overlap&&v==='marker');}
+   const ws=fontWeights(fid);
+   const lines=[ws?`이 글꼴이 가진 굵기는 ${ws.join('·')}입니다. 흐리게 보이는 단계는 이 글꼴에 없는 굵기라 가까운 굵기로 표시됩니다.`:'이 글꼴이 가진 굵기를 알 수 없어서 모든 단계를 고를 수 있습니다.'];
+   lines.push(isDialogue?'굵기 \'기본\'은 테마 기본 그대로입니다(Paper·Nocturne의 대사는 굵게).':'굵기 \'기본\'은 테마 기본 그대로입니다.');
+   if(overlap)lines.push('Nocturne 대사는 자막식 배경이 이미 깔려 있어서 형광펜이 흐리게 보이지만, 고르면 그 위에 연하게 겹쳐 적용됩니다.');
+   note.textContent=lines.join(' ');
+  }};
+ }
  const font=makeFontRow('지문 폰트','font');
+ narrStyle=makeStyleRow('지문','narrationStyle','font',false);
  const dialogueFont=makeFontRow('대사 폰트','dialogueFont');
+ dlgStyle=makeStyleRow('대사','dialogueStyle','dialogueFont',true);
+ {const row=el('label','ttk-field ttk-emph-row');const box=el('input');box.type='checkbox';box.addEventListener('change',()=>{settings.design.emphasis=box.checked;syncPreview();changed();});row.append(box,el('span','','강조 서식 (*강조*를 기울임 + 한 단계 굵게로 구분)'));
+  const note=el('small','ttk-note ttk-emph-note');controls.append(row,note);
+  emphPaint=()=>{box.checked=settings.design.emphasis===true;const m=emphasisOf(settings.design.font,settings.design.narrationStyle.weight);note.textContent=`지문 전체를 *별표*로 감싸 쓰는 봇이라면 켜지 않는 편이 좋습니다. 켜도 한 문단의 지문 80% 이상이 별표로 감싸져 있으면 강조가 아니라 지문 서식으로 보고 뺍니다. 지금 지문 글꼴·굵기에서는 ${m.mode==='weight'?'한 단계 굵게':'포인트 색(더 굵게 할 수 없어서)'}로 구분합니다.`;};}
  // ---- 내 글꼴 추가 (v0.24.0) ----
  const ufSection=el('details','ttk-subsection');ufSection.append(el('summary','','내 글꼴 추가'));
  ufSection.append(el('p','ttk-note',`웹폰트를 세 칸으로 추가합니다. 세 번째 칸에는 CSS 주소(Google Fonts 등), 글꼴 파일 주소(woff2·woff·ttf·otf), @font-face 코드 중 아무거나 붙여 넣으면 알아서 구분합니다. 최대 ${USER_FONT_MAX}개, https 주소만 쓸 수 있고 고른 글꼴만 불러옵니다.`));
@@ -376,11 +445,17 @@ function build(){
  controls.append(mbSection);
  const dropRow=el('label','ttk-field ttk-dropcap-row');const dropCap=el('input');dropCap.type='checkbox';dropCap.addEventListener('change',()=>{settings.design.dropCap=dropCap.checked;changed()});dropRow.append(dropCap,el('span','','Studio 첫 글자 장식(드롭캡)'));controls.append(dropRow);
  const typeRow=el('label','ttk-field ttk-typing-row');const typeBox=el('input');typeBox.type='checkbox';typeBox.addEventListener('change',()=>{settings.design.typing=typeBox.checked;changed()});typeRow.append(typeBox,el('span','','입력 중 표시(AI가 응답을 쓰는 동안 표시)'));controls.append(typeRow);
- function syncPreview(){const d=settings.design,c=d.custom;preview.dataset.theme=d.theme;preview.dataset.porcelainVariant=d.theme==='porcelain'?(c.border.toLowerCase()==='#c5b18a'?'trim':c.accent.toLowerCase()==='#153e82'?'royal':'classic'):'';for(const [key,value] of Object.entries(c))preview.style.setProperty(`--pv-${key}`,value);preview.style.setProperty('--pv-font',FONTS[d.font].family);preview.style.setProperty('--pv-dialogue-font',FONTS[d.dialogueFont].family);preview.style.setProperty('--pv-dialogue-color',d.dialogueColors[d.theme]);preview.style.setProperty('--pv-size',`${d.size}px`);preview.style.setProperty('--pv-line',d.lineHeight);preview.style.setProperty('--pv-tracking',`${d.letterSpacing}px`);preview.style.setProperty('--pv-para',`${d.paragraphSpacing}px`);}
+ function syncPreview(){const d=settings.design,c=d.custom;preview.dataset.theme=d.theme;preview.dataset.porcelainVariant=d.theme==='porcelain'?(c.border.toLowerCase()==='#c5b18a'?'trim':c.accent.toLowerCase()==='#153e82'?'royal':'classic'):'';for(const [key,value] of Object.entries(c))preview.style.setProperty(`--pv-${key}`,value);preview.style.setProperty('--pv-font',FONTS[d.font].family);preview.style.setProperty('--pv-dialogue-font',FONTS[d.dialogueFont].family);preview.style.setProperty('--pv-dialogue-color',d.dialogueColors[d.theme]);preview.style.setProperty('--pv-size',`${d.size}px`);preview.style.setProperty('--pv-line',d.lineHeight);preview.style.setProperty('--pv-tracking',`${d.letterSpacing}px`);preview.style.setProperty('--pv-para',`${d.paragraphSpacing}px`);
+  const ns=d.narrationStyle,ds=d.dialogueStyle,nw=resolveWeight(d.font,ns.weight),dw=resolveWeight(d.dialogueFont,ds.weight),em=emphasisOf(d.font,ns.weight);
+  const setv=(k,v)=>v===null||v===undefined?preview.style.removeProperty(k):preview.style.setProperty(k,String(v));
+  setv('--pv-narr-w',nw.value);setv('--pv-dlg-w',dw.value);setv('--pv-emph-w',em.value);
+  const flag=(k,on)=>{if(on)preview.setAttribute(k,typeof on==='string'?on:'on');else preview.removeAttribute(k);};
+  flag('data-narr-w',nw.value!==null);flag('data-dlg-w',dw.value!==null);flag('data-narr-i',ns.italic);flag('data-dlg-i',ds.italic);flag('data-narr-u',ns.underline!=='none'&&ns.underline);flag('data-dlg-u',ds.underline!=='none'&&ds.underline);flag('data-emph',d.emphasis&&em.mode);
+  narrStyle?.paint();dlgStyle?.paint();emphPaint?.();}
  
  const actions=el('div','ttk-actions');actions.append(btn('현재 테마 초기화',()=>{settings.design=resetPalette(settings.design,settings.design.theme);syncControls();changed();}));
- actions.append(btn('설정 내보내기',()=>{const payload={format:'darak-design',version:5,design:settings.design,userFonts:settings.userFonts,msgButtons:settings.msgButtons};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='darak-design-v5.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}));
- const upload=el('input');upload.type='file';upload.accept='.json,application/json';upload.hidden=true;actions.append(btn('설정 가져오기',()=>upload.click()),upload);upload.addEventListener('change',async()=>{const file=upload.files?.[0];if(!file)return;try{if(file.size>300000)throw Error('300KB 이하 JSON만 지원합니다.');const value=JSON.parse(await file.text());if(!['darak-design','tavern-toolkit-design'].includes(value.format)||![1,2,3,4,5].includes(value.version)||typeof value.design!=='object')throw Error('호환되지 않는 형식입니다.');if(Array.isArray(value.userFonts)){settings.userFonts=normalizeUserFonts(value.userFonts);setUserFonts(settings.userFonts);}if(value.msgButtons&&typeof value.msgButtons==='object')settings.msgButtons=normalizeMsgButtons(value.msgButtons);settings.design=normalizeDesign(value.design);changed();const replacement=build();openDrawer(replacement);replacement.querySelector('#ttk-theme-section').open=true;root.replaceWith(replacement);}catch(error){globalThis.toastr?.error?.(`설정 가져오기 실패: ${error.message}`,'다락방');}finally{upload.value='';}});controls.append(actions);
+ actions.append(btn('설정 내보내기',()=>{const payload={format:'darak-design',version:6,design:settings.design,userFonts:settings.userFonts,msgButtons:settings.msgButtons};const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='darak-design-v6.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}));
+ const upload=el('input');upload.type='file';upload.accept='.json,application/json';upload.hidden=true;actions.append(btn('설정 가져오기',()=>upload.click()),upload);upload.addEventListener('change',async()=>{const file=upload.files?.[0];if(!file)return;try{if(file.size>300000)throw Error('300KB 이하 JSON만 지원합니다.');const value=JSON.parse(await file.text());if(!['darak-design','tavern-toolkit-design'].includes(value.format)||![1,2,3,4,5,6].includes(value.version)||typeof value.design!=='object')throw Error('호환되지 않는 형식입니다.');if(Array.isArray(value.userFonts)){settings.userFonts=normalizeUserFonts(value.userFonts);setUserFonts(settings.userFonts);}if(value.msgButtons&&typeof value.msgButtons==='object')settings.msgButtons=normalizeMsgButtons(value.msgButtons);settings.design=normalizeDesign(value.design);changed();const replacement=build();openDrawer(replacement);replacement.querySelector('#ttk-theme-section').open=true;root.replaceWith(replacement);}catch(error){globalThis.toastr?.error?.(`설정 가져오기 실패: ${error.message}`,'다락방');}finally{upload.value='';}});controls.append(actions);
  function syncControls(){for(const [id,b] of themeButtons)b.setAttribute('aria-pressed',String(id===settings.design.theme));themeDesc.textContent=`${THEMES[settings.design.theme].name} — ${THEMES[settings.design.theme].description}`;font.value=settings.design.font;dialogueFont.value=settings.design.dialogueFont;dialogueColorInput.value=settings.design.dialogueColors[settings.design.theme];font.updateStatus();dialogueFont.updateStatus();for(const [key,input] of Object.entries(colorInputs))input.value=settings.design.custom[key];iconStyle.value=settings.design.iconStyle;iconTone.value=settings.design.iconTone;dropCap.checked=settings.design.dropCap!==false;typeBox.checked=settings.design.typing!==false;renderPaletteChips();sliders.replaceChildren();slider(sliders,'글자 크기','size',10,23,1,v=>`${v}px`,syncPreview);slider(sliders,'줄간격','lineHeight',1.4,2.4,.05,v=>Number(v).toFixed(2),syncPreview);slider(sliders,'자간','letterSpacing',-.6,1.8,.1,v=>`${Number(v).toFixed(1)}px`,syncPreview);slider(sliders,'문단 간격','paragraphSpacing',0,32,1,v=>`${v}px`,syncPreview);syncPreview();}
  // ---- 묶음: 채팅 보조 / 화면 / 도구 ----
  {const groups=[['채팅 보조','번역 · 대필 · 프로필 사진',[['translation','ttk-translation-section'],['ghostwrite','ttk-ghostwrite-section'],['avatars','ttk-avatars-section']],['ttk-glossary-section']],['화면','디자인 · 한글화 · 테마 이미지 · 모바일 최적화',[['design','ttk-theme-section'],['localization','ttk-localization-section'],['themeImages','ttk-themeimg-section'],['optimization','ttk-optimization-section']],[]],['도구','QR 보관함 · 통합 조회 · 이미지 모아보기',[['qr','ttk-qr-section'],['inventory','ttk-inventory-section'],['gallery','ttk-gallery-section']],[]]];
