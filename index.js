@@ -362,7 +362,7 @@ function build(){
   const box=el('div','ttk-field ttk-style-field');box.append(el('strong','',`${title} 서식`));
   const seg=(label,items,onPick)=>{const wrap=el('div','ttk-style-line');wrap.append(el('small','ttk-style-sub',label));const g=el('div','ttk-seg');g.setAttribute('role','group');g.setAttribute('aria-label',`${title} ${label}`);const map={};for(const [value,text] of items){const b=el('button','ttk-seg-btn',text);b.type='button';b.addEventListener('click',()=>onPick(value));map[value]=b;g.append(b);}wrap.append(g);box.append(wrap);return map;};
   const wBtns=seg('굵기',WEIGHT_STEPS,v=>{settings.design[styleKey].weight=v;syncPreview();changed();});
-  const iLine=el('div','ttk-style-line');iLine.append(el('small','ttk-style-sub','기울임'));
+  const iLine=el('div','ttk-style-line');
   const iRow=el('label','ttk-style-check');const iBox=el('input');iBox.type='checkbox';iBox.addEventListener('change',()=>{settings.design[styleKey].italic=iBox.checked;syncPreview();changed();});iRow.append(iBox,el('span','','기울임체'));iLine.append(iRow);box.append(iLine);
   const uBtns=seg('밑줄',UNDERLINES,v=>{settings.design[styleKey].underline=v;syncPreview();changed();});
   const note=el('small','ttk-note ttk-style-note');box.append(note);

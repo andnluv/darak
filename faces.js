@@ -369,8 +369,9 @@ export class Faces {
         const clamp = () => { const { kx, ky } = dims(); fit.cx = Math.min(1 - 0.5 / kx, Math.max(0.5 / kx, fit.cx)); fit.cy = Math.min(1 - 0.5 / ky, Math.max(0.5 / ky, fit.cy)); };
         const draw = () => { clamp(); facePaint(stage, { fit }, url); };
         const zoom = el('input'); zoom.type = 'range'; zoom.min = '1'; zoom.max = '4'; zoom.step = '0.05'; zoom.value = String(Math.min(4, fit.z)); zoom.setAttribute('aria-label', '크기');
-        zoom.addEventListener('input', () => { fit.z = Number(zoom.value); draw(); });
-        const zl = el('label', 'ttk-field'); zl.append(el('span', '', '크기'), zoom); box.append(zl);
+        const zlab = el('span', '', ''); const zshow = () => { zlab.textContent = `크기 · ${Number(zoom.value).toFixed(1)}배`; }; zshow();
+        zoom.addEventListener('input', () => { fit.z = Number(zoom.value); zshow(); draw(); });
+        const zl = el('label', 'ttk-field'); zl.append(zlab, zoom); box.append(zl);
         if (entry.moods?.length) {
             const sel = el('select'); sel.setAttribute('aria-label', '미리 볼 표정'); sel.append(new Option('기본', ''));
             for (const m of entry.moods) sel.append(new Option(moodLabel(m.k), m.url));
