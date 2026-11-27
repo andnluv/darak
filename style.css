@@ -2049,3 +2049,12 @@ html[data-ttk-opt~=motion][data-ttk-enter] #chat .mes.ttk-enter{animation:none}
 #ttk-panel .ttk-marker-row{display:grid;gap:6px;padding:6px 0;border-top:1px solid var(--ttk-border,#bbb)}
 #ttk-panel .ttk-marker-row .ttk-color-field{justify-content:flex-start;gap:10px;font-size:inherit}
 #ttk-panel .ttk-marker-row input[type=color][data-follow=true]{opacity:.55}
+/* 말풍선: 큰 얼굴 + 이름, 아래 아이콘 버튼 2개 */
+.ttk-lc-repeat{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8cGF0aCBkPSJtMTcgMiA0IDQtNCA0IiAvPiA8cGF0aCBkPSJNMyAxMXYtMWE0IDQgMCAwIDEgNC00aDE0IiAvPiA8cGF0aCBkPSJtNyAyMi00LTQgNC00IiAvPiA8cGF0aCBkPSJNMjEgMTN2MWE0IDQgMCAwIDEtNCA0SDMiIC8+IDwvc3ZnPg==")}
+.ttk-lc-smile{--ttk-lc:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgPiA8Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgLz4gPHBhdGggZD0iTTggMTRzMS41IDIgNCAyIDQtMiA0LTIiIC8+IDxwYXRoIGQ9Ik05IDloLjAxIiAvPiA8cGF0aCBkPSJNMTUgOWguMDEiIC8+IDwvc3ZnPg==")}
+.ttk-face-pop-card{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:150px}
+.ttk-face-pop .ttk-face-pop-big{width:72px;height:72px}
+.ttk-face-pop-name{font-size:14px;max-width:200px;text-align:center;overflow-wrap:anywhere}
+.ttk-face-pop-acts{display:flex;gap:8px}
+.ttk-face-pop-ib{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:transparent;color:inherit;border-radius:10px;cursor:pointer;font-size:18px}
+.ttk-face-pop-ib:hover{background:color-mix(in srgb,currentColor 7%,transparent)}

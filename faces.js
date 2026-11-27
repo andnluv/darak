@@ -257,10 +257,14 @@ export class Faces {
         const entries = this.entries(), e = entries.find(x => x.id === faceEl.dataset.id); if (!e) return;
         const pop = this.pop = el('div', 'ttk-face-pop'); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', '화자 얼굴');
         if (!change && !mood) {
-            const row = el('div', 'ttk-face-pop-row'); row.append(el('strong', '', e.name));
-            const b = el('button', 'ttk-face-pop-btn', '바꾸기'); b.type = 'button'; b.addEventListener('click', () => this.openPop(faceEl, { change: true })); row.append(b);
-            if (e.moods?.length) { const m = el('button', 'ttk-face-pop-btn', '표정'); m.type = 'button'; m.addEventListener('click', () => this.openPop(faceEl, { mood: true })); row.append(m); }
-            pop.append(row);
+            const card = el('div', 'ttk-face-pop-card');
+            const big = el('span', 'ttk-face-thumb ttk-face-pop-big'); facePaint(big, e, pickUrl(e, faceEl.dataset.mood || ''));
+            const acts = el('div', 'ttk-face-pop-acts');
+            const ib = (k, label, fn) => { const x = el('button', 'ttk-face-pop-ib'); x.type = 'button'; x.setAttribute('aria-label', label); x.append(ic(k)); x.addEventListener('click', fn); return x; };
+            acts.append(ib('repeat', '화자 바꾸기', () => this.openPop(faceEl, { change: true })));
+            if (e.moods?.length) acts.append(ib('smile', '표정 고르기', () => this.openPop(faceEl, { mood: true })));
+            card.append(big, el('strong', 'ttk-face-pop-name', e.name), acts);
+            pop.append(card);
         } else if (mood) {
             pop.append(el('div', 'ttk-face-pop-title', `${e.name}의 표정`));
             const grid = el('div', 'ttk-face-pop-grid');
