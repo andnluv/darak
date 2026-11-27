@@ -1896,8 +1896,8 @@ html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=solid] .ttk-preview-
 html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-u=dotted] .ttk-preview-narration,
 html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=dotted] .ttk-preview-dialogue{text-decoration:underline dotted color-mix(in srgb,currentColor 65%,transparent)!important;text-decoration-thickness:.1em!important;text-underline-offset:.24em!important;text-decoration-skip-ink:none!important}
 html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-u=marker] .ttk-preview-narration,
-html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=marker] .ttk-preview-dialogue{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--pv-accent) 30%,transparent) 56%)!important;-webkit-box-decoration-break:clone;box-decoration-break:clone}
-html body #ttk-panel#ttk-panel .ttk-mini-preview[data-theme=nocturne][data-dlg-u=marker] .ttk-preview-dialogue{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--pv-accent) 16%,transparent) 56%)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=marker] .ttk-preview-dialogue{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--pv-accent) 16%,transparent) 56%)!important;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-theme=nocturne][data-dlg-u=marker] .ttk-preview-dialogue{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--pv-accent) 8%,transparent) 56%)!important}
 
 /* 채팅 화면. 속성이 없으면(= 모두 '기본') 아래 규칙은 하나도 적용되지 않아 기존 화면 그대로다 */
 html[data-ttk-narr-w] body #chat#chat .mes :is(.mes_text,.ttk-tr-text){font-weight:var(--ttk-narrWeight)!important}
@@ -1914,6 +1914,6 @@ html[data-ttk-dlg-u=solid] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(
 html[data-ttk-narr-u=dotted] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-narr,
 html[data-ttk-dlg-u=dotted] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){text-decoration:underline dotted color-mix(in srgb,currentColor 65%,transparent)!important;text-decoration-thickness:.1em!important;text-underline-offset:.24em!important;text-decoration-skip-ink:none!important}
 html[data-ttk-narr-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-narr,
-html[data-ttk-dlg-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ttk-accent) 30%,transparent) 56%)!important;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html[data-ttk-dlg-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ttk-accent) 16%,transparent) 56%)!important;-webkit-box-decoration-break:clone;box-decoration-break:clone}
 /* Nocturne 대사는 자막식 배경이 이미 있어서, 형광펜은 연하게 겹친다 */
-html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ttk-accent) 16%,transparent) 56%)!important}
+html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ttk-accent) 8%,transparent) 56%)!important}
