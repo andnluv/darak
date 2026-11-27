@@ -1869,3 +1869,51 @@ html[data-ttk-theme] body #chat#chat .mes.mes .ttk-foot-btn{position:relative}
 #ttk-panel .ttk-uf-field{margin-top:8px}
 #ttk-panel .ttk-uf-list{display:grid;gap:4px;margin-top:8px}
 #ttk-panel .ttk-uf-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px solid var(--ttk-border,rgba(128,128,128,.25))}
+
+/* ===== v1.1.0 본문 서식: 지문·대사 굵기 · 기울임 · 밑줄 · 강조 ===== */
+/* 설정 패널: 단계 칩. 흐린 칸(없는 굵기)도 눌러서 적용할 수 있다 */
+#ttk-panel .ttk-style-field{display:grid;gap:2px}
+#ttk-panel .ttk-style-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:6px}
+#ttk-panel .ttk-style-sub{flex:0 0 34px;opacity:.7;font-size:12px}
+#ttk-panel .ttk-style-line .ttk-seg{flex:1 1 220px;width:auto}
+#ttk-panel .ttk-style-line .ttk-seg-btn{flex:1 1 auto;text-align:center;padding:6px 8px;white-space:nowrap}
+#ttk-panel .ttk-style-check{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+#ttk-panel .ttk-style-note,#ttk-panel .ttk-emph-note{display:block;margin-top:6px;line-height:1.5}
+#ttk-panel .ttk-emph-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+#ttk-panel .ttk-seg-btn[data-dim=true]{opacity:.32}
+#ttk-panel .ttk-seg-btn[data-dim=true][aria-pressed=true]{opacity:.6}
+
+/* 미리보기 (패널 안) */
+html body #ttk-panel#ttk-panel .ttk-mini-preview:is([data-theme=paper],[data-theme=nocturne]) .ttk-preview-dialogue{font-weight:700}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-w] .ttk-preview-narration{font-weight:var(--pv-narr-w)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-w] .ttk-preview-dialogue{font-weight:var(--pv-dlg-w)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-i] .ttk-preview-narration{font-style:italic!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-i] .ttk-preview-dialogue{font-style:italic!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-emph=weight] .ttk-preview-narration em{font-style:italic!important;font-weight:var(--pv-emph-w)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-emph=color] .ttk-preview-narration em{font-style:italic!important;color:var(--pv-accent)!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-u=solid] .ttk-preview-narration,
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=solid] .ttk-preview-dialogue{text-decoration:underline solid color-mix(in srgb,currentColor 55%,transparent)!important;text-decoration-thickness:.07em!important;text-underline-offset:.24em!important;text-decoration-skip-ink:none!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-u=dotted] .ttk-preview-narration,
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=dotted] .ttk-preview-dialogue{text-decoration:underline dotted color-mix(in srgb,currentColor 65%,transparent)!important;text-decoration-thickness:.1em!important;text-underline-offset:.24em!important;text-decoration-skip-ink:none!important}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-narr-u=marker] .ttk-preview-narration,
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-dlg-u=marker] .ttk-preview-dialogue{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--pv-accent) 30%,transparent) 56%)!important;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html body #ttk-panel#ttk-panel .ttk-mini-preview[data-theme=nocturne][data-dlg-u=marker] .ttk-preview-dialogue{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--pv-accent) 16%,transparent) 56%)!important}
+
+/* 채팅 화면. 속성이 없으면(= 모두 '기본') 아래 규칙은 하나도 적용되지 않아 기존 화면 그대로다 */
+html[data-ttk-narr-w] body #chat#chat .mes :is(.mes_text,.ttk-tr-text){font-weight:var(--ttk-narrWeight)!important}
+html[data-ttk-dlg-w] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){font-weight:var(--ttk-dlgWeight)!important}
+html[data-ttk-narr-i] body #chat#chat .mes :is(.mes_text,.ttk-tr-text){font-style:italic!important}
+html[data-ttk-narr-i] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){font-style:normal!important}
+html[data-ttk-dlg-i] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){font-style:italic!important}
+/* 강조: 기울임 + 한 단계 굵게, 더 굵게 할 수 없으면 포인트 색. 문단의 지문 80% 이상이 별표면 data-ttk-emph-skip 으로 제외된다 */
+html[data-ttk-emph=weight] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(em,i):not([data-ttk-emph-skip]){font-style:italic!important;font-weight:var(--ttk-emphWeight)!important}
+html[data-ttk-emph=color] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(em,i):not([data-ttk-emph-skip]){font-style:italic!important;color:var(--ttk-accent)!important}
+/* 밑줄: 지문은 span.ttk-narr(대사와 분리), 대사는 .ttk-dialogue / q */
+html[data-ttk-narr-u=solid] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-narr,
+html[data-ttk-dlg-u=solid] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){text-decoration:underline solid color-mix(in srgb,currentColor 55%,transparent)!important;text-decoration-thickness:.07em!important;text-underline-offset:.24em!important;text-decoration-skip-ink:none!important}
+html[data-ttk-narr-u=dotted] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-narr,
+html[data-ttk-dlg-u=dotted] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){text-decoration:underline dotted color-mix(in srgb,currentColor 65%,transparent)!important;text-decoration-thickness:.1em!important;text-underline-offset:.24em!important;text-decoration-skip-ink:none!important}
+html[data-ttk-narr-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) .ttk-narr,
+html[data-ttk-dlg-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ttk-accent) 30%,transparent) 56%)!important;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+/* Nocturne 대사는 자막식 배경이 이미 있어서, 형광펜은 연하게 겹친다 */
+html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.mes_text,.ttk-tr-text) :is(.ttk-dialogue,q){background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ttk-accent) 16%,transparent) 56%)!important}
