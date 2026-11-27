@@ -135,12 +135,8 @@ export class ThemeImages {
         document.getElementById('themes')?.addEventListener('change', this.onWake);
         this.css()?.addEventListener('input', this.onWake);
         this.timer = setInterval(() => { const ta = this.css(); if (ta && this.stamp !== `${this.theme()}\u0000${ta.value.length}`) this.apply(); }, 2000);
-        const menu = document.getElementById('extensionsMenu');
-        if (menu && !document.getElementById('ttk_themeimg_menu')) {
-            const item = el('div', 'list-group-item flex-container flexGap5 interactable'); item.id = 'ttk_themeimg_menu'; item.tabIndex = 0;
-            item.append(el('div', 'ttk-lc ttk-lc-img extensionsMenuExtensionButton'), el('span', '', '테마 이미지 교체'));
-            item.addEventListener('click', () => this.open()); menu.append(item);
-        }
+        // v1.7.2: 요술봉 메뉴에는 「다락방」만 둡니다. 이 기능은 설정 창의 도구에서 엽니다.
+        document.getElementById('ttk_themeimg_menu')?.remove();
         this.apply();
     }
     stop() {

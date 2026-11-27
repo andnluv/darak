@@ -7,6 +7,8 @@
 
 const MODE_KEY = 'darak-window-mode';
 const FONT_ID = 'ttk-win-fonts';
+const FS = 'https://cdn.jsdelivr.net/npm/@fontsource';
+const FONT_FALLBACK = [`${FS}/gowun-batang@5/400.css`, `${FS}/gowun-batang@5/700.css`, `${FS}/ibm-plex-sans-kr@5/400.css`, `${FS}/ibm-plex-sans-kr@5/500.css`, `${FS}/ibm-plex-sans-kr@5/600.css`];
 const FONT_HREF = 'https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap';
 const MENU_ID = 'ttk_window_menu';
 // 왼쪽 목록 아이콘(Lucide). 값은 css의 .ttk-lc-<이름> 클래스입니다.
@@ -43,9 +45,11 @@ export class SettingsWindow {
         item.append(el('div', 'ttk-lc ttk-lc-w-attic extensionsMenuExtensionButton'), el('span', '', '다락방'));
         item.addEventListener('click', () => { this.open(); this.closeWandMenu(); });
         item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); item.click(); } });
-        menu.prepend(item);
+        // SillyTavern 기본 항목처럼 extension_container 안에 넣어 들여쓰기·간격을 같게 맞춥니다.
+        const box = el('div', 'extension_container interactable'); box.id = 'darak_wand_container'; box.append(item);
+        menu.prepend(box);
     }
-    unregister() { clearTimeout(this.timer); document.getElementById(MENU_ID)?.remove(); if (this.root) { this.rollback(); this.teardown(); } }
+    unregister() { clearTimeout(this.timer); (document.getElementById('darak_wand_container') || document.getElementById(MENU_ID))?.remove(); if (this.root) { this.rollback(); this.teardown(); } }
     // 요술봉 메뉴는 바깥을 누르면 닫히므로, 같은 동작을 흉내 냅니다.
     closeWandMenu() { try { document.body.dispatchEvent(new MouseEvent('click', { bubbles: true })); } catch { /* 메뉴가 열린 채여도 동작에는 문제없음 */ } }
 
@@ -80,13 +84,21 @@ export class SettingsWindow {
         if (ok && this.root) { this.rollback(); this.teardown(); }
     }
     markDirty() { this.dirty = true; this.updateFoot(); }
+    // 창 글꼴: Google Fonts를 먼저 쓰고, 받지 못하면(차단·오류·4초 안에 글자 없음) jsDelivr의 Fontsource 사본으로 다시 받습니다.
     loadFonts() {
         if (document.getElementById(FONT_ID)) return;
-        const link = el('link'); link.id = FONT_ID; link.rel = 'stylesheet'; link.href = FONT_HREF; link.crossOrigin = 'anonymous';
-        // 글꼴을 못 받으면(오프라인·차단) 기본 명조/고딕으로 보이므로 콘솔에만 남깁니다.
-        link.addEventListener('load', () => document.fonts?.load?.("400 22px 'Gowun Batang'", '다락방').then(f => { if (!f?.length) console.warn('[DARAK] 설정 창 글꼴(Gowun Batang)을 불러오지 못했습니다.'); }).catch(() => {}));
-        link.addEventListener('error', () => console.warn('[DARAK] 설정 창 글꼴 CSS(Google Fonts)를 불러오지 못했습니다.'));
-        document.head.append(link);
+        const add = (id, href) => { const l = el('link'); l.id = id; l.rel = 'stylesheet'; l.href = href; l.crossOrigin = 'anonymous'; document.head.append(l); return l; };
+        let fell = false;
+        const fallback = () => {
+            if (fell) return; fell = true;
+            FONT_FALLBACK.forEach((href, i) => add(`${FONT_ID}-fb${i}`, href));
+            console.warn('[DARAK] 설정 창 글꼴을 Google Fonts에서 받지 못해 jsDelivr 사본을 씁니다.');
+        };
+        const ok = () => document.fonts?.check?.("22px 'Gowun Batang'", '다락방') !== false;
+        const link = add(FONT_ID, FONT_HREF);
+        link.addEventListener('error', fallback);
+        link.addEventListener('load', () => document.fonts?.load?.("22px 'Gowun Batang'", '다락방').then(f => { if (!f?.length) fallback(); }).catch(fallback));
+        setTimeout(() => { if (!ok()) fallback(); }, 4000);
     }
 
     // ---- 화면 ----
@@ -155,12 +167,16 @@ export class SettingsWindow {
 
     // ---- 설정 패널 올리기 ----
     mountPanel() {
-        try { this.body.replaceChildren(this.buildPanel(), this.empty); }
+        try {
+            this.ovHead = el('div', 'ttk-win-ovhead'); this.ovTitle = el('h2', 'ttk-win-ovtitle', '다락방에 있는 것'); this.ovCount = el('span', 'ttk-win-ovcount');
+            this.ovHead.append(this.ovTitle, this.ovCount);
+            this.body.replaceChildren(this.ovHead, this.buildPanel(), this.empty);
+        }
         catch (e) { console.error('[DARAK] 설정 창을 만들지 못했습니다', e); this.body.replaceChildren(el('p', 'ttk-win-empty', '설정 화면을 만들지 못했습니다. 브라우저 콘솔(F12)의 [DARAK] 줄을 확인해 주세요. 모듈은 저장된 설정대로 동작합니다.')); }
         // 설정 가져오기처럼 패널이 통째로 바뀌면 목록·필터를 다시 맞춥니다.
         this.mo = new MutationObserver(() => { if (this.panelEl !== this.body.querySelector('#ttk-panel')) this.refresh(); });
         this.mo.observe(this.body, { childList: true });
-        this.body.addEventListener('change', e => { if (e.target.matches?.('.ttk-module-row input[type=checkbox]')) this.renderNav(); });
+        this.body.addEventListener('change', e => { if (e.target.matches?.('.ttk-module-row input[type=checkbox]')) { this.renderNav(); this.apply(); } });
         this.refresh();
     }
     refresh() { this.indexPanel(); this.renderNav(); this.apply(); }
@@ -182,11 +198,23 @@ export class SettingsWindow {
                 it.section = it.els.find(e => e.matches('details'));
                 it.input = row?.querySelector('input[type=checkbox]') || null;
                 it.sections = it.els.filter(e => e.matches('details'));
-                if (row) for (const d of it.sections) d.classList.add('ttk-win-sub');   // 모듈 카드 아래에 붙여 그립니다
+                it.row = row || null;
+                if (row) this.decorateRow(row, it.key);
                 it.label = (row?.querySelector('.ttk-option-label strong')?.textContent || it.section?.querySelector(':scope > summary')?.textContent || '').split(' · ')[0].trim();
             }
             this.groups.push({ name: g.querySelector('.ttk-group-head strong')?.textContent || '', el: g, items: [...items.values()] });
         }
+    }
+    // 개요(전체·묶음 탭)에서는 모듈 줄을 카드로 씁니다: 번호·아이콘을 붙이고, 스위치 밖을 누르면 그 모듈 설정으로 갑니다.
+    decorateRow(row, key) {
+        if (!row.querySelector(':scope > .ttk-win-ic')) {
+            row.prepend(el('span', 'ttk-win-no'), el('span', `ttk-lc ttk-lc-${NAV_ICON[key] || 'w-layout-grid'} ttk-win-ic`));
+        }
+        if (row.dataset.winBound) return; row.dataset.winBound = '1';
+        row.addEventListener('click', e => {
+            if (!this.body.classList.contains('ttk-win-overview') || e.target.closest('input')) return;
+            e.preventDefault(); this.go(`m:${key}`);
+        });
     }
     renderNav() {
         if (!this.nav) return;
@@ -223,9 +251,11 @@ export class SettingsWindow {
     // 탭과 검색어에 맞춰 보이는 모듈만 남깁니다.
     apply() {
         const p = this.panelEl; if (!p) return;
-        const q = this.q.trim().toLowerCase(), solo = this.tab.startsWith('m:');
+        const q = this.q.trim().toLowerCase(), solo = this.tab.startsWith('m:'), overview = !solo && !q;
         this.body.classList.toggle('ttk-win-solo', solo);
-        let shown = 0;
+        this.body.classList.toggle('ttk-win-overview', overview);
+        this.body.classList.toggle('ttk-win-gtab', overview && this.tab.startsWith('g:'));
+        let shown = 0, no = 0, on = 0, total = 0;
         this.groups.forEach((g, gi) => {
             let n = 0;
             for (const it of g.items) {
@@ -233,15 +263,24 @@ export class SettingsWindow {
                 if (this.tab.startsWith('g:')) vis = this.tab === `g:${gi}`;
                 else if (solo) vis = this.tab === `m:${it.key}`;
                 if (vis && q) vis = this.textOf(it).includes(q);
-                for (const e of it.els) e.classList.toggle('ttk-win-hide', !vis);
+                if (overview && !it.row) vis = false;              // 개요에는 모듈 카드만
+                if (it.row && vis) { total++; if (it.input?.checked) on++; const nb = it.row.querySelector(':scope > .ttk-win-no'); if (nb) nb.textContent = String(++no).padStart(2, '0'); }
+                for (const e of it.els) e.classList.toggle('ttk-win-hide', !vis || (overview && e !== it.row));
                 if (vis) { n++; if (solo || q) for (const d of it.sections) d.open = true; }
                 // 모듈 하나만 볼 때 카드 제목과 같은 접힘 칸 제목은 숨깁니다.
                 for (const d of it.sections) { const sm = d.querySelector(':scope > summary'); sm?.classList.toggle('ttk-win-dup', solo && vis && sm.textContent.trim() === it.label); }
             }
             g.el.classList.toggle('ttk-win-hide', !n); shown += n;
         });
-        for (const note of p.querySelectorAll('.ttk-settings-body > :is(.ttk-note,.ttk-failures)')) note.classList.toggle('ttk-win-hide', !!q || this.tab !== 'all');
+        for (const note of p.querySelectorAll('.ttk-settings-body > .ttk-note')) note.classList.add('ttk-win-hide');
+        for (const box of p.querySelectorAll('.ttk-settings-body > .ttk-failures')) box.classList.toggle('ttk-win-hide', !overview || this.tab !== 'all');
         this.empty.hidden = shown > 0;
+        if (this.ovHead) {
+            this.ovHead.classList.toggle('ttk-win-hide', !overview);
+            const g = this.tab.startsWith('g:') ? this.groups[Number(this.tab.slice(2))] : null;
+            this.ovTitle.textContent = g ? g.name : '다락방에 있는 것';
+            this.ovCount.textContent = `${on}개 켜짐 · 카드를 누르면 세부 설정으로 갑니다`;
+        }
     }
     // 설정 칸 안의 글자(드롭다운 항목·입력칸 제외)만 검색 대상으로 삼습니다.
     textOf(it) {
