@@ -1937,3 +1937,18 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 #ttk-panel .ttk-face-row>img{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none}
 #ttk-panel .ttk-face-fields{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
 #ttk-panel .ttk-face-fields input{width:100%;box-sizing:border-box}
+
+/* v1.2.2 페이지에서 얼굴 가져오기 */
+#ttk-face-import{position:fixed;inset:0;z-index:99998;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(0,0,0,.45)}
+#ttk-face-import .ttk-fi-box{width:min(640px,100%);max-height:min(88vh,100%);overflow:auto;display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:14px;background:var(--ttk-surface,#fff);color:var(--ttk-text,#222);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+#ttk-face-import .ttk-fi-head{display:flex;align-items:center;justify-content:space-between}
+#ttk-face-import .ttk-fi-x{border:1px solid color-mix(in srgb,currentColor 25%,transparent);background:transparent;color:inherit;border-radius:8px;padding:4px 10px;cursor:pointer}
+#ttk-face-import textarea,#ttk-face-import input[type=url],#ttk-face-import input[type=search]{width:100%;box-sizing:border-box;font-size:13px}
+#ttk-face-import .ttk-fi-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#ttk-face-import .ttk-fi-tools input{flex:1;min-width:140px}
+#ttk-face-import .ttk-fi-list{display:flex;flex-direction:column;gap:4px;max-height:42vh;overflow:auto}
+#ttk-face-import .ttk-fi-row{display:flex;align-items:center;gap:10px;padding:4px 6px;border-radius:8px;cursor:pointer}
+#ttk-face-import .ttk-fi-row[hidden]{display:none}
+#ttk-face-import .ttk-fi-row img{width:40px;height:40px;border-radius:50%;object-fit:cover;flex:none}
+#ttk-face-import .ttk-fi-name{display:flex;flex-direction:column;min-width:0}
+#ttk-face-import .ttk-fi-name small{opacity:.7}
