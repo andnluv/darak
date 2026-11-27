@@ -139,7 +139,7 @@ export class Weather {
     // ---- 화면 크기 · 입자 ----
     resize() {
         if (!this.canvas) return;
-        this.DPR = Math.min(window.devicePixelRatio || 1, this.mobile() ? 1 : 1.5);
+        this.DPR = Math.min(window.devicePixelRatio || 1, this.mobile() ? 2 : 1.5); // 휴대폰도 2배까지: 1배면 고해상도 화면에서 가는 빗줄기가 뭉개져 거의 안 보인다
         this.W = window.innerWidth; this.H = window.innerHeight;
         this.canvas.width = Math.round(this.W * this.DPR); this.canvas.height = Math.round(this.H * this.DPR);
         this.cx.setTransform(this.DPR, 0, 0, this.DPR, 0, 0);
@@ -153,8 +153,9 @@ export class Weather {
         return (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255 > 0.5;
     }
     count(kind) {
-        const s = this.getSettings(), area = (this.W * this.H) / (1920 * 1080), lv = kind === 'star' ? 1 : LV[s.level];
-        return Math.max(3, Math.round(BASE[kind] * area * lv * s.amount * (this.mobile() ? 0.5 : 1)));
+        // v1.3.4: 면적 비례만 쓰면 휴대폰(1920×1080의 약 14%)에 몇 개밖에 안 남아 효과가 안 보였다 → 작은 화면은 0.55를 바닥으로 둔다.
+        const s = this.getSettings(), area = Math.max(0.55, (this.W * this.H) / (1920 * 1080)), lv = kind === 'star' ? 1 : LV[s.level];
+        return Math.max(3, Math.round(BASE[kind] * area * lv * s.amount));
     }
     spawn(kind, fresh) {
         const { W, H } = this, p = { k: kind, x: R(0, W), y: fresh ? R(-H * 0.1, H) : R(-40, -5), ph: R(0, 6.28) };
@@ -196,6 +197,7 @@ export class Weather {
         this.tint.style.background = cl ? (this.dark ? `rgba(6,8,14,${Math.min(0.6, (0.28 * cl * s.opacity) / 0.35)})` : `rgba(70,78,92,${Math.min(0.5, (0.2 * cl * s.opacity) / 0.35)})`) : 'transparent';
     }
     ensureLoop() {
+        if (this.top) { this.top.dataset.p = this.P.length + this.fog.length; this.top.dataset.why = `고른 날씨 ${this.sel.weather}/${this.sel.mood}` + (this.reduced() ? ' · 동작 줄이기로 정지 화면' : '') + (document.hidden ? ' · 탭 숨김' : ''); }
         if (!this.enabled || this.raf || document.hidden || this.reduced()) return;
         if (!this.P.length && !this.fog.length && this.sel.weather !== 'storm') return; // 그릴 것이 없으면 돌지 않는다
         this.last = performance.now(); this.acc = 0; this.raf = requestAnimationFrame(this.onFrame);
@@ -210,6 +212,7 @@ export class Weather {
         const dt = Math.min(this.acc, 50) / 1000; this.acc = 0; this.T += dt;
         if (++this.tick % 180 === 0) { const d = this.detectDark(); if (d !== this.dark) { this.dark = d; this.applyTint(); } }
         this.draw(dt);
+        if (this.top && this.tick % 15 === 0) { this.top.dataset.p = this.P.length + this.fog.length; this.top.dataset.f = this.tick; }
         if (this.sel.weather === 'storm' && now > this.nextBolt) { this.strike(); this.nextBolt = now + R(8000, 20000); }
     }
     /** 번개: 8초 이상 간격, 밝기 30% 이하, 동작 줄이기에서는 쓰지 않는다. */
@@ -289,7 +292,7 @@ export class Weather {
     // ---- 설정 화면 ----
     buildPanel(btn) {
         const root = el('div', 'ttk-controls'), self = this, S = () => this.getSettings();
-        root.append(el('p', 'ttk-note', '배경 위, 채팅 칸 아래에 날씨와 분위기 효과를 깝니다. 고른 날씨와 분위기는 채팅마다 따로 저장되어, 다른 채팅을 열면 그 채팅의 하늘로 바뀝니다. 세기·양·농도·속도는 모든 채팅에 공통입니다. 채팅 내용과 실리태번 설정은 바꾸지 않으며, 끄면 바로 사라집니다.'));
+        root.append(el('p', 'ttk-note', '날씨와 분위기 효과가 채팅 칸 위로 지나갑니다(설정 창·메뉴보다는 아래, 화면 어둡힘은 채팅 칸 뒤). 고른 날씨와 분위기는 채팅마다 따로 저장되어, 다른 채팅을 열면 그 채팅의 하늘로 바뀝니다. 세기·양·농도·속도는 모든 채팅에 공통입니다. 채팅 내용과 실리태번 설정은 바꾸지 않으며, 끄면 바로 사라집니다.'));
         const state = el('p', 'ttk-note ttk-wx-state'); state.setAttribute('aria-live', 'polite'); root.append(state);
         const group = (title, items, get, set) => {
             const box = el('div', 'ttk-field'); box.append(el('strong', '', title));

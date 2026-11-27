@@ -1956,10 +1956,10 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 
 /* v1.3.0 날씨·분위기: 배경(#bg1, z-index -1) 바로 뒤 · 채팅 칸(#sheld, z-index 30) 아래 */
 #ttk-wx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-#ttk-wx-top{position:fixed;inset:0;z-index:31;pointer-events:none;overflow:hidden}
+#ttk-wx-top{position:fixed;inset:0;z-index:31;pointer-events:none;overflow:hidden;-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform}
 #ttk-wx-top canvas,#ttk-wx .ttk-wx-tint{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 #ttk-wx .ttk-wx-tint{transition:background .8s}
-#ttk-wx-flash{position:fixed;inset:0;z-index:2000;background:#fff;opacity:0;pointer-events:none}
+#ttk-wx-flash{position:fixed;inset:0;z-index:2000;background:#fff;opacity:0;pointer-events:none;-webkit-transform:translateZ(0);transform:translateZ(0)}
 #ttk-panel .ttk-wx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(5.6em,1fr));gap:6px}
 #ttk-panel .ttk-wx-btn{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;min-height:38px;padding:6px 8px;border-radius:8px;border:1px solid rgba(128,128,128,.35);font-size:13px;line-height:1.2;cursor:pointer;color:inherit;opacity:.7;white-space:nowrap}
 #ttk-panel .ttk-wx-btn svg{width:17px;height:17px;flex:none}
@@ -2031,9 +2031,10 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 #ttk-face-import .ttk-actions{padding:18px 12px;border:1.5px dashed color-mix(in srgb,currentColor 30%,transparent);border-radius:14px;justify-content:center;flex-wrap:wrap}
 
 /* v1.3.2 테마 효과: 필름 그레인 · 비네트 · 새 응답 등장 (설정에서 켤 때만) */
-#ttk-fx-grain{position:fixed;inset:0;z-index:2147483000;pointer-events:none;opacity:.13;background-size:160px 160px;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-html[data-ttk-scheme=dark] #ttk-fx-grain{mix-blend-mode:screen;opacity:.09}
-#ttk-fx-vig{position:fixed;inset:0;z-index:2147482999;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.34) 100%)}
+#ttk-fx-grain{position:fixed;inset:0;z-index:2147483000;pointer-events:none;opacity:.16;background-size:180px 180px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.4 -1.15'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url%28%23n%29'/%3E%3C/svg%3E");-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform}
+html[data-ttk-scheme=dark] #ttk-fx-grain{opacity:.12;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 2.4 -1.15'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url%28%23n%29'/%3E%3C/svg%3E")}
+#ttk-fx-vig{position:fixed;inset:0;z-index:2147482999;pointer-events:none;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.42) 100%);-webkit-transform:translateZ(0);transform:translateZ(0);will-change:transform}
+html[data-ttk-scheme=dark] #ttk-fx-vig{background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,.62) 100%)}
 @keyframes ttk-enter-fade{from{opacity:0}to{opacity:1}}
 @keyframes ttk-enter-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 html[data-ttk-enter=fade] #chat .mes.ttk-enter{animation:ttk-enter-fade .45s ease-out both}
@@ -2043,3 +2044,4 @@ html[data-ttk-opt~=motion][data-ttk-enter] #chat .mes.ttk-enter{animation:none}
 .ttk-fx-row{display:flex;flex-direction:column;gap:8px}
 .ttk-add-menu>summary::marker,.ttk-more>summary::marker{content:""}
 #ttk-face-import .ttk-actions.ttk-drop-on{border-color:var(--ttk-accent,currentColor);background:color-mix(in srgb,var(--ttk-accent,currentColor) 8%,transparent)}
+.ttk-fx-diag textarea{width:100%;font-size:11px;line-height:1.4;font-family:ui-monospace,monospace;margin-top:6px}

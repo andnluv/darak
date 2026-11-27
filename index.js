@@ -10,6 +10,7 @@ import {Faces,normalizeFaces} from './faces.js';
 import {ThemeImages,normalizeThemeImages} from './theme-images.js';
 import {Gallery,normalizeGallery} from './gallery.js';
 import {Weather,normalizeWeather} from './weather.js';
+import {fxDiagRow} from './fx-diag.js';
 import {confirmAsk} from './dialogs.js';
 import {syncMessageFooters} from './message-footer.js';
 import {normalizeMsgButtons,scanButtons,syncMessageButtons,isFront,setFront,resetFront} from './message-buttons.js';
@@ -264,7 +265,7 @@ function build(){
 
  // ---- 날씨·분위기 ----
  const wxPanel=el('details','ttk-section');wxPanel.id='ttk-weather-section';wxPanel.hidden=!settings.modules.weather;wxPanel.append(el('summary','ttk-section-summary','날씨 · 분위기'));
- if(weather)wxPanel.append(weather.buildPanel(btn));
+ if(weather)wxPanel.append(weather.buildPanel(btn),fxDiagRow(el,btn));
  body.append(wxPanel);
 
  // ---- 모바일 최적화 ----
@@ -462,7 +463,7 @@ function build(){
  const fxRow=el('div','ttk-field ttk-fx-row');
  const mkChk=(label,key)=>{const l=el('label','ttk-style-check'),c=el('input');c.type='checkbox';c.addEventListener('change',()=>{settings.design[key]=c.checked;changed()});l.append(c,el('span','',label));fxRow.append(l);return c;};
  const grainBox=mkChk('필름 그레인 (화면 위에 아주 옅은 알갱이)','grain'),vigBox=mkChk('비네트 (화면 가장자리를 살짝 어둡게)','vignette');
- const enterLine=el('label','ttk-field'),enterSel=el('select');enterSel.setAttribute('aria-label','새 응답 등장 효과');for(const [v,t] of [['off','새 응답 등장 효과: 없음'],['fade','새 응답 등장 효과: 서서히 나타나기'],['rise','새 응답 등장 효과: 아래에서 떠오르기']])enterSel.append(new Option(t,v));enterSel.addEventListener('change',()=>{settings.design.entrance=enterSel.value;changed()});enterLine.append(enterSel);fxRow.append(enterLine);controls.append(fxRow);
+ const enterLine=el('label','ttk-field'),enterSel=el('select');enterSel.setAttribute('aria-label','새 응답 등장 효과');for(const [v,t] of [['off','새 응답 등장 효과: 없음'],['fade','새 응답 등장 효과: 서서히 나타나기'],['rise','새 응답 등장 효과: 아래에서 떠오르기']])enterSel.append(new Option(t,v));enterSel.addEventListener('change',()=>{settings.design.entrance=enterSel.value;changed()});enterLine.append(enterSel);fxRow.append(enterLine,fxDiagRow(el,btn));controls.append(fxRow);
   const typeRow=el('label','ttk-field ttk-typing-row');const typeBox=el('input');typeBox.type='checkbox';typeBox.addEventListener('change',()=>{settings.design.typing=typeBox.checked;changed()});typeRow.append(typeBox,el('span','','입력 중 표시(AI가 응답을 쓰는 동안 표시)'));controls.append(typeRow);
  function syncPreview(){const d=settings.design,c=d.custom;preview.dataset.theme=d.theme;preview.dataset.porcelainVariant=d.theme==='porcelain'?(c.border.toLowerCase()==='#c5b18a'?'trim':c.accent.toLowerCase()==='#153e82'?'royal':'classic'):'';for(const [key,value] of Object.entries(c))preview.style.setProperty(`--pv-${key}`,value);preview.style.setProperty('--pv-font',FONTS[d.font].family);preview.style.setProperty('--pv-dialogue-font',FONTS[d.dialogueFont].family);preview.style.setProperty('--pv-dialogue-color',d.dialogueColors[d.theme]);preview.style.setProperty('--pv-size',`${d.size}px`);preview.style.setProperty('--pv-line',d.lineHeight);preview.style.setProperty('--pv-tracking',`${d.letterSpacing}px`);preview.style.setProperty('--pv-para',`${d.paragraphSpacing}px`);
   const ns=d.narrationStyle,ds=d.dialogueStyle,nw=resolveWeight(d.font,ns.weight),dw=resolveWeight(d.dialogueFont,ds.weight),em=emphasisOf(d.font,ns.weight);
