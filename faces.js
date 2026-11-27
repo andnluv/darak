@@ -416,7 +416,11 @@ export class Faces {
         box.append(more('“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 얼굴 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
         const file = el('input'); file.type = 'file'; file.accept = '.zip,application/zip'; file.hidden = true; file.setAttribute('aria-label', 'zip 파일'); // 테마가 파일 입력칸을 가릴 수 있어 자체 버튼을 쓴다
         const pickRow = el('div', 'ttk-actions'), pickBtn = el('button', 'ttk-button', 'zip 파일 고르기'); pickBtn.type = 'button'; pickBtn.addEventListener('click', () => file.click());
-        const pickName = el('span', 'ttk-note', '고른 파일 없음'); pickRow.append(pickBtn, pickName, file);
+        const pickName = el('span', 'ttk-note', '고른 파일 없음 · 여기에 끌어 놓아도 됩니다'); pickRow.append(pickBtn, pickName, file);
+        // 점선 칸에 zip을 끌어 놓으면 고른 것과 같게 처리한다.
+        pickRow.addEventListener('dragover', ev => { ev.preventDefault(); pickRow.classList.add('ttk-drop-on'); });
+        pickRow.addEventListener('dragleave', () => pickRow.classList.remove('ttk-drop-on'));
+        pickRow.addEventListener('drop', ev => { ev.preventDefault(); pickRow.classList.remove('ttk-drop-on'); const fs = ev.dataTransfer?.files; if (!fs?.length) return; try { file.files = fs; } catch { return; } file.dispatchEvent(new Event('change')); });
         const cropRow = el('label', 'ttk-style-check'), crop = el('input'); crop.type = 'checkbox'; crop.checked = true; cropRow.append(crop, el('span', '', '가로·세로가 긴 그림은 처음 위치를 위쪽 가운데(얼굴)에 맞추기 (나중에 목록의 [위치 조정]으로 바꿀 수 있음)'));
         const status = el('p', 'ttk-note'), list = el('div', 'ttk-fi-list'), go = el('button', 'ttk-button', '선택한 인물 가져오기'); go.type = 'button'; go.hidden = true;
         box.append(pickRow, cropRow, status, list, go);

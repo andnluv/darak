@@ -1956,7 +1956,8 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 
 /* v1.3.0 날씨·분위기: 배경(#bg1, z-index -1) 바로 뒤 · 채팅 칸(#sheld, z-index 30) 아래 */
 #ttk-wx{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
-#ttk-wx canvas,#ttk-wx .ttk-wx-tint{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#ttk-wx-top{position:fixed;inset:0;z-index:31;pointer-events:none;overflow:hidden}
+#ttk-wx-top canvas,#ttk-wx .ttk-wx-tint{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 #ttk-wx .ttk-wx-tint{transition:background .8s}
 #ttk-wx-flash{position:fixed;inset:0;z-index:2000;background:#fff;opacity:0;pointer-events:none}
 #ttk-panel .ttk-wx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(5.6em,1fr));gap:6px}
@@ -2018,7 +2019,7 @@ html[data-ttk-theme=nocturne][data-ttk-dlg-u=marker] body #chat#chat .mes :is(.m
 #ttk-panel .ttk-face-row>.ttk-face-thumb{width:52px;height:52px}
 #ttk-panel .ttk-face-fields input{background:transparent!important;border:0!important;border-bottom:1px solid color-mix(in srgb,currentColor 22%,transparent)!important;border-radius:0!important;box-shadow:none!important;padding:4px 2px!important}
 #ttk-panel .ttk-face-fields input:focus{border-bottom-color:var(--ttk-accent,currentColor)!important;outline:0}
-#ttk-panel .ttk-ib{width:36px;height:36px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;flex:none}
+#ttk-panel .ttk-ib{width:40px;height:40px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:10px;flex:none}
 /* 추가 메뉴 */
 .ttk-add-menu{position:relative}
 .ttk-add-menu>summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
@@ -2038,5 +2039,7 @@ html[data-ttk-scheme=dark] #ttk-fx-grain{mix-blend-mode:screen;opacity:.09}
 html[data-ttk-enter=fade] #chat .mes.ttk-enter{animation:ttk-enter-fade .45s ease-out both}
 html[data-ttk-enter=rise] #chat .mes.ttk-enter{animation:ttk-enter-rise .45s ease-out both}
 @media (prefers-reduced-motion:reduce){html[data-ttk-enter] #chat .mes.ttk-enter{animation:none}}
+html[data-ttk-opt~=motion][data-ttk-enter] #chat .mes.ttk-enter{animation:none}
 .ttk-fx-row{display:flex;flex-direction:column;gap:8px}
 .ttk-add-menu>summary::marker,.ttk-more>summary::marker{content:""}
+#ttk-face-import .ttk-actions.ttk-drop-on{border-color:var(--ttk-accent,currentColor);background:color-mix(in srgb,var(--ttk-accent,currentColor) 8%,transparent)}

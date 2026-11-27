@@ -237,7 +237,7 @@ let enterObs=null;
 function syncEnter(mode){
  if(enterObs){enterObs.disconnect();enterObs=null;}
  const chat=document.getElementById('chat');if(!mode||!chat||typeof MutationObserver==='undefined')return;
- if(matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+ if(window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches)return;
  // 채팅을 불러올 때처럼 한꺼번에 많이 들어올 때는 건너뛰고, 새 메시지 1~2개만 등장 효과를 준다.
  enterObs=new MutationObserver(list=>{const add=list.flatMap(m=>[...m.addedNodes]).filter(n=>n.nodeType===1&&n.classList?.contains('mes'));if(!add.length||add.length>2)return;for(const n of add){n.classList.add('ttk-enter');n.addEventListener('animationend',()=>n.classList.remove('ttk-enter'),{once:true});}});
  enterObs.observe(chat,{childList:true});
