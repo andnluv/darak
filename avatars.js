@@ -32,7 +32,7 @@ function el(tag, cls, text) { const n = document.createElement(tag); if (cls) n.
 const uid = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
 /** Downscale to MAX_SIDE and return {blob, ext}. */
-async function shrink(file) {
+export async function shrink(file) {
     const bmp = await createImageBitmap(file);
     const k = Math.min(1, MAX_SIDE / Math.max(bmp.width, bmp.height));
     const c = document.createElement('canvas'); c.width = Math.max(1, Math.round(bmp.width * k)); c.height = Math.max(1, Math.round(bmp.height * k));
@@ -41,7 +41,7 @@ async function shrink(file) {
     if (!blob) throw Error('이미지를 변환하지 못했습니다.');
     return { blob, ext: blob.type === 'image/webp' ? 'webp' : 'png' };
 }
-const toBase64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
+export const toBase64 = blob => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1] || ''); r.onerror = () => rej(r.error); r.readAsDataURL(blob); });
 
 export class Avatars {
     constructor({ getSettings, save } = {}) { this.getSettings = getSettings; this.save = save; this.enabled = false; this.drawer = null; }
