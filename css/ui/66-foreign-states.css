@@ -1,0 +1,10 @@
+/* DARAK v1.7.11 — 다른 확장의 '선택된' 버튼.
+   글자색만 바꾸면 확장의 흰 바탕과 겹쳐 흰 바탕에 흰 글자가 되므로, 흔히 쓰는 선택 표시가 붙은 버튼은
+   바탕·글자·테두리를 한 쌍으로 다락방 색으로 칠합니다. 확장이 더 높은 우선순위로 칠하면 바탕·글자 모두 확장 쪽이 이깁니다.
+   다락방 설정 창(.ttk-win)과 채팅 메시지(#chat)는 제외합니다. */
+html[data-ttk-theme] :is(.menu_button,button,[role=button],[role=tab]):is(.active,.selected,.is-active,.is-selected,[aria-pressed=true],[aria-selected=true]):not(.ttk-win *):not(#chat *):not(#ttk-panel *){
+  background:var(--ttk-accent)!important;color:var(--ttk-bg)!important;-webkit-text-fill-color:currentColor!important;border-color:var(--ttk-accent)!important;text-shadow:none!important;opacity:1!important;
+}
+html[data-ttk-theme] :is(.menu_button,button,[role=button],[role=tab]):is(.active,.selected,.is-active,.is-selected,[aria-pressed=true],[aria-selected=true]):not(.ttk-win *):not(#chat *):not(#ttk-panel *) :is(i,span,small,b,strong,svg){
+  color:inherit!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;
+}

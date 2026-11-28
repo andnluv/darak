@@ -4,7 +4,8 @@ html[data-ttk-theme] body{background:var(--ttk-bg)!important;color:var(--ttk-tex
 html[data-ttk-theme] :is(#top-bar,#top-settings-holder,#top-settings,#left-nav-panel,#right-nav-panel,#left-nav-panel .drawer-content,#right-nav-panel .drawer-content,#extensions_settings,#extensions_settings2,#character_popup,#rm_print_characters_block,#form_create,#form_rename,#form_delete,#form_import,#options,#world_popup){background-color:var(--ttk-surface)!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important}
 /* v0.22: 일반 클래스(.popup 등)는 다른 확장 창에도 닿으므로 !important 를 걸지 않는다. */
 html[data-ttk-theme] :is(.popup,.dialogue_popup,.ui-dialog,.drawer-content,.floating_panel,.floating-panel){background-color:var(--ttk-surface);color:var(--ttk-text);border-color:var(--ttk-border)}
-html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.drawer-icon,.menu_button){color:var(--ttk-text)}
+/* v1.7.11: .menu_button은 다른 확장도 쓰므로 우선순위 0(:where)으로 낮춘다. 확장이 정한 글자색이 있으면 그쪽이 이긴다. */
+:where(html[data-ttk-theme]) :where(.drawer-header,.drawer-header-title,.drawer-icon,.menu_button){color:var(--ttk-text)}
 html[data-ttk-theme] :is(.drawer-header,.drawer-header-title,.inline-drawer-header,.inline-drawer-content,.settings-section,.settings-category,.settingsBlock){border-color:var(--ttk-border)}
 /* Existing inline extension headers used black/translucent gradients that survived the original palette override. */
 html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel) :is(.inline-drawer-header,.inline-drawer-header.inline-drawer-toggle,.inline-drawer-content,.standoutHeader,.settingsBlock,.settings-section,.settings-category){background:var(--ttk-surface)!important;background-image:none!important;color:var(--ttk-text)!important;border-color:var(--ttk-border)!important;box-shadow:none!important;text-shadow:none!important}
@@ -441,11 +442,11 @@ html[data-ttk-theme] :is(#left-nav-panel,#right-nav-panel,#extensions_settings,#
 }
 
 
-/* Checkboxes (rewritten in 0.3.14).
+/* Checkboxes (rewritten in 0.3.14; v1.7.11: 다른 확장의 스위치 구조는 제외, opacity 강제 제거).
    Drawn entirely by this rule — no pseudo-elements, no native white box on dark palettes.
    display/position are deliberately NOT set: SillyTavern keeps several checkboxes hidden on
    purpose (message delete mode, panel pins, power toggles) and they must stay hidden. */
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox),
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input),
 #ttk-panel input[type="checkbox"] {
   -webkit-appearance:none!important;appearance:none!important;box-sizing:border-box!important;
   width:17px!important;min-width:17px!important;max-width:17px!important;
@@ -453,28 +454,28 @@ html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-che
   margin:0 6px 0 0;padding:0!important;vertical-align:middle!important;flex:0 0 auto;
   border:1.5px solid color-mix(in srgb,var(--ttk-muted,#7b8794) 70%,var(--ttk-border,#c9d2dc))!important;border-radius:4px!important;
   background:var(--ttk-surface,#fff) center/12px 12px no-repeat!important;
-  box-shadow:none!important;text-shadow:none!important;filter:none!important;opacity:1!important;transform:none!important;
+  box-shadow:none!important;text-shadow:none!important;filter:none!important;transform:none!important;
   cursor:pointer;transition:background-color .12s ease,border-color .12s ease;
 }
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox)::before,
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox)::after,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input)::before,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input)::after,
 #ttk-panel input[type="checkbox"]::before,
 #ttk-panel input[type="checkbox"]::after {content:none!important;display:none!important}
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):hover,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input):hover,
 #ttk-panel input[type="checkbox"]:hover {border-color:var(--ttk-accent,#587997)!important}
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):checked,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input):checked,
 #ttk-panel input[type="checkbox"]:checked {
   background-color:var(--ttk-accent,#587997)!important;border-color:var(--ttk-accent,#587997)!important;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.3l2.4 2.4 4.6-5'/%3E%3C/svg%3E")!important;
 }
 /* On dark palettes the accent is light, so the tick turns dark. */
-html[data-ttk-theme][data-ttk-scheme=dark] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):checked,
+html[data-ttk-theme][data-ttk-scheme=dark] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input):checked,
 html[data-ttk-theme][data-ttk-scheme=dark] #ttk-panel input[type="checkbox"]:checked {
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%23141a22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6.3l2.4 2.4 4.6-5'/%3E%3C/svg%3E")!important;
 }
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):disabled,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input):disabled,
 #ttk-panel input[type="checkbox"]:disabled {opacity:.5!important;cursor:not-allowed}
-html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):focus-visible,
+html[data-ttk-theme] input[type="checkbox"]:not([role="switch"]):not(.toggle-checkbox):not(.switch-checkbox):not(:is(:has(+ :is([class*=slider],[class*=switch],[class*=toggle],[class*=knob],[class*=track],[class*=thumb])))):not(:is([class*=switch],[class*=toggle]) > input):focus-visible,
 #ttk-panel input[type="checkbox"]:focus-visible {outline:2px solid var(--ttk-accent,#587997)!important;outline-offset:2px!important}
 
 /* A unified surface system for native settings, lorebook, backgrounds and drawers. */
