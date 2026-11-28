@@ -18,11 +18,12 @@ import {SettingsWindow} from './settings-window.js';
 import {syncMessageFooters} from './message-footer.js';
 import {normalizeMsgButtons,scanButtons,syncMessageButtons,isFront,setFront,resetFront} from './message-buttons.js';
 import {syncTyping} from './typing.js';
+import {syncComposerIcons} from './composer-icons.js';
 import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.7.11';
+const VERSION = '1.7.12';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
@@ -36,7 +37,7 @@ const failed=new Map();
 function guard(name,fn,cleanup){try{return fn();}catch(e){console.error(`[DARAK] ${name} 오류`,e);try{cleanup?.();}catch{}if(!failed.has(name)){failed.set(name,String(e?.message||e).slice(0,160));globalThis.toastr?.error?.(`${name}에서 오류가 나 이 모듈만 멈췄습니다. 다른 모듈은 계속 동작합니다. 자세한 내용은 다락방 설정 맨 위에 있습니다.`,'다락방',{timeOut:9000});}showFailures();}}
 function showFailures(){const lf=document.getElementById('ttk-launcher-fail');if(lf){lf.hidden=!failed.size;lf.textContent=failed.size?`멈춘 모듈 ${failed.size}개 — 설정 창을 열면 맨 위에 자세한 내용이 있습니다.`:'';}const box=document.getElementById('ttk-failures');if(!box)return;box.hidden=!failed.size;if(!failed.size)return;box.replaceChildren(el('strong','','멈춘 모듈이 있습니다'),...[...failed].map(([n,m])=>el('p','',`${n}: ${m}`)),el('p','','나머지 모듈은 그대로 동작합니다. 브라우저 콘솔(F12)의 [DARAK] 줄에 자세한 오류가 있습니다. 페이지를 새로고침하면 다시 시도합니다.'));}
 const footerHooks={shelf:id=>(settings?.modules?.avatars&&avatars)?avatars.shelfFor(id):null};
-function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncStyleMarks();syncMessageFooters(settings.modules.design,footerHooks);syncMessageButtons(settings.modules.design,settings.msgButtons);syncTyping(settings.modules.design&&settings.design.typing!==false);},()=>{teardownDesign();syncMessageFooters(false);syncMessageButtons(false);syncTyping(false);});guard('한글화',syncLocalization);guard('화면 전체 한국어',syncUiTranslation);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('화자 얼굴',syncFaces);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);guard('날씨·분위기',syncWeather);}
+function applyModules(){guard('디자인',()=>{applyDesign(settings.modules.design,settings.design);syncDialogueHighlights(settings.modules.design);syncStyleMarks();syncMessageFooters(settings.modules.design,footerHooks);syncMessageButtons(settings.modules.design,settings.msgButtons);syncTyping(settings.modules.design&&settings.design.typing!==false);syncComposerIcons(settings.modules.design);},()=>{teardownDesign();syncMessageFooters(false);syncMessageButtons(false);syncTyping(false);syncComposerIcons(false);});guard('한글화',syncLocalization);guard('화면 전체 한국어',syncUiTranslation);guard('번역',syncTranslation);guard('대필',syncGhostwrite);guard('QR 보관함',syncQr);guard('통합 조회',syncInventory);guard('모바일 최적화',syncOptimization);guard('프로필 사진',syncAvatars);guard('화자 얼굴',syncFaces);guard('테마 이미지 교체',syncThemeImages);guard('이미지 모아보기',syncGallery);guard('날씨·분위기',syncWeather);}
 function changed(){applyModules();save();}
 function syncWeather(){if(!weather)return;if(settings.modules.weather)weather.start();else weather.stop();}
 function syncFaces(){if(!faces)return;if(settings.modules.faces)faces.start();else faces.stop();}
