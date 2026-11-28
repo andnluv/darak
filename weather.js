@@ -312,7 +312,7 @@ export class Weather {
         lab.append(el('strong', '', 'AI에게 날씨 표기 요청'), el('small', '', '장면의 날씨·분위기가 바뀔 때만 응답 끝에 [날씨:…] 표기를 붙이라는 한 줄을 보냅니다. 표기는 채팅 화면에서 숨기고 채팅 내용에는 남습니다. 끄면 봇이 스스로 쓴 표기와 본문 구절만 읽습니다.'));
         const box = el('input'); box.type = 'checkbox'; box.addEventListener('change', () => { S().prompt = box.checked; this.save(); this.syncPrompt(); });
         row.append(lab, box); root.append(row);
-        root.append(el('small', 'ttk-font-status', '효과는 휴대폰에서 초당 30장, PC에서 60장까지만 그리고 화면 넓이에 맞춰 개수를 줄입니다. 탭이 가려지면 멈추고, "동작 줄이기"가 켜져 있으면 멈춘 장면만 보여 주며 번개 번쩍임도 쓰지 않습니다.'));
+        root.append(el('small', 'ttk-font-status', '효과는 모바일에서 초당 30장, PC에서 60장까지만 그리고 화면 넓이에 맞춰 개수를 줄입니다. 탭이 가려지면 멈추고, "동작 줄이기"가 켜져 있으면 멈춘 장면만 보여 주며 번개 번쩍임도 쓰지 않습니다.'));
         const label = (list, v) => list.find(x => x[0] === v)?.[1] || v;
         const why = r => !r ? '' : `${r.back === 0 ? '마지막' : `${r.back}개 전`} 메시지의 ${r.by === 'tag' ? '표기' : '구절'} "${String(r.text).trim().slice(0, 24)}"`;
         const paint = () => {
@@ -321,7 +321,7 @@ export class Weather {
             if (!this.enabled) { state.textContent = '날씨·분위기 모듈이 꺼져 있습니다.'; return; }
             const parts = [weather === 'none' ? '날씨 없음' : `날씨 ${label(WEATHERS, weather)}(${label(LEVELS, level)})`, mood === 'none' ? '분위기 없음' : `분위기 ${label(MOODS, mood)}`];
             const reasons = [w.weather && `날씨: ${why(w.weather)}`, w.mood && `분위기: ${why(w.mood)}`].filter(Boolean);
-            state.textContent = `이 채팅: ${parts.join(' · ')}${reasons.length ? ` · 근거 — ${reasons.join(' / ')}` : ' · 최근 메시지에 날씨 단서가 없습니다.'}`;
+            state.textContent = `이 채팅: ${parts.join(' · ')}${reasons.length ? ` · 근거: ${reasons.join(' / ')}` : ' · 최근 메시지에 날씨 단서가 없습니다.'}`;
         };
         this.onChange = paint; paint();
         return root;

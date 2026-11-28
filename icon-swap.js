@@ -42,7 +42,7 @@ const TOP = [
 ];
 const LC = {
     x: '닫기', images: '이미지 모아보기', 'clip-list': '통합 조회', export: '내보내기', img: '테마 이미지 교체 · 이미지', trash: '삭제', crop: '자르기',
-    plus: '추가', upload: '올리기', link: '링크', code: '코드', zip: '압축 파일', users: '인물 목록', repeat: '화자 바꾸기', smile: '화자 얼굴 · 표정',
+    plus: '추가', upload: '올리기', link: '링크', code: '코드', zip: '압축 파일', users: '인물 목록', repeat: '화자 바꾸기', smile: '인물 프로필 · 표정',
     'w-attic': '다락방(요술봉 메뉴 항목)', 'w-palette': '디자인', 'w-globe': '한글화', 'w-languages': '번역', 'w-pen-line': '대필', 'w-cloud': '날씨',
     'w-smartphone': '최적화', 'w-layout-grid': '전체', 'w-sun': '창 밝게', 'w-moon': '창 어둡게', 'w-search': '검색', 'w-qr-code': 'QR 보관함',
     'w-user-round': '프로필 사진', 'w-book-a': '용어집',

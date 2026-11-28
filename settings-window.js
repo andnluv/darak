@@ -122,7 +122,7 @@ export class SettingsWindow {
         const bm = el('div'); bm.append(el('div', 'ttk-win-brand-name', '다락방'), el('div', 'ttk-win-ver', `DARAK · v${this.version}`));
         brandM.append(el('span', 'ttk-win-key'), bm);
         const search = el('label', 'ttk-win-search'); search.append(icon('w-search'));
-        const input = el('input'); input.type = 'search'; input.placeholder = '설정 검색 — 예: 형광펜, 줄간격, 용어집'; input.setAttribute('aria-label', '설정 검색');
+        const input = el('input'); input.type = 'search'; input.placeholder = '설정 검색 · 예: 형광펜, 줄간격, 용어집'; input.setAttribute('aria-label', '설정 검색');
         input.autocomplete = 'off'; input.enterKeyHint = 'search'; input.spellcheck = false;
         input.addEventListener('input', () => { this.q = input.value; this.apply(); });
         search.append(input);

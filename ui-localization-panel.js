@@ -28,7 +28,7 @@ export function buildUiTranslationPanel({el, btn, info, confirmAsk, translator, 
         const follow = el('option', '', '번역 모듈에서 고른 프로필 따라가기'); follow.value = ''; profile.append(follow);
         for (const p of profiles) { const o = el('option', '', p.name); o.value = p.id; profile.append(o); }
         profile.value = profiles.some(p => p.id === cur) ? cur : '';
-        profNote.textContent = profiles.length ? `${profiles.length}개 연결 프로필 사용 가능` : '지원되는 저장 연결 프로필이 없습니다. 연결 관리자를 확인하세요.';
+        profNote.textContent = profiles.length ? `연결 프로필 ${profiles.length}개` : '지원되는 저장 연결 프로필이 없습니다. 연결 관리자를 확인하세요.';
     }
     profile.addEventListener('change', () => { getSettings().profileId = profile.value; save(); });
     body.append(btn('프로필 목록 새로고침', refreshProfiles));

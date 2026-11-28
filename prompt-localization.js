@@ -129,7 +129,7 @@ export class PromptNameTranslator{
   if(this.service)return this.service;
   // Official ST API: same-origin module; no third-party extension code used.
   const module=await import('/scripts/extensions/shared.js');
-  if(!module?.ConnectionManagerRequestService?.sendRequest)throw Error('현재 실리태번에서 프로필 요청 서비스를 사용할 수 없습니다.');
+  if(!module?.ConnectionManagerRequestService?.sendRequest)throw Error('현재 SillyTavern에서 프로필 요청 서비스를 사용할 수 없습니다.');
   this.service=module.ConnectionManagerRequestService;
   return this.service;
  }
@@ -160,7 +160,7 @@ export class PromptNameTranslator{
   if(!this.enabled||this.activeRun)return;
   const profile=this.getSettings().profileId;
   if(!profile)return;
-  if(!this.getProfiles().some(p=>p.id===profile)){this.onStatus('저장된 번역 프로필을 선택해 주세요.');return;}
+  if(!this.getProfiles().some(p=>p.id===profile)){this.onStatus('저장된 번역 프로필을 골라 주세요.');return;}
   const run={};this.activeRun=run;
   if(force)this.failures.clear();
   const keptSet=new Set(force?[]:this.getSettings().kept||[]);

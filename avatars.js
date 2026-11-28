@@ -197,7 +197,7 @@ export class Avatars {
             d.append(this.group(key, { messageId: mode, msg })); return;
         }
         const ch = c?.characters?.[c?.characterId]?.avatar, pk = this.personaKey();
-        if (ch) d.append(this.group(`char:${ch}`, {})); else d.append(el('p', 'ttk-av-empty', c?.groupId ? '그룹 채팅에서는 메시지 단위로 바꿔 주세요. (메시지 메뉴의 ID 아이콘)' : '캐릭터가 선택되어 있지 않습니다.'));
+        if (ch) d.append(this.group(`char:${ch}`, {})); else d.append(el('p', 'ttk-av-empty', c?.groupId ? '그룹 채팅에서는 메시지 단위로 바꿔 주세요. (메시지 메뉴의 ID 아이콘)' : '봇이 선택되어 있지 않습니다.'));
         if (pk) d.append(this.group(pk, {})); else d.append(el('p', 'ttk-av-empty', '선택된 페르소나를 찾지 못했습니다.'));
         const all = el('button', 'ttk-av-wide', '이 채팅의 기존 메시지에 지금 기본 사진 적용'); all.type = 'button';
         all.addEventListener('click', async () => { if (!(await confirmAsk('이 채팅의 모든 메시지 사진을 현재 기본 사진으로 바꿉니다. 메시지마다 따로 고른 사진도 덮어씁니다. 계속할까요?'))) return; this.applyAll(); });

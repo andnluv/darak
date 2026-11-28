@@ -267,7 +267,7 @@ export class Faces {
     openPop(faceEl, { change = false, mood = false } = {}) {
         this.closePop();
         const entries = this.entries(), e = faceEl.dataset.id === NPC_ID ? NPC_ENTRY : entries.find(x => x.id === faceEl.dataset.id); if (!e) return;
-        const pop = this.pop = el('div', 'ttk-face-pop'); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', '화자 얼굴');
+        const pop = this.pop = el('div', 'ttk-face-pop'); pop.setAttribute('role', 'dialog'); pop.setAttribute('aria-label', '인물 프로필');
         if (!change && !mood) {
             const card = el('div', 'ttk-face-pop-card');
             const big = el('span', 'ttk-face-thumb ttk-face-pop-big'); facePaint(big, e, pickUrl(e, faceEl.dataset.mood || ''));
@@ -293,7 +293,7 @@ export class Faces {
                 const b = el('button', 'ttk-face-pop-pick'); b.type = 'button'; b.setAttribute('aria-pressed', String(x.id === e.id));
                 const th = el('span', 'ttk-face-thumb'); facePaint(th, x, x.url); b.append(th, el('span', '', x.name)); b.addEventListener('click', () => this.setPick(faceEl, x.id)); grid.append(b);
             }
-            const none = el('button', 'ttk-face-pop-pick ttk-face-pop-none'); none.type = 'button'; none.append(el('span', '', '얼굴 없음')); none.addEventListener('click', () => this.setPick(faceEl, '')); grid.append(none);
+            const none = el('button', 'ttk-face-pop-pick ttk-face-pop-none'); none.type = 'button'; none.append(el('span', '', '사진 없음')); none.addEventListener('click', () => this.setPick(faceEl, '')); grid.append(none);
             pop.append(grid);
         }
         document.body.append(pop);
@@ -343,7 +343,7 @@ export class Faces {
     addEntry(name, url, aliases = []) {
         const key = this.key(); if (!key) return false;
         const card = this.S().cards[key] ||= { entries: [] };
-        if (card.entries.length >= MAX_FACES) { window.toastr?.warning?.(`얼굴은 카드마다 최대 ${MAX_FACES}명까지 등록할 수 있습니다.`); return false; }
+        if (card.entries.length >= MAX_FACES) { window.toastr?.warning?.(`인물은 카드마다 최대 ${MAX_FACES}명까지 등록할 수 있습니다.`); return false; }
         card.entries.push({ id: uid(), name: String(name || '이름 없음').trim().slice(0, 20), url, aliases: aliases.slice(0, 6) }); return true;
     }
     /** Files: the file name (without extension) becomes the character name. */
@@ -362,7 +362,7 @@ export class Faces {
     }
     /** Use a character card's own picture, named after the card. */
     async addFromCard(avatar) {
-        const c = this.ctx(), ch = c?.characters?.find(x => x.avatar === avatar); if (!ch) throw Error('카드를 찾지 못했습니다.');
+        const c = this.ctx(), ch = c?.characters?.find(x => x.avatar === avatar); if (!ch) throw Error('봇을 찾지 못했습니다.');
         const r = await fetch(`/characters/${encodeURIComponent(avatar)}`); if (!r.ok) throw Error(String(r.status));
         const url = await this.putFile(new File([await r.blob()], 'face', { type: 'image/png' }));
         const ok = this.addEntry(ch.name, url); this.save(); this.refresh(); return ok;
@@ -382,12 +382,12 @@ export class Faces {
         document.getElementById('ttk-face-crop')?.remove();
         const probe = new Image(); probe.src = entry.url; try { await probe.decode(); } catch { return window.toastr?.error?.('사진을 불러오지 못했습니다.'); }
         const r = probe.naturalWidth / probe.naturalHeight, fit = { ...(normalizeFit(entry.fit) || { cx: 0.5, cy: 0.5, z: 1 }), r };
-        const wrap = el('div'); wrap.id = 'ttk-face-crop'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', '얼굴 위치 조정');
+        const wrap = el('div'); wrap.id = 'ttk-face-crop'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', '사진 위치 조정');
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
-        const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', `${entry.name} · 얼굴 위치 조정`)); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
+        const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', `${entry.name} · 사진 위치 조정`)); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
         box.append(more('그림을 끌어서 옮기고(키보드는 방향키), 아래 칸으로 크기를 맞추세요. 어두운 바깥쪽은 채팅에서 보이지 않습니다. 원본은 자르지 않으므로 언제든 다시 바꿀 수 있고, 표정 그림도 같은 위치를 씁니다.'));
-        const stage = el('div', 'ttk-crop-stage'); stage.tabIndex = 0; stage.setAttribute('aria-label', '얼굴 위치 (끌거나 방향키)'); box.append(stage);
+        const stage = el('div', 'ttk-crop-stage'); stage.tabIndex = 0; stage.setAttribute('aria-label', '사진 위치 (끌거나 방향키)'); box.append(stage);
         let url = entry.url;
         const dims = () => { const kx = fit.z * Math.max(fit.r, 1), ky = kx / fit.r; return { kx, ky }; };
         const clamp = () => { const { kx, ky } = dims(); fit.cx = Math.min(1 - 0.5 / kx, Math.max(0.5 / kx, fit.cx)); fit.cy = Math.min(1 - 0.5 / ky, Math.max(0.5 / ky, fit.cy)); };
@@ -432,12 +432,12 @@ export class Faces {
     }
     openZip(done) {
         document.getElementById('ttk-face-import')?.remove();
-        const key = this.key(); if (!key) return window.toastr?.warning?.('카드를 먼저 선택해 주세요.');
+        const key = this.key(); if (!key) return window.toastr?.warning?.('봇을 먼저 골라 주세요.');
         const wrap = el('div'); wrap.id = 'ttk-face-import'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', '표정 묶음(zip)에서 가져오기');
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { document.removeEventListener('keydown', onKey, true); wrap.remove(); done?.(); };
         const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '표정 묶음(zip)에서 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
-        box.append(more('“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 얼굴을 눌러 바꿀 수 있게 저장합니다. 기본 얼굴은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 얼굴 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
+        box.append(more('“인물_표정.png” 꼴의 파일(예: 구야_smile.png)이 들어 있는 zip을 고르면 인물마다 한 명으로 묶고, 표정은 채팅에서 사진을 눌러 바꿀 수 있게 저장합니다. 기본 표정은 무표정, 없으면 미소, 없으면 첫 파일입니다. 큰 그림은 긴 변 512px로 줄여 올리므로 zip이 커도 서버에는 조금만 쌓이고, 그림 자체는 자르지 않아 사진 위치를 나중에 다시 맞출 수 있습니다. 이 작업은 브라우저 안에서만 이루어지고 zip은 어디로도 보내지 않습니다.'));
         const file = el('input'); file.type = 'file'; file.accept = '.zip,application/zip'; file.hidden = true; file.setAttribute('aria-label', 'zip 파일'); // 테마가 파일 입력칸을 가릴 수 있어 자체 버튼을 쓴다
         const pickRow = el('div', 'ttk-actions'), pickBtn = el('button', 'ttk-button', 'zip 파일 고르기'); pickBtn.type = 'button'; pickBtn.addEventListener('click', () => file.click());
         const pickName = el('span', 'ttk-note', '고른 파일 없음 · 여기에 끌어 놓아도 됩니다'); pickRow.append(pickBtn, pickName, file);
@@ -497,21 +497,21 @@ export class Faces {
     }
     openImport(done) {
         document.getElementById('ttk-face-import')?.remove();
-        const key = this.key(); if (!key) return window.toastr?.warning?.('카드를 먼저 선택해 주세요.');
-        const wrap = el('div'); wrap.id = 'ttk-face-import'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', '페이지에서 얼굴 가져오기');
+        const key = this.key(); if (!key) return window.toastr?.warning?.('봇을 먼저 골라 주세요.');
+        const wrap = el('div'); wrap.id = 'ttk-face-import'; wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-label', '페이지에서 인물 가져오기');
         const box = el('div', 'ttk-fi-box'); wrap.append(box);
         const close = () => { wrap.remove(); done?.(); };
-        const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '페이지에서 얼굴 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
+        const head = el('div', 'ttk-fi-head'); head.append(el('strong', '', '페이지에서 인물 가져오기')); const x = el('button', 'ttk-fi-x', '닫기'); x.type = 'button'; x.addEventListener('click', close); head.append(x); box.append(head);
         box.append(more('인물 도감 같은 페이지의 코드(개발자 도구 Elements에서 복사)를 붙여 넣고, 사진 주소의 기준이 되는 사이트 주소를 적으세요. 사진 옆의 굵은 글씨나 제목을 이름으로 읽습니다.'));
         const code = el('textarea', 'ttk-fi-code'); code.rows = 5; code.placeholder = '붙여넣을 HTML 코드'; code.setAttribute('aria-label', 'HTML 코드');
         const base = el('input', 'ttk-fi-base'); base.type = 'url'; base.placeholder = '기준 주소 (사진 주소가 /img/… 처럼 상대 경로일 때만, 예: https://example.github.io/site/)'; base.setAttribute('aria-label', '기준 주소');
         const read = el('button', 'ttk-button', '읽기'); read.type = 'button';
-        const status = el('p', 'ttk-note'), tools = el('div', 'ttk-fi-tools'), list = el('div', 'ttk-fi-list'), go = el('button', 'ttk-button', '선택한 얼굴 가져오기'); go.type = 'button'; go.hidden = true;
+        const status = el('p', 'ttk-note'), tools = el('div', 'ttk-fi-tools'), list = el('div', 'ttk-fi-list'), go = el('button', 'ttk-button', '선택한 인물 가져오기'); go.type = 'button'; go.hidden = true;
         box.append(code, base, read, status, tools, list, go);
         let items = [];
         const have = () => new Set(this.entries().map(e => norm(e.name)));
         const chosen = () => items.filter(i => i.cb && i.cb.checked && !i.cb.disabled);
-        const refreshCount = () => { const n = chosen().length; go.textContent = `선택한 얼굴 가져오기 (${n}명)`; };
+        const refreshCount = () => { const n = chosen().length; go.textContent = `선택한 인물 가져오기 (${n}명)`; };
         const draw = filter => {
             list.replaceChildren(); const q = norm(filter), h = have();
             for (const it of items) {
@@ -575,14 +575,14 @@ export class Faces {
     // ---- settings panel body ----
     buildPanel(btn) {
         const root = el('div', 'ttk-controls'), self = this;
-        root.append(el('p', 'ttk-note', '여러 인물이 나오는 봇에서 대사 앞에 말한 인물의 얼굴을 보여 줍니다. 얼굴 목록은 카드마다 따로 저장되고, 채팅에 보이는 모양만 바꿉니다. 디자인 모듈이 켜져 있어야 대사가 인식됩니다.'));
-        root.append(el('p', 'ttk-note', '화자는 대사 바로 앞의 [이름] 표기로 찾고, 없으면 대사 앞뒤 글에 나온 등록된 이름으로 추정합니다(한 글자 이름은 표기로만 인식, 번역문에 얼굴을 보이려면 번역된 이름을 “다른 이름”에 넣으세요). 화면에서는 표기를 숨기며, 채팅 내용에는 그대로 남습니다. 얼굴을 누르면 이름과 [바꾸기]가 나옵니다.'));
+        root.append(el('p', 'ttk-note', '여러 인물이 나오는 봇에서 대사 앞에 말한 인물의 사진을 보여 줍니다. 인물 목록은 카드마다 따로 저장되고, 채팅에 보이는 모양만 바꿉니다. 디자인 모듈이 켜져 있어야 대사가 인식됩니다.'));
+        root.append(el('p', 'ttk-note', '화자는 대사 바로 앞의 [이름] 표기로 찾고, 없으면 대사 앞뒤 글에 나온 등록된 이름으로 추정합니다(한 글자 이름은 표기로만 인식, 번역문에 사진을 보이려면 번역된 이름을 “다른 이름”에 넣으세요). 화면에서는 표기를 숨기며, 채팅 내용에는 그대로 남습니다. 사진을 누르면 이름과 [바꾸기]가 나옵니다.'));
         const promptRow = el('label', 'ttk-style-check'); const pc = el('input'); pc.type = 'checkbox'; pc.checked = this.S().prompt !== false;
         pc.addEventListener('change', () => { this.S().prompt = pc.checked; this.save(); this.syncPrompt(); });
         promptRow.append(pc, el('span', '', '대사 앞에 [이름]을 붙이도록 AI에게 지시문 보내기')); root.append(promptRow);
         root.append(el('p', 'ttk-note', '지시문은 등록된 이름만 담은 한 줄이며 끄면 보내지 않습니다. 프리셋이 대괄호 표기를 막는다면 끄고 이름 추정만 쓰세요.'));
-        const sizeRow = el('div', 'ttk-style-line'); sizeRow.append(el('small', 'ttk-style-sub', '채팅 속 얼굴 크기'));
-        const sizeSeg = el('div', 'ttk-seg'); sizeSeg.setAttribute('role', 'group'); sizeSeg.setAttribute('aria-label', '채팅 속 얼굴 크기'); const sizeBtns = {};
+        const sizeRow = el('div', 'ttk-style-line'); sizeRow.append(el('small', 'ttk-style-sub', '채팅 속 사진 크기'));
+        const sizeSeg = el('div', 'ttk-seg'); sizeSeg.setAttribute('role', 'group'); sizeSeg.setAttribute('aria-label', '채팅 속 사진 크기'); const sizeBtns = {};
         const paintSize = () => { for (const [k, b] of Object.entries(sizeBtns)) b.setAttribute('aria-pressed', String(k === (this.S().size || 'md'))); };
         for (const [k, label] of FACE_SIZES) { const b = el('button', 'ttk-seg-btn', label); b.type = 'button'; b.addEventListener('click', () => { this.S().size = k; this.save(); this.applySize(); paintSize(); }); sizeBtns[k] = b; sizeSeg.append(b); }
         sizeRow.append(sizeSeg); root.append(sizeRow); paintSize();
@@ -591,20 +591,20 @@ export class Faces {
         const file = el('input'); file.type = 'file'; file.accept = 'image/*'; file.multiple = true; file.hidden = true;
         file.addEventListener('change', async () => { const fs = [...file.files]; file.value = ''; if (!fs.length) return; await this.addFiles(fs); render(); });
         const run = async fn => { try { await fn(); } catch (e) { window.toastr?.error?.(e?.message || String(e)); } render(); };
-        actions.append(btn('사진 올리기 (파일 이름이 인물 이름)', () => { if (!self.key()) return window.toastr?.warning?.('카드를 먼저 선택해 주세요.'); file.click(); }), file,
+        actions.append(btn('사진 올리기 (파일 이름이 인물 이름)', () => { if (!self.key()) return window.toastr?.warning?.('봇을 먼저 골라 주세요.'); file.click(); }), file,
             btn('주소로 추가', () => run(async () => {
-                if (!self.key()) throw Error('카드를 먼저 선택해 주세요.');
+                if (!self.key()) throw Error('봇을 먼저 골라 주세요.');
                 const name = window.prompt('인물 이름'); if (!name) return;
                 const address = window.prompt('사진 주소 (https://…)'); if (!address) return;
                 await self.addUrl(name, address.trim());
             })),
             btn('페이지에서 가져오기 (도감 등)', () => self.openImport(render)),
             btn('표정 묶음(zip) 가져오기', () => self.openZip(render)),
-            btn('다른 카드 사진 가져오기', () => run(async () => {
-                if (!self.key()) throw Error('카드를 먼저 선택해 주세요.');
-                const chars = self.ctx()?.characters || []; if (!chars.length) throw Error('카드 목록을 불러오지 못했습니다.');
-                const name = window.prompt('가져올 카드의 이름 (정확히 같은 이름)'); if (!name) return;
-                const hit = chars.find(x => norm(x.name) === norm(name)); if (!hit) throw Error('같은 이름의 카드가 없습니다.');
+            btn('다른 봇의 인물 가져오기', () => run(async () => {
+                if (!self.key()) throw Error('봇을 먼저 골라 주세요.');
+                const chars = self.ctx()?.characters || []; if (!chars.length) throw Error('봇 목록을 불러오지 못했습니다.');
+                const name = window.prompt('가져올 봇의 이름 (정확히 같은 이름)'); if (!name) return;
+                const hit = chars.find(x => norm(x.name) === norm(name)); if (!hit) throw Error('같은 이름의 봇이 없습니다.');
                 await self.addFromCard(hit.avatar);
             })));
         // 「추가」 메뉴: 흩어져 있던 추가 버튼을 한 곳에 모은다
@@ -619,15 +619,15 @@ export class Faces {
             const al = el('input'); al.type = 'text'; al.value = (e.aliases || []).join(', '); al.placeholder = '다른 이름 (쉼표로 구분)'; al.setAttribute('aria-label', '다른 이름');
             const apply = () => { e.name = name.value.trim().slice(0, 20) || e.name; e.aliases = al.value.split(/[,，、]/).map(s => s.trim().slice(0, 20)).filter(Boolean).slice(0, 6); self.save(); self.refresh(); };
             name.addEventListener('change', apply); al.addEventListener('change', apply);
-            const del = btn('', async () => { if (!(await confirmAsk(`“${e.name}” 얼굴을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger ttk-ib'); del.setAttribute('aria-label', `${e.name} 삭제`); del.append(ic('trash'));
+            const del = btn('', async () => { if (!(await confirmAsk(`“${e.name}” 인물을 목록에서 지웁니다.`))) return; await self.removeEntry(e.id); render(); }, 'ttk-button-danger ttk-ib'); del.setAttribute('aria-label', `${e.name} 삭제`); del.append(ic('trash'));
             const fields = el('div', 'ttk-face-fields'); fields.append(name, al); const crop = btn('', () => self.openCrop(e, render), 'ttk-ib'); crop.setAttribute('aria-label', `${e.name} 위치 조정`); crop.append(ic('crop')); r.append(fields, crop, del); return r;
         }
         function render() {
             const key = self.key(), c = self.ctx(); list.replaceChildren();
-            if (!key) { where.textContent = '카드가 선택되어 있지 않습니다. 채팅을 열면 그 카드의 얼굴 목록이 나옵니다.'; return; }
-            const label = key.startsWith('group:') ? '이 그룹' : (c?.characters?.[c?.characterId]?.name || '이 카드');
-            where.textContent = `${label}의 얼굴 목록 · ${self.entries().length}/${MAX_FACES}명`;
-            const es = self.entries(); if (!es.length) { list.append(el('p', 'ttk-note', '아직 등록한 얼굴이 없습니다. 아래에서 사진을 올리면 파일 이름이 인물 이름이 됩니다.')); return; }
+            if (!key) { where.textContent = '봇이 선택되어 있지 않습니다. 채팅을 열면 그 봇의 인물 목록이 나옵니다.'; return; }
+            const label = key.startsWith('group:') ? '이 그룹' : (c?.characters?.[c?.characterId]?.name || '이 봇');
+            where.textContent = `${label}의 인물 목록 · ${self.entries().length}/${MAX_FACES}명`;
+            const es = self.entries(); if (!es.length) { list.append(el('p', 'ttk-note', '아직 등록한 인물이 없습니다. 아래에서 사진을 올리면 파일 이름이 인물 이름이 됩니다.')); return; }
             for (const e of es) list.append(row(e));
         }
         this.onChange = render; render(); return root;
