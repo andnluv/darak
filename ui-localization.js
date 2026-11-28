@@ -355,7 +355,7 @@ export class UiTranslator {
         if (this.running) return;
         const profile = this.profileId();
         if (!profile) { this.onStatus('번역에 쓸 연결 프로필을 골라 주세요.'); return; }
-        if (!this.getProfiles().some(p => p.id === profile)) { this.onStatus('저장된 번역 프로필을 선택해 주세요.'); return; }
+        if (!this.getProfiles().some(p => p.id === profile)) { this.onStatus('저장된 번역 프로필을 골라 주세요.'); return; }
         if (mode === 'all') { this.pending.clear(); this.processRoot(document.body); }
         this.running = true;
         const controller = new AbortController(); this.controller = controller;
@@ -420,7 +420,7 @@ export class UiTranslator {
         if (this.service) return this.service;
         if (this.loadService) { this.service = await this.loadService(); return this.service; }
         const module = await import('/scripts/extensions/shared.js');
-        if (!module?.ConnectionManagerRequestService?.sendRequest) throw Error('현재 실리태번에서 프로필 요청 서비스를 사용할 수 없습니다.');
+        if (!module?.ConnectionManagerRequestService?.sendRequest) throw Error('현재 SillyTavern에서 프로필 요청 서비스를 사용할 수 없습니다.');
         return (this.service = module.ConnectionManagerRequestService);
     }
 

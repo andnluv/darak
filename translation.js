@@ -196,7 +196,7 @@ export class MessageTranslator {
     async loadService() {
         if (this.service) return this.service;
         const module = await import('/scripts/extensions/shared.js');
-        if (!module?.ConnectionManagerRequestService?.sendRequest) throw Error('현재 실리태번에서 연결 프로필 요청을 사용할 수 없습니다.');
+        if (!module?.ConnectionManagerRequestService?.sendRequest) throw Error('현재 SillyTavern에서 연결 프로필 요청을 사용할 수 없습니다.');
         return (this.service = module.ConnectionManagerRequestService);
     }
     profileReady() {
@@ -372,7 +372,7 @@ export class MessageTranslator {
     isQueued(id) { return this.queue.some(j => j.id === id) || this.current === id; }
     enqueue(id, manual, redo = false) {
         if (!this.enabled) return;
-        if (!this.profileReady()) { this.onStatus('번역용 연결 프로필을 선택하세요.'); globalThis.toastr?.warning?.('다락방 설정에서 번역용 연결 프로필을 선택하세요.', '번역'); return; }
+        if (!this.profileReady()) { this.onStatus('번역용 연결 프로필을 골라 주세요.'); globalThis.toastr?.warning?.('다락방 설정에서 번역용 연결 프로필을 골라 주세요.', '번역'); return; }
         if (this.isQueued(id)) return;
         this.queue.push({ id, manual, redo });
         this.render(id);
@@ -456,7 +456,7 @@ export class MessageTranslator {
         const original = area.value;
         if (!original.trim()) return;
         if (this.pending && original === this.pending.translated) { area.value = this.pending.original; area.dispatchEvent(new Event('input', { bubbles: true })); this.pending = null; return; }
-        if (!this.profileReady()) { globalThis.toastr?.warning?.('다락방 설정에서 번역용 연결 프로필을 선택하세요.', '번역'); return; }
+        if (!this.profileReady()) { globalThis.toastr?.warning?.('다락방 설정에서 번역용 연결 프로필을 골라 주세요.', '번역'); return; }
         const button = document.getElementById('ttk_input_translate'), ctxNow = this.ctx() || { chat: [] };
         this.inputBusy = true; button?.classList.add('ttk-tr-spin');
         try {

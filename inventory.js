@@ -81,18 +81,18 @@ export function analyzeExtensions(exts, { stVersion = '', sessionErrors = [], se
     }
     const byBase = new Map();
     for (const e of on.filter(e => e.type !== 'system')) { const k = baseName(e.id) + '|' + (e.manifest?.display_name || ''); const k2 = baseName(e.id); for (const key of [k2]) byBase.set(key, [...(byBase.get(key) || []), e]); }
-    for (const [, list] of byBase) if (list.length > 1) issues.push({ level: 'warn', area: '확장', title: `같은 확장이 ${list.length}번 설치된 것으로 보임`, detail: `${list.map(e => e.id.replace(/^third-party\//, '')).join(', ')} — 둘 다 켜져 있으면 기능이 두 번 실행될 수 있습니다. 하나를 지우거나 끄세요.` });
+    for (const [, list] of byBase) if (list.length > 1) issues.push({ level: 'warn', area: '확장', title: `같은 확장이 ${list.length}번 설치된 것으로 보임`, detail: `${list.map(e => e.id.replace(/^third-party\//, '')).join(', ')}. 둘 다 켜져 있으면 기능이 두 번 실행될 수 있습니다. 하나를 지우거나 끄세요.` });
     const byName = new Map();
     for (const e of on.filter(e => e.type !== 'system' && e.manifest?.display_name)) byName.set(e.manifest.display_name, [...(byName.get(e.manifest.display_name) || []), e]);
-    for (const [name, list] of byName) if (list.length > 1 && new Set(list.map(e => baseName(e.id))).size > 1) issues.push({ level: 'warn', area: '확장', title: `표시 이름 "${name}"이 같은 확장 ${list.length}개`, detail: `${list.map(e => e.id.replace(/^third-party\//, '')).join(', ')} — 같은 확장의 사본일 수 있습니다.` });
+    for (const [name, list] of byName) if (list.length > 1 && new Set(list.map(e => baseName(e.id))).size > 1) issues.push({ level: 'warn', area: '확장', title: `표시 이름 "${name}"이 같은 확장 ${list.length}개`, detail: `${list.map(e => e.id.replace(/^third-party\//, '')).join(', ')}. 같은 확장의 사본일 수 있습니다.` });
     for (const [group, re] of GROUPS) {
         const hits = on.filter(e => e.type !== 'system' && e.id !== self && (re.test(e.id) || re.test(e.manifest?.display_name || '')));
         if (group === '번역') {
             const total = hits.length + (toolkit.translation ? 1 : 0);
-            if (total > 1) issues.push({ level: 'warn', area: '충돌', title: `번역 확장이 ${total}개 켜져 있음`, detail: `${[toolkit.translation && '다락방 번역 모듈', ...hits.map(label)].filter(Boolean).join(', ')} — 같은 메시지를 여러 번 번역할 수 있습니다. 하나만 켜 두세요.` });
+            if (total > 1) issues.push({ level: 'warn', area: '충돌', title: `번역 확장이 ${total}개 켜져 있음`, detail: `${[toolkit.translation && '다락방 번역 모듈', ...hits.map(label)].filter(Boolean).join(', ')}. 같은 메시지를 여러 번 번역할 수 있습니다. 하나만 켜 두세요.` });
         } else {
             const total = hits.length + (toolkit.design ? 1 : 0);
-            if (total > 1) issues.push({ level: 'info', area: '충돌', title: `화면을 바꾸는 확장이 ${total}개 켜져 있음 (이름 기준 추정)`, detail: `${[toolkit.design && '다락방 디자인 모듈', ...hits.map(label)].filter(Boolean).join(', ')} — 서로의 스타일을 덮어써 화면이 깨질 수 있습니다. 문제가 보이면 하나씩 꺼서 확인하세요.` });
+            if (total > 1) issues.push({ level: 'info', area: '충돌', title: `화면을 바꾸는 확장이 ${total}개 켜져 있음 (이름 기준 추정)`, detail: `${[toolkit.design && '다락방 디자인 모듈', ...hits.map(label)].filter(Boolean).join(', ')}. 서로의 스타일을 덮어써 화면이 깨질 수 있습니다. 문제가 보이면 하나씩 꺼서 확인하세요.` });
         }
     }
     const errs = new Map();
@@ -104,7 +104,7 @@ export function analyzeThemes(themes, current, toolkitDesignOn) {
     const issues = [], list = (Array.isArray(themes) ? themes : []).map(t => ({ name: t?.name || '(이름 없음)', css: String(t?.custom_css || '').length, current: t?.name === current }));
     const cur = list.find(t => t.current);
     if (current && !cur) issues.push({ level: 'warn', area: '테마', title: `선택된 테마 "${current}"가 목록에 없음`, detail: '테마 파일이 지워졌거나 이름이 바뀌었습니다. 사용자 설정에서 테마를 다시 고르세요.' });
-    if (cur?.css && toolkitDesignOn) issues.push({ level: 'info', area: '충돌', title: `테마 "${cur.name}"의 사용자 CSS와 도구함 디자인이 함께 적용 중`, detail: `이 테마에는 사용자 CSS ${cur.css.toLocaleString()}자가 들어 있습니다. 도구함 디자인 모듈과 겹쳐 일부 화면이 의도와 다르게 보일 수 있습니다. 한쪽만 쓰려면 디자인 모듈을 끄거나 기본 테마로 바꾸세요.` });
+    if (cur?.css && toolkitDesignOn) issues.push({ level: 'info', area: '충돌', title: `테마 "${cur.name}"의 사용자 CSS와 다락방 디자인이 함께 적용 중`, detail: `이 테마에는 사용자 CSS ${cur.css.toLocaleString()}자가 들어 있습니다. 다락방 디자인 모듈과 겹쳐 일부 화면이 의도와 다르게 보일 수 있습니다. 한쪽만 쓰려면 디자인 모듈을 끄거나 기본 테마로 바꾸세요.` });
     const names = new Map(); for (const t of list) names.set(t.name, (names.get(t.name) || 0) + 1);
     for (const [n, c] of names) if (c > 1) issues.push({ level: 'info', area: '테마', title: `테마 이름 "${n}"이 ${c}번 중복`, detail: '같은 이름의 테마 파일이 여러 개 있습니다.' });
     return { list, issues };
@@ -166,7 +166,7 @@ export class Inventory {
             ...presets.flatMap(p => p.current || p.broken ? p.issues : p.issues.filter(i => i.level === 'error')),
             ...analyzeRegexScripts(ctx?.extensionSettings?.regex, '전역 정규식'),
         ];
-        if (tk.translation) for (const c of detectConflicts(this.self.replace(/^third-party\//, ''))) if (!issues.some(i => i.title.startsWith('번역 확장이'))) issues.push({ level: 'warn', area: '충돌', title: '다른 번역 기능이 켜져 있음', detail: `${c} — 다락방 번역 모듈과 함께 켜면 같은 메시지를 두 번 번역합니다.` });
+        if (tk.translation) for (const c of detectConflicts(this.self.replace(/^third-party\//, ''))) if (!issues.some(i => i.title.startsWith('번역 확장이'))) issues.push({ level: 'warn', area: '충돌', title: '다른 번역 기능이 켜져 있음', detail: `${c}. 다락방 번역 모듈과 함께 켜면 같은 메시지를 두 번 번역합니다.` });
         issues.sort((a, b) => LEVEL[a.level][1] - LEVEL[b.level][1]);
         this.data = { themes: themes.list, presets, exts, issues, notes, version: version.pkgVersion || '', currentPreset, loadedAt: new Date() };
     }
@@ -215,7 +215,7 @@ export class Inventory {
             const top = el('div', 'ttk-inv-issue-top'); top.append(el('span', 'ttk-inv-level', LEVEL[i.level][0]), el('span', 'ttk-inv-area', i.area), el('strong', '', i.title));
             row.append(top, el('p', '', i.detail)); body.append(row);
         }
-        body.append(el('p', 'ttk-inv-foot', '점검 범위: 확장의 설치 상태·필요 조건·중복·이번 접속 중 스크립트 오류(도구함이 켜진 뒤 발생한 것), 번역·화면 확장의 중복, 현재 테마의 사용자 CSS, 현재 프리셋의 프롬프트 구성(다른 프리셋은 오류만), 정규식 패턴. 확장끼리의 세부 동작 충돌이나 모델 응답 품질은 확인하지 않으며, 여기서 아무것도 바꾸지 않습니다.'));
+        body.append(el('p', 'ttk-inv-foot', '점검 범위: 확장의 설치 상태·필요 조건·중복·이번 접속 중 스크립트 오류(다락방이 켜진 뒤 발생한 것), 번역·화면 확장의 중복, 현재 테마의 사용자 CSS, 현재 프리셋의 프롬프트 구성(다른 프리셋은 오류만), 정규식 패턴. 확장끼리의 세부 동작 충돌이나 모델 응답 품질은 확인하지 않으며, 여기서 아무것도 바꾸지 않습니다.'));
     }
     renderList(body) {
         const d = this.data, q = this.query.trim().toLowerCase();
