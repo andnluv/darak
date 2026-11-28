@@ -22,7 +22,7 @@ import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.7.9';
+const VERSION = '1.7.10';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
@@ -456,10 +456,13 @@ function build(){
  markerField.append(markerInput);
  const markerFollowRow=el('label','ttk-style-check');const markerFollow=el('input');markerFollow.type='checkbox';markerFollowRow.append(markerFollow,el('span','','강조색과 같게 (기본)'));
  const markerNote=el('small','ttk-note','밑줄을 \'형광펜\'으로 고른 지문·대사에 쓰이는 색입니다. 위 \'테마 컬러 변경\'의 강조색과 따로 정할 수 있고, 현재 테마에만 적용됩니다. 농도는 그대로(일반 16%, Nocturne 대사 8%)입니다.');
- markerInput.addEventListener('input',()=>{settings.design.markerColors[settings.design.theme]=markerInput.value;markerFollow.checked=false;markerInput.dataset.follow='false';syncPreview();changed();});
- markerFollow.addEventListener('change',()=>{const id=settings.design.theme;if(markerFollow.checked){settings.design.markerColors[id]=null;markerInput.value=settings.design.custom.accent;}else{settings.design.markerColors[id]=markerInput.value||settings.design.custom.accent;}markerInput.dataset.follow=String(markerFollow.checked);syncPreview();changed();});
- const markerPaint=()=>{const d=settings.design,own=d.markerColors?.[d.theme]||null;markerFollow.checked=!own;markerInput.value=own||d.custom.accent;markerInput.dataset.follow=String(!own);};
- markerRow.append(markerField,markerFollowRow,markerNote);controls.append(markerRow);
+ // v1.7.10: 실제 농도를 입힌 미리보기(채팅 테마의 AI 메시지 바탕 위). Nocturne은 대사 8%도 함께 보여 준다.
+ const markerSample=el('div','ttk-marker-sample');const markerSampleMain=el('span','','형광펜 미리보기 · 16%');const markerSampleDlg=el('span','','Nocturne 대사 · 8%');markerSampleDlg.style.setProperty('--ms-pct','8%');markerSample.append(markerSampleMain,markerSampleDlg);
+ const paintMarkerSample=()=>{const d=settings.design,c=d.custom;markerSample.style.setProperty('--ms-bg',c.ai);markerSample.style.setProperty('--ms-text',c.text);markerSample.style.setProperty('--ms-line',c.border);markerSample.style.setProperty('--ms-mark',d.markerColors?.[d.theme]||c.accent);markerSampleDlg.hidden=d.theme!=='nocturne';};
+ markerInput.addEventListener('input',()=>{settings.design.markerColors[settings.design.theme]=markerInput.value;markerFollow.checked=false;markerInput.dataset.follow='false';paintMarkerSample();syncPreview();changed();});
+ markerFollow.addEventListener('change',()=>{const id=settings.design.theme;if(markerFollow.checked){settings.design.markerColors[id]=null;markerInput.value=settings.design.custom.accent;}else{settings.design.markerColors[id]=markerInput.value||settings.design.custom.accent;}markerInput.dataset.follow=String(markerFollow.checked);paintMarkerSample();syncPreview();changed();});
+ const markerPaint=()=>{const d=settings.design,own=d.markerColors?.[d.theme]||null;markerFollow.checked=!own;markerInput.value=own||d.custom.accent;markerInput.dataset.follow=String(!own);paintMarkerSample();};
+ markerRow.append(markerField,markerFollowRow,markerSample,markerNote);controls.append(markerRow);
 
  controls.append(el('p','ttk-note','“큰따옴표” 또는 「낫표」로 묶인 대사를 화면에서만 구분합니다. HTML 서식으로 끊긴 대사, 따옴표 없는 대사는 지문 폰트가 유지될 수 있습니다.'));
  const sliders=el('div','ttk-slider-grid');slider(sliders,'글자 크기','size',10,23,1,v=>`${v}px`,syncPreview);slider(sliders,'줄간격','lineHeight',1.4,2.4,.05,v=>Number(v).toFixed(2),syncPreview);slider(sliders,'자간','letterSpacing',-.6,1.8,.1,v=>`${Number(v).toFixed(1)}px`,syncPreview);slider(sliders,'문단 간격','paragraphSpacing',0,32,1,v=>`${v}px`,syncPreview);controls.append(sliders);

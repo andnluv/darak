@@ -11,6 +11,9 @@
   /* 안쪽 설정 패널이 쓰는 변수도 이 창 팔레트로 맞춥니다(채팅 테마 색이 새어 들어오지 않게). */
   --w-font:'IBM Plex Sans KR','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;--w-serif:'Gowun Batang','Nanum Myeongjo','AppleMyungjo',serif;
   --ttk-text:var(--w-text);--ttk-muted:var(--w-muted);--ttk-surface:var(--w-surface);--ttk-raised:var(--w-sel);--ttk-border:var(--w-line);--ttk-accent:var(--w-accent);
+  /* v1.7.10: SillyTavern 기본 글자색 변수도 창 팔레트로 맞춥니다. html에 걸린 채팅 테마 값이 그대로 내려오면
+     창(밝게/어둡게)과 채팅 테마(Paper/Nocturne)가 엇갈릴 때 작은 글자가 바탕에 묻힙니다. */
+  --SmartThemeBodyColor:var(--w-text);--SmartThemeEmColor:var(--w-muted);--SmartThemeBorderColor:var(--w-line);
   position:fixed;inset:0;z-index:30000;display:flex;align-items:center;justify-content:center;
   background:var(--w-backdrop);color:var(--w-text);
   font-family:'IBM Plex Sans KR','Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:14px;line-height:1.5;
@@ -109,6 +112,10 @@ html .ttk-win #ttk-panel input[type=checkbox]::after{content:""!important;displa
 html .ttk-win #ttk-panel input[type=checkbox]:checked{background:var(--w-accent)!important;background-image:none!important}
 html .ttk-win #ttk-panel input[type=checkbox]:checked::after{left:17px;background:var(--w-knob-on)}
 html .ttk-win #ttk-panel input[type=checkbox]:disabled{cursor:not-allowed}
+/* v1.7.10: 채팅 테마가 어두운 쪽(data-ttk-scheme=dark, 예: Nocturne)이면 20-st-ui.css의 체크 표시(background-image) 규칙이
+   위 규칙보다 우선순위가 높아 켜진 스위치 위에 검은 체크가 겹쳤습니다. 속성 선택자를 더해 그 규칙보다 높게 맞춥니다. */
+html[data-ttk-theme][data-ttk-scheme] .ttk-win #ttk-panel input[type=checkbox]:checked,
+html .ttk-win #ttk-panel input[type=checkbox]:checked{background-color:var(--w-accent)!important;background-image:none!important}
 
 /* ---- 확장 목록의 시작 버튼 ---- */
 #ttk-launcher.ttk-launcher{display:grid;gap:4px;margin:0 0 4px;padding:4px 6px 4px 10px;border:1px solid rgba(128,128,128,.3);border-radius:8px}
@@ -240,3 +247,13 @@ html body #ttk-win#ttk-win #ttk-panel .ttk-preview-message :is(.ttk-preview-dial
   html .ttk-win #ttk-panel .ttk-preview-message{padding:12px 14px}
 }
 
+
+/* ---- v1.7.10: 테마 컬러 조합 카드 이름 ----
+   카드 바탕은 창 팔레트인데 이름 글자는 채팅 테마 색을 따라가, 창 모드와 채팅 테마가 엇갈리면(다크 창+Paper, 라이트 창+Nocturne) 안 보였습니다.
+   이름은 항상 창 팔레트 글자색으로 둡니다. */
+html .ttk-win #ttk-panel .ttk-palette-chip small{color:var(--w-muted)!important;-webkit-text-fill-color:currentColor!important;opacity:1!important;text-shadow:none!important}
+/* ---- v1.7.10: 형광펜 미리보기 ----
+   실제 채팅에 칠해지는 농도(일반 16%, Nocturne 대사 8%)를 채팅 테마의 AI 메시지 바탕 위에 그대로 보여 줍니다. */
+#ttk-panel .ttk-marker-sample{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;padding:7px 10px;border:1px solid var(--ms-line,var(--ttk-border));border-radius:4px;background:var(--ms-bg);color:var(--ms-text);font-size:13px;line-height:1.6}
+#ttk-panel .ttk-marker-sample > span{background-image:linear-gradient(transparent 56%,color-mix(in srgb,var(--ms-mark) var(--ms-pct,16%),transparent) 56%);-webkit-box-decoration-break:clone;box-decoration-break:clone;-webkit-text-fill-color:currentColor}
+#ttk-panel .ttk-marker-sample > span[hidden]{display:none}
