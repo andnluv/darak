@@ -38,3 +38,7 @@ export function syncComposerIcons(on){
  const form=document.getElementById('send_form');if(!form||typeof MutationObserver==='undefined')return;
  obs=new MutationObserver(later);obs.observe(form,{childList:true,subtree:true,characterData:true});later();
 }
+// v1.7.15: 아이콘 교체(테마 이미지 교체 → 아이콘 탭)가 내장 Lucide 목록에서 고를 수 있게 꺼내 둡니다.
+export const lucideNames=()=>Object.keys(ICONS).sort();
+export const lucideSvg=n=>ICONS[n]?`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'>${ICONS[n]}</svg>`:'';
+export const lucideUrl=n=>ICONS[n]?SVG(n):'';

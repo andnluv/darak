@@ -4,11 +4,13 @@
  * from your device, without editing the CSS. Replacements are stored per theme in the browser (IndexedDB),
  * so they follow the theme, survive theme updates, and never touch the theme file itself.
  * Replacements can be saved as named presets and cleaned up when a theme is gone.
+ * v1.7.15: the 「아이콘」 tab (icon-swap.js) swaps DARAK's own icons, common to all DARAK themes or per theme.
  *
  * How a swap is applied: a copy of the custom CSS with the chosen urls replaced is appended as its own
  * <style>, after the original, so it wins the cascade. Turning the module off removes that style.
  */
 import { confirmAsk, inputAsk } from './dialogs.js';
+import { IconSwap, ICON_STORE } from './icon-swap.js';
 const DB_NAME = 'ttk_theme_images', OVERRIDES = 'overrides', PRESETS = 'presets';
 const STYLE_ID = 'ttk-themeimg-style';
 const SKIP_URL = /\.(woff2?|ttf|otf|eot|css)(\?|#|$)/i;
@@ -74,8 +76,8 @@ class Store {
         if (typeof indexedDB === 'undefined') return Promise.reject(Error('IndexedDB unavailable'));
         return new Promise((res, rej) => {
             let r;
-            try { r = indexedDB.open(DB_NAME, 1); } catch (e) { rej(e); return; }
-            r.onupgradeneeded = () => { const d = r.result; for (const n of [OVERRIDES, PRESETS]) if (!d.objectStoreNames.contains(n)) d.createObjectStore(n); };
+            try { r = indexedDB.open(DB_NAME, 2); } catch (e) { rej(e); return; }
+            r.onupgradeneeded = () => { const d = r.result; for (const n of [OVERRIDES, PRESETS, ICON_STORE]) if (!d.objectStoreNames.contains(n)) d.createObjectStore(n); };
             r.onsuccess = () => { this.db = r.result; res(this.db); };
             r.onerror = () => rej(r.error);
         });
@@ -101,7 +103,7 @@ class Store {
 
 export class ThemeImages {
     constructor({ getSettings, save } = {}) {
-        this.getSettings = getSettings; this.save = save; this.store = new Store(); this.enabled = false; this.blobUrls = new Map(); this.tab = 'images'; this.dialog = null;
+        this.getSettings = getSettings; this.save = save; this.store = new Store(); this.icons = new IconSwap(this.store); this.enabled = false; this.blobUrls = new Map(); this.tab = 'images'; this.dialog = null;
         this.onWake = () => this.apply();
     }
     ctx() { return window.SillyTavern?.getContext?.(); }
@@ -137,14 +139,14 @@ export class ThemeImages {
         this.timer = setInterval(() => { const ta = this.css(); if (ta && this.stamp !== `${this.theme()}\u0000${ta.value.length}`) this.apply(); }, 2000);
         // v1.7.2: 요술봉 메뉴에는 「다락방」만 둡니다. 이 기능은 설정 창의 도구에서 엽니다.
         document.getElementById('ttk_themeimg_menu')?.remove();
-        this.apply();
+        this.apply(); this.icons.start();
     }
     stop() {
         if (!this.enabled) return; this.enabled = false;
         const c = this.ctx(); if (this.evName) c?.eventSource?.removeListener?.(this.evName, this.onWake);
         document.getElementById('themes')?.removeEventListener('change', this.onWake);
         this.css()?.removeEventListener('input', this.onWake);
-        clearInterval(this.timer); document.getElementById(STYLE_ID)?.remove(); document.getElementById('ttk_themeimg_menu')?.remove();
+        clearInterval(this.timer); document.getElementById(STYLE_ID)?.remove(); this.icons.stop(); document.getElementById('ttk_themeimg_menu')?.remove();
         this.dialog?.remove(); this.dialog = null;
         for (const u of this.blobUrls.values()) URL.revokeObjectURL(u); this.blobUrls.clear(); this.store.close();
     }
@@ -172,20 +174,23 @@ export class ThemeImages {
             const b = el('div', 'ttk-inv-body'); b.append(el('p', 'ttk-inv-note', '이 브라우저에서는 교체한 이미지를 저장할 수 없습니다. 사생활 보호(시크릿) 창이거나 사이트 데이터를 막아 둔 경우입니다. 일반 창에서 사이트 데이터를 허용한 뒤 다시 열어 주세요.'));
             dlg.append(h, b); return;
         }
+        const keep = this.lastTab === this.tab ? dlg.querySelector('.ttk-inv-body')?.scrollTop || 0 : 0; this.lastTab = this.tab;
         dlg.replaceChildren();
-        const head = el('div', 'ttk-inv-head'), title = el('div', 'ttk-inv-title'); title.append(el('strong', '', '테마 이미지 교체'), el('small', '', `현재 테마: ${theme}`));
+        const head = el('div', 'ttk-inv-head'), title = el('div', 'ttk-inv-title'); title.append(el('strong', '', '테마 이미지 교체'), el('small', '', this.tab === 'icons' ? '다락방 아이콘 · 이 브라우저에 저장' : `현재 테마: ${theme}`));
         const acts = el('div', 'ttk-inv-head-actions'), x = el('button', 'ttk-inv-x', '✕'); x.type = 'button'; x.setAttribute('aria-label', '닫기'); x.addEventListener('click', () => dlg.close());
         acts.append(x); head.append(title, acts);
         const tabs = el('div', 'ttk-inv-tabs'); tabs.setAttribute('role', 'tablist');
-        for (const [id, label] of [['images', '이미지'], ['presets', '프리셋'], ['clean', '정리']]) {
+        for (const [id, label] of [['images', '이미지'], ['icons', '아이콘'], ['presets', '프리셋'], ['clean', '정리']]) {
             const b = el('button', 'ttk-inv-tab', label); b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', String(this.tab === id));
             b.addEventListener('click', () => { this.tab = id; this.render(); }); tabs.append(b);
         }
         const body = el('div', 'ttk-inv-body');
         dlg.append(head, tabs, body);
         if (this.tab === 'images') this.renderImages(body, theme, urls, ov);
+        else if (this.tab === 'icons') await this.icons.render(body, () => this.render(), stale);
         else if (this.tab === 'presets') await this.renderPresets(body, theme, ov, stale);
         else await this.renderClean(body, theme, urls, ov, stale);
+        if (keep && !stale()) body.scrollTop = keep;
     }
     renderImages(body, theme, urls, ov) {
         const S = this.getSettings();

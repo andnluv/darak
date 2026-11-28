@@ -23,7 +23,7 @@ import {markDropcap} from './dropcap.js';
 import {applyDesign,teardownDesign,normalizeDesign,selectTheme,resetPalette,fontPreviewNode,THEMES,FONTS,FONT_GROUPS,PHOTO_SIZES,USER_FONT_MAX,normalizeUserFonts,setUserFonts,sanitizeFontFaceCode,userFontId,WEIGHT_STEPS,UNDERLINES,fontWeights,resolveWeight,emphasisOf,DIALOGUE_FOLLOW} from './design.js';
 const KEY='darak';
 const LEGACY_KEY='tavern_toolkit_independent'; // 이전 이름(태번 도구함)의 설정 키 — 첫 실행 때 한 번 옮겨 옵니다.
-const VERSION = '1.7.14';
+const VERSION = '1.7.15';
 const SELF_FOLDER=decodeURIComponent(new URL(import.meta.url).pathname.split('/third-party/')[1]?.split('/')[0]||'');
 const DEFAULT_MODULES={design:true,localization:true,translation:false,qr:false,inventory:false,ghostwrite:false,optimization:false,avatars:false,faces:false,themeImages:false,gallery:false,weather:false};
 let settings,save,promptTranslator,uiTranslator,messageTranslator,ghostwriter,qrVault,inventory,optimizer,avatars,faces,themeImages,gallery,weather,conflictToastShown=false,settingsWindow,committed,ctxRef,hold=false,pending=false,inWindow=false;
@@ -153,7 +153,7 @@ function build(){
  const drawer=el('div','inline-drawer-content');root.append(drawer);const body=el('div','ttk-settings-body');drawer.append(body);
  const failBox=el('div','ttk-failures');failBox.id='ttk-failures';failBox.hidden=true;failBox.setAttribute('role','alert');body.append(failBox);
  body.append(el('p','ttk-note','모듈별 ON/OFF를 지원합니다. 디자인을 끄면 확장 스타일이 제거되고 원래 실리태번 테마가 표시됩니다.'));
- const modules=el('section','ttk-module-list');const rowOf={};const addModule=(...a)=>{rowOf[a[a.length-1]]=switchRow(modules,...a);};addModule('디자인','Paper · Nocturne · Porcelain · Studio 테마','design');addModule('한글화','추론 제목 · 프롬프트 토글 표시명 · 화면 전체 한국어','localization');addModule('번역','AI 응답 한국어 번역 · 입력 번역 · 다른 번역 확장과 함께 켜지 말고 하나만 쓰세요','translation');addModule('QR 보관함','버튼 하나로 여는 서랍에서 QR 실행 · 세트 켜기/가져오기/내보내기/백업','qr');addModule('통합 조회','테마·프롬프트·확장을 한 창에서 확인하고 오류·충돌을 점검합니다','inventory');addModule('유저 인풋 대필','현재 RP 연결로 내 다음 메시지를 입력창에 써 줍니다','ghostwrite');addModule('프로필 사진','봇 캐릭터·내 페르소나에 사진을 여러 장 등록하고, 새 메시지의 기본 사진과 메시지별 사진을 고릅니다','avatars');addModule('화자 얼굴','여러 인물이 나오는 봇에서 대사 옆에 말한 인물의 얼굴을 보여 줍니다 · 대사 인식에 디자인 모듈이 필요합니다','faces');addModule('테마 이미지 교체','테마 CSS 속 이미지를 내 파일로 바꾸고 프리셋으로 저장합니다','themeImages');addModule('이미지 모아보기','이 채팅과 서버 폴더의 생성 이미지를 한 창에서 봅니다','gallery');addModule('날씨·분위기','채팅을 읽어 비·눈·흐림·안개·뇌우와 꽃잎·낙엽·반딧불·불똥·별빛을 자동으로 깝니다 · 켜고 끄기만 · 다른 모듈과 독립','weather');addModule('모바일 최적화','독립 성능 모듈 · 긴 채팅과 무거운 효과의 부담을 줄입니다','optimization');
+ const modules=el('section','ttk-module-list');const rowOf={};const addModule=(...a)=>{rowOf[a[a.length-1]]=switchRow(modules,...a);};addModule('디자인','Paper · Nocturne · Porcelain · Studio 테마','design');addModule('한글화','추론 제목 · 프롬프트 토글 표시명 · 화면 전체 한국어','localization');addModule('번역','AI 응답 한국어 번역 · 입력 번역 · 다른 번역 확장과 함께 켜지 말고 하나만 쓰세요','translation');addModule('QR 보관함','버튼 하나로 여는 서랍에서 QR 실행 · 세트 켜기/가져오기/내보내기/백업','qr');addModule('통합 조회','테마·프롬프트·확장을 한 창에서 확인하고 오류·충돌을 점검합니다','inventory');addModule('유저 인풋 대필','현재 RP 연결로 내 다음 메시지를 입력창에 써 줍니다','ghostwrite');addModule('프로필 사진','봇 캐릭터·내 페르소나에 사진을 여러 장 등록하고, 새 메시지의 기본 사진과 메시지별 사진을 고릅니다','avatars');addModule('화자 얼굴','여러 인물이 나오는 봇에서 대사 옆에 말한 인물의 얼굴을 보여 줍니다 · 대사 인식에 디자인 모듈이 필요합니다','faces');addModule('테마 이미지 교체','테마 CSS 속 이미지와 다락방 아이콘을 내 파일로 바꾸고 프리셋으로 저장합니다','themeImages');addModule('이미지 모아보기','이 채팅과 서버 폴더의 생성 이미지를 한 창에서 봅니다','gallery');addModule('날씨·분위기','채팅을 읽어 비·눈·흐림·안개·뇌우와 꽃잎·낙엽·반딧불·불똥·별빛을 자동으로 깝니다 · 켜고 끄기만 · 다른 모듈과 독립','weather');addModule('모바일 최적화','독립 성능 모듈 · 긴 채팅과 무거운 효과의 부담을 줄입니다','optimization');
  const locPanel=el('details','ttk-section');locPanel.id='ttk-localization-section';locPanel.append(el('summary','ttk-section-summary','한글화 · 추론 제목 / 토글 이름 / 화면 전체'));
  const locBody=el('div','ttk-controls');locPanel.append(locBody);
  locBody.append(el('p','ttk-note','추론(Thought) 제목만 화면에서 변경합니다. 접기·펼치기 상태, 추론 원문, 채팅 저장 데이터는 변경하지 않습니다.'));
@@ -266,6 +266,7 @@ function build(){
  const tiPanel=el('details','ttk-section');tiPanel.id='ttk-themeimg-section';tiPanel.hidden=!settings.modules.themeImages;tiPanel.append(el('summary','ttk-section-summary','테마 이미지 교체'));
  const tiBody=el('div','ttk-controls');tiPanel.append(tiBody);
  tiBody.append(el('p','ttk-note','현재 테마의 사용자 CSS에서 이미지 주소를 찾아, 항목마다 내 파일로 바꿉니다. 테마 파일은 건드리지 않고 이 브라우저에만 저장되며 테마별로 따로 기억합니다. 다른 기기에서는 다시 지정해야 합니다.'));
+ tiBody.append(el('p','ttk-note','「아이콘」 탭에서는 다락방이 정한 아이콘(상단 메뉴·입력창·메시지 버튼·설정 창·다른 확장 버튼)을 내 파일, SVG 코드, 내장 Lucide 아이콘으로 바꿉니다. 모든 테마 공통으로 바꾸거나 테마마다 따로 덮어쓸 수 있습니다.'));
  tiBody.append(el('p','ttk-note','"테마 이미지 교체"가 만든 스타일은 사용자 CSS 뒤에 덧붙여 적용됩니다. 끄면 바로 원래대로 돌아갑니다.'));
  const tiActions=el('div','ttk-actions');tiActions.append(btn('테마 이미지 교체 열기',()=>themeImages.open()));tiBody.append(tiActions);
  body.append(tiPanel);
